@@ -1,0 +1,230 @@
+
+PlayerSprite.png
+size: 512, 32
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+runDown
+  rotate: false
+  xy: 38, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 3
+runDown
+  rotate: false
+  xy: 38, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 1
+runDown
+  rotate: false
+  xy: 110, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 0
+runDown
+  rotate: false
+  xy: 110, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 4
+runDown
+  rotate: false
+  xy: 164, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 5
+runDown
+  rotate: false
+  xy: 164, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 7
+runDown
+  rotate: false
+  xy: 236, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 2
+runDown
+  rotate: false
+  xy: 434, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 6
+runLeft
+  rotate: false
+  xy: 56, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 7
+runLeft
+  rotate: false
+  xy: 128, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 4
+runLeft
+  rotate: false
+  xy: 182, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 1
+runLeft
+  rotate: false
+  xy: 254, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 6
+runLeft
+  rotate: false
+  xy: 308, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 3
+runLeft
+  rotate: false
+  xy: 362, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 0
+runLeft
+  rotate: false
+  xy: 398, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 5
+runLeft
+  rotate: false
+  xy: 452, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 2
+runRight
+  rotate: false
+  xy: 2, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 2
+runRight
+  rotate: false
+  xy: 74, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 7
+runRight
+  rotate: false
+  xy: 146, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 4
+runRight
+  rotate: false
+  xy: 200, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 1
+runRight
+  rotate: false
+  xy: 272, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 6
+runRight
+  rotate: false
+  xy: 326, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 3
+runRight
+  rotate: false
+  xy: 380, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 0
+runRight
+  rotate: false
+  xy: 416, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 5
+runUp
+  rotate: false
+  xy: 20, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 5
+runUp
+  rotate: false
+  xy: 20, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 7
+runUp
+  rotate: false
+  xy: 92, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 2
+runUp
+  rotate: false
+  xy: 218, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 4
+runUp
+  rotate: false
+  xy: 218, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 0
+runUp
+  rotate: false
+  xy: 290, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 1
+runUp
+  rotate: false
+  xy: 290, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 3
+runUp
+  rotate: false
+  xy: 344, 2
+  size: 16, 28
+  orig: 16, 28
+  offset: 0, 0
+  index: 6
