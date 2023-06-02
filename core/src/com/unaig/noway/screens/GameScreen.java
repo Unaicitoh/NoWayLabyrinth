@@ -23,7 +23,7 @@ public class GameScreen extends ScreenAdapter {
 		renderer = new OrthogonalTiledMapRenderer(Assets.instance.labMap);
 		camera = new OrthographicCamera();
 		batch = (SpriteBatch) renderer.getBatch();
-		player = new Player(Assets.instance.playerAtlas.createSprite("runDown", 0));
+		player = new Player();
 		Gdx.input.setInputProcessor(player);
 		camera.zoom=1/4f;
 

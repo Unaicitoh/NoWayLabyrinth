@@ -16,7 +16,7 @@ public class Assets {
 	public TextureAtlas playerAtlas;
 	
 	public void load() {
-		playerAtlas= new TextureAtlas("sprites/PlayerSprite.atlas");
+		playerAtlas= new TextureAtlas("sprites/PlayerAnimations");
 		labMap = new TmxMapLoader().load("maps/lvl1.tmx");
 	}
 	
