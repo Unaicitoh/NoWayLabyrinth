@@ -1,6 +1,8 @@
 package com.unaig.noway.entities;
 
 
+import java.awt.Point;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
@@ -8,6 +10,9 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -40,9 +45,27 @@ public class Player implements InputProcessor{
 	}
 	
 	private void init(SpellPool spellPool) {
-		pos = new Vector2(Constants.TILE_SIZE*2,Constants.TILE_SIZE*2);
-		vel = new Vector2(0,0);
+		int rnd = MathUtils.random(1);
+		Gdx.app.log(TAG, ""+rnd);
 		size = new Vector2(Constants.TILE_SIZE,Constants.TILE_SIZE);
+		MapObjects collisions = Assets.instance.labMap.getLayers().get("Spawns").getObjects();
+		for (int i = 0; i < collisions.getCount(); i++)
+		{
+		    MapObject mapObject = collisions.get(i);
+		    
+		    if (rnd==0)
+		    {
+		    	if(mapObject.getName().equals("PlayerSpawn")) {
+		    		Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+		    		pos = new Vector2(rectangle.x-size.x/2,rectangle.y);		    		
+		    	}
+		    }else {
+		    		Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+		    		pos = new Vector2(rectangle.x-size.x/2,rectangle.y);		    		
+		    }
+		}
+		
+		vel = new Vector2(0,0);
 		playerBounds = new Rectangle(pos.x+offsetX, pos.y, size.x-offsetX*2, size.y);
 		lastDir=Direction.RIGHT;
 		animations=new ObjectMap<>();

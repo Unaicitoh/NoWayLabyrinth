@@ -8,8 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -19,7 +17,6 @@ import com.unaig.noway.entities.Player;
 import com.unaig.noway.entities.Spell;
 import com.unaig.noway.entities.SpellPool;
 import com.unaig.noway.util.Constants;
-import com.unaig.noway.util.GameHelper;
 
 public class GameScreen extends ScreenAdapter {
 	public static final String TAG = GameScreen.class.getName();
@@ -42,12 +39,14 @@ public class GameScreen extends ScreenAdapter {
 		Gdx.input.setInputProcessor(player);
 		((OrthographicCamera)viewport.getCamera()).zoom=1/5f;
 		shaper=new ShapeRenderer();
+		viewport.getCamera().position.set(new Vector3(player.getPos(),0));
 	}
 
 	@Override
 	public void render(float delta) {
 		ScreenUtils.clear(.15f,.15f, .15f, 1f);
 		viewport.apply();
+		
 		viewport.getCamera().position.lerp(new Vector3(player.getPos(),0), CAM_SPEED*delta);
 		
 		shaper.setProjectionMatrix(viewport.getCamera().combined);
