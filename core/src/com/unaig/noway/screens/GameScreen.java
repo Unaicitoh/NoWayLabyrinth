@@ -14,8 +14,8 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.entities.Player;
-import com.unaig.noway.entities.Spell;
 import com.unaig.noway.entities.SpellPool;
+import com.unaig.noway.entities.spells.Spell;
 import com.unaig.noway.util.Constants;
 
 public class GameScreen extends ScreenAdapter {

@@ -1,9 +1,8 @@
 package com.unaig.noway.entities;
 
 
-import java.awt.Point;
-
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -18,6 +17,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.unaig.noway.data.Assets;
+import com.unaig.noway.entities.spells.FireSpell;
+import com.unaig.noway.entities.spells.Spell;
+import com.unaig.noway.util.AttackType;
 import com.unaig.noway.util.Constants;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.ElementType;
@@ -32,8 +34,7 @@ public class Player implements InputProcessor{
 	private ObjectMap<String, Animation<AtlasRegion>> animations;
 	private Rectangle playerBounds;
 	public Direction lastDir;
-	private ElementType type;
-	
+	private ElementType elementType;
 	public SpellPool spellPool;
 	
 	private float stateTime;
@@ -183,9 +184,6 @@ public class Player implements InputProcessor{
 		case Keys.S:
 			vel.y=-MAX_VEL;
 			break;
-		case Keys.SPACE:
-			Spell.create(spellPool, this);
-			break;
 		}
 		return true;
 	}
@@ -240,8 +238,16 @@ public class Player implements InputProcessor{
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
+		switch (button) {
+		case Buttons.LEFT:
+			FireSpell.create(spellPool, this, AttackType.BASIC);
+
+			break;
+		case Buttons.RIGHT:
+			FireSpell.create(spellPool, this, AttackType.STRONG);
+			break;
+		}
+		return true;
 	}
 
 	@Override
