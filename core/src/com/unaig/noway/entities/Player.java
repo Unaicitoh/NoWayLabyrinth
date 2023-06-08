@@ -8,7 +8,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -25,29 +24,20 @@ import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.ElementType;
 import com.unaig.noway.util.GameHelper;
 
-public class Player implements InputProcessor{
+public class Player extends Entity implements InputProcessor{
 
 	public static final String TAG = Player.class.getName();
 
-	private Vector2 pos;
-	private Vector2 vel;
-	private Vector2 size;
-	private ObjectMap<String, Animation<AtlasRegion>> animations;
-	private Rectangle playerBounds;
-	public Direction lastDir;
-	private ElementType elementType;
 	public SpellPool spellPool;
-	
-	private float stateTime;
-	private static final float FRAME_DURATION = 0.1f;
+	private ElementType elementType;
 	private static final float OFFSET_X = 2f;
-	public static float maxVel = Constants.TILE_SIZE*3;
-	
+	private static final float FRAME_DURATION = 0.1f;
+
 	public Player(SpellPool spellPool) {
 		init(spellPool);
 	}
 	
-	private void init(SpellPool spellPool) {
+	protected void init(SpellPool spellPool) {
 		int rnd = MathUtils.random(1);
 		elementType=ElementType.FIRE;
 		size = new Vector2(Constants.TILE_SIZE,Constants.TILE_SIZE);
@@ -69,7 +59,8 @@ public class Player implements InputProcessor{
 		}
 		
 		vel = new Vector2(0,0);
-		playerBounds = new Rectangle(pos.x+OFFSET_X, pos.y, size.x-OFFSET_X*2, size.y);
+		maxVel = Constants.TILE_SIZE*3;
+		bounds = new Rectangle(pos.x+OFFSET_X, pos.y, size.x-OFFSET_X*2, size.y);
 		lastDir=Direction.RIGHT;
 		animations=new ObjectMap<>();
 		animations.put(Constants.PLAYER_ANIM_RIGHT, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(Constants.PLAYER_ANIM_RIGHT), PlayMode.LOOP));
@@ -116,60 +107,28 @@ public class Player implements InputProcessor{
 		    
 		    // Move horizontally
 		    pos.x += vel.x * delta;
-		    playerBounds.setPosition(pos.x+OFFSET_X, pos.y);
-		    if (GameHelper.checkCollisions(playerBounds)) {
+		    bounds.setPosition(pos.x+OFFSET_X, pos.y);
+		    if (GameHelper.checkCollisions(bounds)) {
 		        pos.x = lastValidPos.x;
 		    } else {
 		        lastValidPos.x = pos.x; 
 		    }
-		    playerBounds.setPosition(pos.x+OFFSET_X, pos.y);
+		    bounds.setPosition(pos.x+OFFSET_X, pos.y);
 
 		    // Move vertically
 		    pos.y += vel.y * delta;
-		    playerBounds.setPosition(pos.x+OFFSET_X, pos.y);
-		    if (GameHelper.checkCollisions(playerBounds)) {
+		    bounds.setPosition(pos.x+OFFSET_X, pos.y);
+		    if (GameHelper.checkCollisions(bounds)) {
 		        pos.y = lastValidPos.y;
 		    } else {
 		        lastValidPos.y = pos.y;
 		    }
-		    playerBounds.setPosition(pos.x+OFFSET_X, pos.y);
+		    bounds.setPosition(pos.x+OFFSET_X, pos.y);
 		    pos.set(lastValidPos); 
 			
 		}
 		
-
-
-	public Vector2 getPos() {
-		return pos;
-	}
-
-	public void setPos(Vector2 pos) {
-		this.pos = pos;
-	}
-
-	public Vector2 getVel() {
-		return vel;
-	}
-
-	public void setVel(Vector2 vel) {
-		this.vel = vel;
-	}
-
-	public Rectangle getPlayerBounds() {
-		return playerBounds;
-	}
-
-	public void setPlayerBounds(Rectangle playerBounds) {
-		this.playerBounds = playerBounds;
-	}
-
-	public Vector2 getSize() {
-		return size;
-	}
-
-	public void setSize(Vector2 size) {
-		this.size = size;
-	}
+	
 
 	@Override
 	public boolean keyDown(int keycode) {
@@ -185,6 +144,9 @@ public class Player implements InputProcessor{
 			break;
 		case Keys.S:
 			vel.y=-maxVel;
+			break;
+		case Keys.SPACE:
+			changeElement();
 			break;
 		}
 		return true;
@@ -228,9 +190,6 @@ public class Player implements InputProcessor{
 				else if(Gdx.input.isKeyPressed(Keys.A)) vel.x=-maxVel;
 			}
 			stateTime=0f;
-			break;
-		case Keys.SPACE:
-			changeElement();
 			break;
 		}
 		return true;

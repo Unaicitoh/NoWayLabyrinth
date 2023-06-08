@@ -58,7 +58,7 @@ public class GameScreen extends ScreenAdapter {
 		batch.end();
 		
 		shaper.begin(ShapeType.Line);
-		shaper.rect(player.getPlayerBounds().x, player.getPlayerBounds().y, player.getPlayerBounds().width, player.getPlayerBounds().height);
+		shaper.rect(player.getBounds().x, player.getBounds().y, player.getBounds().width, player.getBounds().height);
 		for(Spell s: spellPool.spells) {
 			shaper.rect(s.getSpellBounds().x, s.getSpellBounds().y, s.getSpellBounds().width, s.getSpellBounds().height);
 
