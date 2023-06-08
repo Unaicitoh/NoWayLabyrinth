@@ -46,10 +46,9 @@ public class GameScreen extends ScreenAdapter {
 	public void render(float delta) {
 		ScreenUtils.clear(.15f,.15f, .15f, 1f);
 		viewport.apply();
-		
 		viewport.getCamera().position.lerp(new Vector3(player.getPos(),0), CAM_SPEED*delta);
-		
 		shaper.setProjectionMatrix(viewport.getCamera().combined);
+		
 		renderer.setView((OrthographicCamera) viewport.getCamera());
 		renderer.render();
 		
@@ -78,9 +77,9 @@ public class GameScreen extends ScreenAdapter {
 			((OrthographicCamera)viewport.getCamera()).zoom+=0.15;
 		}
 		if(Gdx.input.isKeyJustPressed(Keys.RIGHT)) {
-			Player.MAX_VEL+=Constants.TILE_SIZE;
+			Player.maxVel+=Constants.TILE_SIZE;
 		}else if(Gdx.input.isKeyJustPressed(Keys.LEFT)) {
-			Player.MAX_VEL-=Constants.TILE_SIZE;
+			Player.maxVel-=Constants.TILE_SIZE;
 		}
 		
 		Gdx.app.log(TAG, ""+Gdx.graphics.getFramesPerSecond());
@@ -99,6 +98,7 @@ public class GameScreen extends ScreenAdapter {
 	public void dispose() {
 		spellPool.clear();
 		batch.dispose();
+		shaper.dispose();
 		renderer.dispose();
 	}
 }

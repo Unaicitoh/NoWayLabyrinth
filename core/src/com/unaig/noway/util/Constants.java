@@ -30,6 +30,27 @@ public class Constants {
 	public static final String FIRE2_SPELL_LEFT_DOWN="fire2LeftDown";
 	public static final String FIRE2_SPELL_RIGHT_UP ="fire2RightUp";
 	public static final String FIRE2_SPELL_RIGHT_DOWN ="fire2RightDown";
+	
+	//Ice spells animations
+	////Basic
+	public static final String ICE_SPELL_LEFT ="iceLeft";
+	public static final String ICE_SPELL_RIGHT ="iceRight";
+	public static final String ICE_SPELL_UP ="iceUp";
+	public static final String ICE_SPELL_DOWN ="iceDown";
+	public static final String ICE_SPELL_LEFT_UP="iceLeftUp";
+	public static final String ICE_SPELL_LEFT_DOWN="iceLeftDown";
+	public static final String ICE_SPELL_RIGHT_UP ="iceRightUp";
+	public static final String ICE_SPELL_RIGHT_DOWN ="iceRightDown";
+	////Strong
+	public static final String ICE2_SPELL_LEFT ="ice2Left";
+	public static final String ICE2_SPELL_RIGHT ="ice2Right";
+	public static final String ICE2_SPELL_UP ="ice2Up";
+	public static final String ICE2_SPELL_DOWN ="ice2Down";
+	public static final String ICE2_SPELL_LEFT_UP="ice2LeftUp";
+	public static final String ICE2_SPELL_LEFT_DOWN="ice2LeftDown";
+	public static final String ICE2_SPELL_RIGHT_UP ="ice2RightUp";
+	public static final String ICE2_SPELL_RIGHT_DOWN ="ice2RightDown";
+	
 	private Constants() {}
 	
 }

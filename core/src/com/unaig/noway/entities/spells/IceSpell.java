@@ -9,13 +9,13 @@ import com.unaig.noway.util.Constants;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
 
-public class FireSpell extends Spell{
+public class IceSpell extends Spell{
 
 
-	private static Pool<FireSpell> spellPool = Pools.get(FireSpell.class);
+	private static Pool<IceSpell> spellPool = Pools.get(IceSpell.class);
 
 	public static void create(SpellPool pool,Player player, AttackType type) {
-		FireSpell spell = spellPool.obtain();
+		IceSpell spell = spellPool.obtain();
 		spell.init(player, type);
 		pool.add(spell);
 	}
@@ -34,42 +34,42 @@ public class FireSpell extends Spell{
 	}
 	private void basicAttackAnimations() {
 		if((vel.x<0 && vel.y==0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.LEFT)){
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_LEFT);
+			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.ICE_SPELL_LEFT);
 		}else if((vel.x>0 && vel.y==0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.RIGHT)) {
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_RIGHT);
+			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.ICE_SPELL_RIGHT);
 		}else if((vel.x==0 && vel.y>0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.UP)) {
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_UP);
+			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.ICE_SPELL_UP);
 		}else if((vel.x==0 && vel.y<0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.DOWN)) {
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_DOWN);
+			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.ICE_SPELL_DOWN);
 		}else if(vel.x<0 && vel.y>0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_LEFT_UP);
+			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.ICE_SPELL_LEFT_UP);
 		}else if(vel.x<0 && vel.y<0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_LEFT_DOWN);
+			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.ICE_SPELL_LEFT_DOWN);
 		}else if(vel.x>0 && vel.y>0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_RIGHT_UP);
+			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.ICE_SPELL_RIGHT_UP);
 		}else if(vel.x>0 && vel.y<0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_RIGHT_DOWN);
+			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.ICE_SPELL_RIGHT_DOWN);
 
 		}		
 	}
 	
 	private void strongAttackAnimations() {
 		if((vel.x<0 && vel.y==0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.LEFT)){
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_LEFT);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.ICE2_SPELL_LEFT);
 		}else if((vel.x>0 && vel.y==0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.RIGHT)) {
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_RIGHT);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.ICE2_SPELL_RIGHT);
 		}else if((vel.x==0 && vel.y>0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.UP)) {
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_UP);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.ICE2_SPELL_UP);
 		}else if((vel.x==0 && vel.y<0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.DOWN)) {
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_DOWN);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.ICE2_SPELL_DOWN);
 		}else if(vel.x<0 && vel.y>0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_LEFT_UP);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.ICE2_SPELL_LEFT_UP);
 		}else if(vel.x<0 && vel.y<0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_LEFT_DOWN);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.ICE2_SPELL_LEFT_DOWN);
 		}else if(vel.x>0 && vel.y>0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_RIGHT_UP);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.ICE2_SPELL_RIGHT_UP);
 		}else if(vel.x>0 && vel.y<0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_RIGHT_DOWN);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.ICE2_SPELL_RIGHT_DOWN);
 		}
 		
 	}
