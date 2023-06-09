@@ -19,7 +19,7 @@ public abstract class Entity {
 	public static float maxVel;
 	protected float stateTime;
 
-	protected abstract void init(SpellPool spellPool);
+	protected abstract void init();
 
 	public abstract void render(SpriteBatch batch, float delta);
 	

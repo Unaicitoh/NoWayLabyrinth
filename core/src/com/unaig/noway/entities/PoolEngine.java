@@ -4,11 +4,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.unaig.noway.entities.spells.Spell;
 
-public class SpellPool {
+public class PoolEngine {
 
 	public Array<Spell> spells;
 	
-	public SpellPool() {
+	public PoolEngine() {
 		spells=new Array<>();
 	}
 	

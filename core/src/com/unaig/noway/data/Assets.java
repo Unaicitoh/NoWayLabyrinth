@@ -17,7 +17,7 @@ public class Assets {
 	public TextureAtlas enemiesAtlas;
 
 	public void load() {
-		playerAtlas= new TextureAtlas("sprites/PlayerAnimations.atlas");
+		playerAtlas = new TextureAtlas("sprites/PlayerAnimations.atlas");
 		enemiesAtlas = new TextureAtlas("sprites/EnemiesAnimations.atlas");
 		labMap = new TmxMapLoader().load("maps/lvl1.tmx");
 	}
@@ -25,6 +25,7 @@ public class Assets {
 	public void dispose() {
 		labMap.dispose();
 		playerAtlas.dispose();
+		enemiesAtlas.dispose();
 	}
 	
 }

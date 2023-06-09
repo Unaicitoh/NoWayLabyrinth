@@ -8,6 +8,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -28,16 +29,17 @@ public class Player extends Entity implements InputProcessor{
 
 	public static final String TAG = Player.class.getName();
 
-	public SpellPool spellPool;
+	public PoolEngine poolEngine;
 	private ElementType elementType;
 	private static final float OFFSET_X = 2f;
 	private static final float FRAME_DURATION = 0.1f;
 
-	public Player(SpellPool spellPool) {
-		init(spellPool);
+	public Player(PoolEngine poolEngine) {
+		this.poolEngine = poolEngine;
+		init();
 	}
 	
-	protected void init(SpellPool spellPool) {
+	protected void init() {
 		int rnd = MathUtils.random(1);
 		elementType=ElementType.FIRE;
 		size = new Vector2(Constants.TILE_SIZE,Constants.TILE_SIZE);
@@ -63,17 +65,18 @@ public class Player extends Entity implements InputProcessor{
 		bounds = new Rectangle(pos.x+OFFSET_X, pos.y, size.x-OFFSET_X*2, size.y);
 		lastDir=Direction.RIGHT;
 		animations=new ObjectMap<>();
+		loadPlayerAnimations(animations);
+		stateTime=0f;
+	}
+
+	private void loadPlayerAnimations(ObjectMap<String, Animation<TextureAtlas.AtlasRegion>> animations) {
 		animations.put(Constants.PLAYER_ANIM_RIGHT, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(Constants.PLAYER_ANIM_RIGHT), PlayMode.LOOP));
 		animations.put(Constants.PLAYER_ANIM_LEFT, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(Constants.PLAYER_ANIM_LEFT), PlayMode.LOOP));
 		animations.put(Constants.PLAYER_ANIM_UP, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(Constants.PLAYER_ANIM_UP), PlayMode.LOOP));
 		animations.put(Constants.PLAYER_ANIM_DOWN, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(Constants.PLAYER_ANIM_DOWN), PlayMode.LOOP));
-		this.spellPool= spellPool;
-		stateTime=0f;
-		
 	}
 
 	public void render(SpriteBatch batch, float delta) {
-		stateTime+=delta;
 		update(delta);
 		
 		if(vel.x<0) {
@@ -101,7 +104,8 @@ public class Player extends Entity implements InputProcessor{
 	}
 
 	public void update(float delta) {
-			vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
+		stateTime+=delta;
+		vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
 			vel.y = MathUtils.clamp(vel.y, -maxVel, maxVel);
 		    Vector2 lastValidPos = new Vector2(pos);
 		    
@@ -213,15 +217,15 @@ public class Player extends Entity implements InputProcessor{
 		switch (button) {
 		case Buttons.LEFT:
 			if(elementType==ElementType.FIRE)
-				FireSpell.create(spellPool, this, AttackType.BASIC);
+				FireSpell.create(poolEngine, this, AttackType.BASIC);
 			else if(elementType==ElementType.ICE)
-				IceSpell.create(spellPool, this, AttackType.BASIC);
+				IceSpell.create(poolEngine, this, AttackType.BASIC);
 			break;
 		case Buttons.RIGHT:
 			if(elementType==ElementType.FIRE)
-				FireSpell.create(spellPool, this, AttackType.STRONG);
+				FireSpell.create(poolEngine, this, AttackType.STRONG);
 			else if(elementType==ElementType.ICE)
-				IceSpell.create(spellPool, this, AttackType.STRONG);
+				IceSpell.create(poolEngine, this, AttackType.STRONG);
 			break;
 		}
 		return true;

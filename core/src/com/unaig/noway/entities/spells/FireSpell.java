@@ -3,7 +3,7 @@ package com.unaig.noway.entities.spells;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 import com.unaig.noway.entities.Player;
-import com.unaig.noway.entities.SpellPool;
+import com.unaig.noway.entities.PoolEngine;
 import com.unaig.noway.util.AttackType;
 import com.unaig.noway.util.Constants;
 import com.unaig.noway.util.Direction;
@@ -14,7 +14,7 @@ public class FireSpell extends Spell{
 
 	private static Pool<FireSpell> spellPool = Pools.get(FireSpell.class);
 
-	public static void create(SpellPool pool,Player player, AttackType type) {
+	public static void create(PoolEngine pool, Player player, AttackType type) {
 		FireSpell spell = spellPool.obtain();
 		spell.init(player, type);
 		pool.add(spell);

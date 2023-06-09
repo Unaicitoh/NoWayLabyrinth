@@ -10,7 +10,20 @@ public class Constants {
 	public static final String PLAYER_ANIM_RIGHT ="runRight";
 	public static final String PLAYER_ANIM_UP ="runUp";
 	public static final String PLAYER_ANIM_DOWN ="runDown";
-	
+
+	//Enemy animations
+	////Spider
+	public static final String SPIDER_ANIM_LEFT ="spiderRunLeft";
+	public static final String SPIDER_ANIM_RIGHT ="spiderRunRight";
+	public static final String SPIDER_ANIM_UP ="spiderRunUp";
+	public static final String SPIDER_ANIM_DOWN ="spiderRunDown";
+	public static final String SPIDER_ATTACK_DOWN ="spiderAttackDown";
+	public static final String SPIDER_ATTACK_LEFT ="spiderAttackLeft";
+	public static final String SPIDER_ATTACK_UP ="spiderAttackUp";
+	public static final String SPIDER_ATTACK_RIGHT ="spiderAttackRight";
+	public static final String SPIDER_DEAD_ANIM ="spiderDead";
+
+
 	//Fire spells animations
 	////Basic
 	public static final String FIRE_SPELL_LEFT ="fireLeft";

@@ -14,7 +14,8 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.entities.Player;
-import com.unaig.noway.entities.SpellPool;
+import com.unaig.noway.entities.PoolEngine;
+import com.unaig.noway.entities.SpiderEnemy;
 import com.unaig.noway.entities.spells.Spell;
 import com.unaig.noway.util.Constants;
 
@@ -28,14 +29,16 @@ public class GameScreen extends ScreenAdapter {
 	private ShapeRenderer shaper;
 	private static final float CAM_SPEED=5f;
 	private Player player;
-	private SpellPool spellPool;
+	private SpiderEnemy spider;
+	private PoolEngine poolEngine;
 	@Override
 	public void show() {
 		renderer = new OrthogonalTiledMapRenderer(Assets.instance.labMap);
 		viewport=new ExtendViewport(80*Constants.TILE_SIZE, 80*Constants.TILE_SIZE);
 		batch = (SpriteBatch) renderer.getBatch();
-		spellPool= new SpellPool();
-		player = new Player(spellPool);
+		poolEngine = new PoolEngine();
+		player = new Player(poolEngine);
+		spider =new SpiderEnemy(poolEngine);
 		Gdx.input.setInputProcessor(player);
 		((OrthographicCamera)viewport.getCamera()).zoom=1/5f;
 		shaper=new ShapeRenderer();
@@ -53,13 +56,14 @@ public class GameScreen extends ScreenAdapter {
 		renderer.render();
 		
 		batch.begin();
-		spellPool.render(batch, delta);
+		poolEngine.render(batch, delta);
 		player.render((SpriteBatch) renderer.getBatch(),delta);
+		spider.render((SpriteBatch) renderer.getBatch(),delta);
 		batch.end();
 		
 		shaper.begin(ShapeType.Line);
 		shaper.rect(player.getBounds().x, player.getBounds().y, player.getBounds().width, player.getBounds().height);
-		for(Spell s: spellPool.spells) {
+		for(Spell s: poolEngine.spells) {
 			shaper.rect(s.getSpellBounds().x, s.getSpellBounds().y, s.getSpellBounds().width, s.getSpellBounds().height);
 
 		}
@@ -96,7 +100,7 @@ public class GameScreen extends ScreenAdapter {
 
 	@Override
 	public void dispose() {
-		spellPool.clear();
+		poolEngine.clear();
 		batch.dispose();
 		shaper.dispose();
 		renderer.dispose();
