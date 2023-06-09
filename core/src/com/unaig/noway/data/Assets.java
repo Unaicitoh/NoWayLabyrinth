@@ -14,9 +14,11 @@ public class Assets {
 	
 	public TiledMap labMap;
 	public TextureAtlas playerAtlas;
-	
+	public TextureAtlas enemiesAtlas;
+
 	public void load() {
-		playerAtlas= new TextureAtlas("sprites/PlayerAnimations");
+		playerAtlas= new TextureAtlas("sprites/PlayerAnimations.atlas");
+		enemiesAtlas = new TextureAtlas("sprites/EnemiesAnimations.atlas");
 		labMap = new TmxMapLoader().load("maps/lvl1.tmx");
 	}
 	
