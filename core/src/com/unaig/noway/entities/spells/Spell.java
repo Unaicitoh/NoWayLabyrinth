@@ -9,9 +9,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.util.AttackType;
-import com.unaig.noway.util.Constants;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
+
+import static com.unaig.noway.util.Constants.TILE_SIZE;
 
 public abstract class Spell implements Poolable {
 
@@ -29,7 +30,7 @@ public abstract class Spell implements Poolable {
 	private Rectangle spellBounds;
 	protected Direction playerLastDir;
 	protected Animation<AtlasRegion> animation;
-	protected float velMultipler;
+	protected float velMultiplier;
 	private static final float OFFSET_X = 2f;
 	private static final float OFFSET_Y = 2.5f;
 	private static final float LIFE_DURATION = 3f;
@@ -38,11 +39,11 @@ public abstract class Spell implements Poolable {
 	protected void init(Player player, AttackType attackType) {
 		isAlive=true;
 		timeAlive=0;
-		if(attackType==AttackType.STRONG) velMultipler=2.0f;
-		else velMultipler=2.5f;
+		if(attackType==AttackType.STRONG) velMultiplier =2.0f;
+		else velMultiplier =2.5f;
 		pos= new Vector2(player.getPos());
-		vel=new Vector2(player.getVel().x*velMultipler,player.getVel().y*velMultipler);
-		size = new Vector2(Constants.TILE_SIZE,Constants.TILE_SIZE);
+		vel=new Vector2(player.getVel().x* velMultiplier,player.getVel().y* velMultiplier);
+		size = new Vector2(TILE_SIZE, TILE_SIZE);
 		playerLastDir=player.lastDir;
 		spellBounds= new Rectangle(pos.x+OFFSET_X,pos.y+OFFSET_Y,size.x-OFFSET_X*2,size.y-OFFSET_Y*2);	
 		this.attackType=attackType;
@@ -50,21 +51,21 @@ public abstract class Spell implements Poolable {
 	
 	public void update(float delta) {
 		timeAlive+=delta;
-		vel.x = MathUtils.clamp(vel.x, -Player.maxVel*velMultipler, Player.maxVel*velMultipler);
-		vel.y = MathUtils.clamp(vel.y, -Player.maxVel*velMultipler, Player.maxVel*velMultipler);
+		vel.x = MathUtils.clamp(vel.x, -Player.maxVel* velMultiplier, Player.maxVel* velMultiplier);
+		vel.y = MathUtils.clamp(vel.y, -Player.maxVel* velMultiplier, Player.maxVel* velMultiplier);
 		if(vel.x==0 && vel.y==0) {
 			switch (playerLastDir) {
 			case LEFT:
-				vel.x=-Player.maxVel*velMultipler;
+				vel.x=-Player.maxVel* velMultiplier;
 				break;
 			case DOWN:
-				vel.y=-Player.maxVel*velMultipler;
+				vel.y=-Player.maxVel* velMultiplier;
 				break;
 			case RIGHT:
-				vel.x=Player.maxVel*velMultipler;
+				vel.x=Player.maxVel* velMultiplier;
 				break;
 			case UP:
-				vel.y=Player.maxVel*velMultipler;
+				vel.y=Player.maxVel* velMultiplier;
 				break;
 				
 			}
@@ -93,7 +94,7 @@ public abstract class Spell implements Poolable {
 		vel=new Vector2();
 		spellBounds= new Rectangle();
 		playerLastDir=null;
-		velMultipler = 2.5f;
+		velMultiplier = 2.5f;
 	}
 	
 	public abstract void release();

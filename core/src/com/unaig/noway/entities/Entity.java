@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.unaig.noway.util.Direction;
 
-public abstract class Entity {
+public class Entity {
 	
 	protected Vector2 pos;
 	protected Vector2 vel;
@@ -19,12 +19,6 @@ public abstract class Entity {
 	public static float maxVel;
 	protected float stateTime;
 
-	protected abstract void init();
-
-	public abstract void render(SpriteBatch batch, float delta);
-	
-	public abstract void update(float delta);
-	
 	public Vector2 getPos() {
 		return pos;
 	}

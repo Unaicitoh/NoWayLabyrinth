@@ -20,10 +20,12 @@ import com.unaig.noway.data.Assets;
 import com.unaig.noway.entities.spells.FireSpell;
 import com.unaig.noway.entities.spells.IceSpell;
 import com.unaig.noway.util.AttackType;
-import com.unaig.noway.util.Constants;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.ElementType;
 import com.unaig.noway.util.GameHelper;
+
+import static com.unaig.noway.util.Constants.*;
+import static com.unaig.noway.util.ElementType.*;
 
 public class Player extends Entity implements InputProcessor{
 
@@ -40,9 +42,10 @@ public class Player extends Entity implements InputProcessor{
 	}
 	
 	protected void init() {
-		int rnd = MathUtils.random(1);
-		elementType=ElementType.FIRE;
-		size = new Vector2(Constants.TILE_SIZE,Constants.TILE_SIZE);
+//		int rnd = MathUtils.random(1);
+		int rnd =0;
+		elementType= FIRE;
+		size = new Vector2(TILE_SIZE, TILE_SIZE);
 		MapObjects collisions = Assets.instance.labMap.getLayers().get("Spawns").getObjects();
 		for (int i = 0; i < collisions.getCount(); i++)
 		{
@@ -61,44 +64,44 @@ public class Player extends Entity implements InputProcessor{
 		}
 		
 		vel = new Vector2(0,0);
-		maxVel = Constants.TILE_SIZE*3;
+		maxVel = TILE_SIZE*3;
 		bounds = new Rectangle(pos.x+OFFSET_X, pos.y, size.x-OFFSET_X*2, size.y);
 		lastDir=Direction.RIGHT;
 		animations=new ObjectMap<>();
-		loadPlayerAnimations(animations);
 		stateTime=0f;
+		loadPlayerAnimations(animations);
 	}
 
 	private void loadPlayerAnimations(ObjectMap<String, Animation<TextureAtlas.AtlasRegion>> animations) {
-		animations.put(Constants.PLAYER_ANIM_RIGHT, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(Constants.PLAYER_ANIM_RIGHT), PlayMode.LOOP));
-		animations.put(Constants.PLAYER_ANIM_LEFT, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(Constants.PLAYER_ANIM_LEFT), PlayMode.LOOP));
-		animations.put(Constants.PLAYER_ANIM_UP, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(Constants.PLAYER_ANIM_UP), PlayMode.LOOP));
-		animations.put(Constants.PLAYER_ANIM_DOWN, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(Constants.PLAYER_ANIM_DOWN), PlayMode.LOOP));
+		animations.put(PLAYER_ANIM_RIGHT, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(PLAYER_ANIM_RIGHT), PlayMode.LOOP));
+		animations.put(PLAYER_ANIM_LEFT, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(PLAYER_ANIM_LEFT), PlayMode.LOOP));
+		animations.put(PLAYER_ANIM_UP, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(PLAYER_ANIM_UP), PlayMode.LOOP));
+		animations.put(PLAYER_ANIM_DOWN, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(PLAYER_ANIM_DOWN), PlayMode.LOOP));
 	}
 
 	public void render(SpriteBatch batch, float delta) {
 		update(delta);
 		
 		if(vel.x<0) {
-			GameHelper.drawEntity(batch,animations.get(Constants.PLAYER_ANIM_LEFT).getKeyFrame(stateTime),pos,size);
+			GameHelper.drawEntity(batch,animations.get(PLAYER_ANIM_LEFT).getKeyFrame(stateTime),pos,size);
 			lastDir= Direction.LEFT;
 		}else if(vel.x>0) {
-			GameHelper.drawEntity(batch,animations.get(Constants.PLAYER_ANIM_RIGHT).getKeyFrame(stateTime),pos,size);
+			GameHelper.drawEntity(batch,animations.get(PLAYER_ANIM_RIGHT).getKeyFrame(stateTime),pos,size);
 			lastDir= Direction.RIGHT;
 
 		}else if(vel.y>0) {
-			GameHelper.drawEntity(batch,animations.get(Constants.PLAYER_ANIM_UP).getKeyFrame(stateTime),pos,size);
+			GameHelper.drawEntity(batch,animations.get(PLAYER_ANIM_UP).getKeyFrame(stateTime),pos,size);
 			lastDir= Direction.UP;
 
 		}else if(vel.y<0) {
-			GameHelper.drawEntity(batch,animations.get(Constants.PLAYER_ANIM_DOWN).getKeyFrame(stateTime),pos,size);
+			GameHelper.drawEntity(batch,animations.get(PLAYER_ANIM_DOWN).getKeyFrame(stateTime),pos,size);
 			lastDir= Direction.DOWN;
 
 		}else {
-			if(lastDir==Direction.RIGHT) GameHelper.drawEntity(batch,Assets.instance.playerAtlas.findRegion(Constants.PLAYER_ANIM_RIGHT, 0),pos,size);
-			else if (lastDir==Direction.LEFT) GameHelper.drawEntity(batch,Assets.instance.playerAtlas.findRegion(Constants.PLAYER_ANIM_LEFT, 0),pos,size);
-			else if (lastDir==Direction.UP) GameHelper.drawEntity(batch,Assets.instance.playerAtlas.findRegion(Constants.PLAYER_ANIM_UP, 0),pos,size);
-			else if (lastDir==Direction.DOWN) GameHelper.drawEntity(batch,Assets.instance.playerAtlas.findRegion(Constants.PLAYER_ANIM_DOWN, 0),pos,size);
+			if(lastDir==Direction.RIGHT) GameHelper.drawEntity(batch,Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_RIGHT, 0),pos,size);
+			else if (lastDir==Direction.LEFT) GameHelper.drawEntity(batch,Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_LEFT, 0),pos,size);
+			else if (lastDir==Direction.UP) GameHelper.drawEntity(batch,Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_UP, 0),pos,size);
+			else if (lastDir==Direction.DOWN) GameHelper.drawEntity(batch,Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_DOWN, 0),pos,size);
 		}
 		
 	}
@@ -106,52 +109,42 @@ public class Player extends Entity implements InputProcessor{
 	public void update(float delta) {
 		stateTime+=delta;
 		vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
-			vel.y = MathUtils.clamp(vel.y, -maxVel, maxVel);
-		    Vector2 lastValidPos = new Vector2(pos);
+		vel.y = MathUtils.clamp(vel.y, -maxVel, maxVel);
+		Vector2 lastValidPos = new Vector2(pos);
 		    
-		    // Move horizontally
-		    pos.x += vel.x * delta;
-		    bounds.setPosition(pos.x+OFFSET_X, pos.y);
-		    if (GameHelper.checkCollisions(bounds)) {
-		        pos.x = lastValidPos.x;
-		    } else {
-		        lastValidPos.x = pos.x; 
-		    }
-		    bounds.setPosition(pos.x+OFFSET_X, pos.y);
-
-		    // Move vertically
-		    pos.y += vel.y * delta;
-		    bounds.setPosition(pos.x+OFFSET_X, pos.y);
-		    if (GameHelper.checkCollisions(bounds)) {
-		        pos.y = lastValidPos.y;
-		    } else {
-		        lastValidPos.y = pos.y;
-		    }
-		    bounds.setPosition(pos.x+OFFSET_X, pos.y);
-		    pos.set(lastValidPos); 
-			
+		// Move horizontally
+		pos.x += vel.x * delta;
+		bounds.setPosition(pos.x+OFFSET_X, pos.y);
+		if (GameHelper.checkCollisions(bounds)) {
+			pos.x = lastValidPos.x;
+		} else {
+			lastValidPos.x = pos.x;
 		}
+		bounds.setPosition(pos.x+OFFSET_X, pos.y);
+
+		// Move vertically
+		pos.y += vel.y * delta;
+		bounds.setPosition(pos.x+OFFSET_X, pos.y);
+		if (GameHelper.checkCollisions(bounds)) {
+			pos.y = lastValidPos.y;
+		} else {
+			lastValidPos.y = pos.y;
+		}
+		bounds.setPosition(pos.x+OFFSET_X, pos.y);
+		pos.set(lastValidPos);
+			
+	}
 		
 	
 
 	@Override
 	public boolean keyDown(int keycode) {
-		switch(keycode) {
-		case Keys.D:
-			vel.x=maxVel;
-			break;
-		case Keys.A:
-			vel.x=-maxVel;
-			break;
-		case Keys.W:
-			vel.y=maxVel;
-			break;
-		case Keys.S:
-			vel.y=-maxVel;
-			break;
-		case Keys.SPACE:
-			changeElement();
-			break;
+		switch (keycode) {
+			case Keys.D -> vel.x = maxVel;
+			case Keys.A -> vel.x = -maxVel;
+			case Keys.W -> vel.y = maxVel;
+			case Keys.S -> vel.y = -maxVel;
+			case Keys.SPACE -> changeElement();
 		}
 		return true;
 	}
@@ -200,10 +193,10 @@ public class Player extends Entity implements InputProcessor{
 	}
 
 	private void changeElement() {
-		if(elementType==ElementType.FIRE) {
-			elementType=ElementType.ICE; 		
-		}else if(elementType==ElementType.ICE) {
-			elementType=ElementType.FIRE;
+		if(elementType== FIRE) {
+			elementType= ICE;
+		}else if(elementType== ICE) {
+			elementType= FIRE;
 		}
 	}
 
@@ -216,15 +209,15 @@ public class Player extends Entity implements InputProcessor{
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		switch (button) {
 		case Buttons.LEFT:
-			if(elementType==ElementType.FIRE)
+			if(elementType== FIRE)
 				FireSpell.create(poolEngine, this, AttackType.BASIC);
-			else if(elementType==ElementType.ICE)
+			else if(elementType== ICE)
 				IceSpell.create(poolEngine, this, AttackType.BASIC);
 			break;
 		case Buttons.RIGHT:
-			if(elementType==ElementType.FIRE)
+			if(elementType== FIRE)
 				FireSpell.create(poolEngine, this, AttackType.STRONG);
-			else if(elementType==ElementType.ICE)
+			else if(elementType== ICE)
 				IceSpell.create(poolEngine, this, AttackType.STRONG);
 			break;
 		}

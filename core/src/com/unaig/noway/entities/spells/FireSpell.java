@@ -9,6 +9,8 @@ import com.unaig.noway.util.Constants;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
 
+import static com.unaig.noway.util.Constants.*;
+
 public class FireSpell extends Spell{
 
 
@@ -34,42 +36,42 @@ public class FireSpell extends Spell{
 	}
 	private void basicAttackAnimations() {
 		if((vel.x<0 && vel.y==0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.LEFT)){
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_LEFT);
+			animation = GameHelper.setAnimation(FRAME_DURATION, FIRE_SPELL_LEFT);
 		}else if((vel.x>0 && vel.y==0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.RIGHT)) {
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_RIGHT);
+			animation = GameHelper.setAnimation(FRAME_DURATION, FIRE_SPELL_RIGHT);
 		}else if((vel.x==0 && vel.y>0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.UP)) {
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_UP);
+			animation = GameHelper.setAnimation(FRAME_DURATION, FIRE_SPELL_UP);
 		}else if((vel.x==0 && vel.y<0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.DOWN)) {
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_DOWN);
+			animation = GameHelper.setAnimation(FRAME_DURATION, FIRE_SPELL_DOWN);
 		}else if(vel.x<0 && vel.y>0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_LEFT_UP);
+			animation = GameHelper.setAnimation(FRAME_DURATION, FIRE_SPELL_LEFT_UP);
 		}else if(vel.x<0 && vel.y<0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_LEFT_DOWN);
+			animation = GameHelper.setAnimation(FRAME_DURATION, FIRE_SPELL_LEFT_DOWN);
 		}else if(vel.x>0 && vel.y>0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_RIGHT_UP);
+			animation = GameHelper.setAnimation(FRAME_DURATION, FIRE_SPELL_RIGHT_UP);
 		}else if(vel.x>0 && vel.y<0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION, Constants.FIRE_SPELL_RIGHT_DOWN);
+			animation = GameHelper.setAnimation(FRAME_DURATION, FIRE_SPELL_RIGHT_DOWN);
 
 		}		
 	}
 	
 	private void strongAttackAnimations() {
 		if((vel.x<0 && vel.y==0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.LEFT)){
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_LEFT);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, FIRE2_SPELL_LEFT);
 		}else if((vel.x>0 && vel.y==0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.RIGHT)) {
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_RIGHT);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, FIRE2_SPELL_RIGHT);
 		}else if((vel.x==0 && vel.y>0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.UP)) {
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_UP);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, FIRE2_SPELL_UP);
 		}else if((vel.x==0 && vel.y<0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.DOWN)) {
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_DOWN);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, FIRE2_SPELL_DOWN);
 		}else if(vel.x<0 && vel.y>0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_LEFT_UP);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, FIRE2_SPELL_LEFT_UP);
 		}else if(vel.x<0 && vel.y<0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_LEFT_DOWN);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, FIRE2_SPELL_LEFT_DOWN);
 		}else if(vel.x>0 && vel.y>0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_RIGHT_UP);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, FIRE2_SPELL_RIGHT_UP);
 		}else if(vel.x>0 && vel.y<0) {
-			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, Constants.FIRE2_SPELL_RIGHT_DOWN);
+			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, FIRE2_SPELL_RIGHT_DOWN);
 		}
 		
 	}

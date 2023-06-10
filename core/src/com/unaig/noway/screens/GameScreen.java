@@ -15,9 +15,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.entities.PoolEngine;
-import com.unaig.noway.entities.SpiderEnemy;
+import com.unaig.noway.entities.enemies.SpiderEnemy;
 import com.unaig.noway.entities.spells.Spell;
-import com.unaig.noway.util.Constants;
+
+import static com.unaig.noway.util.Constants.TILE_SIZE;
 
 public class GameScreen extends ScreenAdapter {
 	public static final String TAG = GameScreen.class.getName();
@@ -34,7 +35,7 @@ public class GameScreen extends ScreenAdapter {
 	@Override
 	public void show() {
 		renderer = new OrthogonalTiledMapRenderer(Assets.instance.labMap);
-		viewport=new ExtendViewport(80*Constants.TILE_SIZE, 80*Constants.TILE_SIZE);
+		viewport=new ExtendViewport(80* TILE_SIZE, 80* TILE_SIZE);
 		batch = (SpriteBatch) renderer.getBatch();
 		poolEngine = new PoolEngine();
 		player = new Player(poolEngine);
@@ -58,7 +59,7 @@ public class GameScreen extends ScreenAdapter {
 		batch.begin();
 		poolEngine.render(batch, delta);
 		player.render((SpriteBatch) renderer.getBatch(),delta);
-		spider.render((SpriteBatch) renderer.getBatch(),delta);
+		spider.render((SpriteBatch) renderer.getBatch(),delta,player.getPos());
 		batch.end();
 		
 		shaper.begin(ShapeType.Line);
@@ -81,12 +82,12 @@ public class GameScreen extends ScreenAdapter {
 			((OrthographicCamera)viewport.getCamera()).zoom+=0.15;
 		}
 		if(Gdx.input.isKeyJustPressed(Keys.RIGHT)) {
-			Player.maxVel+=Constants.TILE_SIZE;
+			Player.maxVel+= TILE_SIZE;
 		}else if(Gdx.input.isKeyJustPressed(Keys.LEFT)) {
-			Player.maxVel-=Constants.TILE_SIZE;
+			Player.maxVel-= TILE_SIZE;
 		}
 		
-		Gdx.app.log(TAG, ""+Gdx.graphics.getFramesPerSecond());
+//		Gdx.app.log(TAG, ""+Gdx.graphics.getFramesPerSecond());
 
 	}
 		
