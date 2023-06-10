@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.entities.Player;
-import com.unaig.noway.entities.PoolEngine;
+import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.entities.enemies.SpiderEnemy;
 import com.unaig.noway.entities.spells.Spell;
 

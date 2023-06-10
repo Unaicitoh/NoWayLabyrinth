@@ -1,4 +1,4 @@
-package com.unaig.noway.entities;
+package com.unaig.noway.engines;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;

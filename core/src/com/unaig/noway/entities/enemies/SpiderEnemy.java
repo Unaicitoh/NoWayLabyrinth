@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.entities.Entity;
 import com.unaig.noway.entities.Player;
-import com.unaig.noway.entities.PoolEngine;
+import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
 

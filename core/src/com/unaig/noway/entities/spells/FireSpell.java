@@ -3,9 +3,8 @@ package com.unaig.noway.entities.spells;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 import com.unaig.noway.entities.Player;
-import com.unaig.noway.entities.PoolEngine;
+import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.util.AttackType;
-import com.unaig.noway.util.Constants;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
 
