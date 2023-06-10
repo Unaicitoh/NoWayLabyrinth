@@ -99,9 +99,22 @@ public class SpiderEnemy extends Entity {
         vel.x= MathUtils.clamp(vel.x,-maxVel,maxVel);
         vel.y= MathUtils.clamp(vel.y,-maxVel,maxVel);
         Vector2 direction=playerPos.sub(pos).nor();
-        if(direction.x>0) vel.x=1;
-        if(direction.y>0) vel.y=1;
+        Gdx.app.log(TAG,"direction"+direction);
+        if((int)direction.x>0){
+            vel.x=maxVel;
+        } else if ((int)direction.x<0) {
+            vel.x=-maxVel;
+        }else{
+
+            vel.x=0;
+        }
+        if((int)direction.y>0){
+            vel.y=maxVel;
+        } else if ((int)direction.y<0) {
+            vel.y=-maxVel;
+        }else{
+            vel.y=0;
+        }
         pos.add(direction.scl(maxVel*delta));
-        Gdx.app.log(TAG,"Chasing player");
     }
 }
