@@ -23,24 +23,29 @@ public class SpiderEnemy extends Entity {
     public static final String TAG = Player.class.getName();
 
     private static final float FRAME_DURATION = .1f;
+    private final float OFFSET_X = 2f;
+    private final float OFFSET_Y = 2f;
     private PoolEngine poolEngine;
     private float attackRange;
     private Vector2 playerPos;
+    private Rectangle playerBounds;
+
     public SpiderEnemy(PoolEngine poolEngine) {
         this.poolEngine = poolEngine;
         init();
     }
 
     protected void init() {
-        pos = new Vector2(TILE_SIZE, TILE_SIZE);
+        pos = new Vector2(TILE_SIZE*2, TILE_SIZE*2);
         vel = new Vector2(0,0);
         size = new Vector2(TILE_SIZE, TILE_SIZE);
-        maxVel = TILE_SIZE*3;
-        bounds = new Rectangle(pos.x, pos.y, size.x, size.y);
+        maxVel = TILE_SIZE*2.5f;
+        bounds = new Rectangle(pos.x+OFFSET_X, pos.y+OFFSET_Y, size.x-OFFSET_X*2, size.y-OFFSET_Y*2);
         lastDir= Direction.RIGHT;
         animations=new ObjectMap<>();
         stateTime=0f;
-        attackRange=TILE_SIZE*5;
+        attackRange=TILE_SIZE*4;
+        playerBounds = new Rectangle();
         playerPos=new Vector2();
         loadSpiderAnimations(animations);
     }
@@ -57,8 +62,9 @@ public class SpiderEnemy extends Entity {
         animations.put(SPIDER_DEAD_ANIM, new Animation<>(FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_DEAD_ANIM), Animation.PlayMode.NORMAL));
     }
 
-    public void render(SpriteBatch batch, float delta, Vector2 playerPos) {
-        this.playerPos.set(playerPos);
+    public void render(SpriteBatch batch, float delta, Player player) {
+        playerBounds.set(player.getBounds());
+        playerPos.set(player.getPos());
         update(delta);
 
         if(vel.x<0) {
@@ -87,8 +93,18 @@ public class SpiderEnemy extends Entity {
     public void update(float delta) {
         stateTime+=delta;
         if(isPlayerInRange()){
-            chaseMode(delta);
+            if(bounds.overlaps(playerBounds)){
+                attackPlayer();
+            }else{
+                chaseMode(delta);
+            }
+        }else{
+            vel.x=0;
+            vel.y=0;
         }
+    }
+
+    private void attackPlayer() {
     }
 
     private boolean isPlayerInRange() {
@@ -98,23 +114,47 @@ public class SpiderEnemy extends Entity {
     private void chaseMode(float delta) {
         vel.x= MathUtils.clamp(vel.x,-maxVel,maxVel);
         vel.y= MathUtils.clamp(vel.y,-maxVel,maxVel);
-        Vector2 direction=playerPos.sub(pos).nor();
-        Gdx.app.log(TAG,"direction"+direction);
-        if((int)direction.x>0){
+        Vector2 direction=playerPos.sub(pos);
+        if(Math.round(direction.x)>0){
             vel.x=maxVel;
-        } else if ((int)direction.x<0) {
+        } else if (Math.round(direction.x)<0) {
             vel.x=-maxVel;
-        }else{
-
-            vel.x=0;
+        }else {
+            vel.x = 0;
         }
-        if((int)direction.y>0){
+        if(Math.round(direction.y)>0){
             vel.y=maxVel;
-        } else if ((int)direction.y<0) {
+        } else if (Math.round(direction.y)<0) {
             vel.y=-maxVel;
-        }else{
-            vel.y=0;
+        }else {
+            vel.y = 0;
         }
-        pos.add(direction.scl(maxVel*delta));
+        checkWallCollisions(delta,direction);
+
+    }
+
+    private void checkWallCollisions(float delta,Vector2 direction) {
+        Vector2 lastValidPos = new Vector2(pos);
+        int directionX = Math.round(direction.x);
+        Vector2 sclDir= new Vector2(directionX,0).nor();
+        pos.add(sclDir.scl(maxVel* delta));
+        bounds.setPosition(pos.x+OFFSET_X,pos.y+OFFSET_Y);
+        if(GameHelper.checkCollisions(bounds)){
+            pos.x= lastValidPos.x;
+        }else{
+            lastValidPos.x=pos.x;
+        }
+
+        int directionY = Math.round(direction.y);
+        sclDir.set(0,directionY).nor();
+        pos.add(sclDir.scl(maxVel* delta));
+        bounds.setPosition(pos.x+OFFSET_X,pos.y+OFFSET_Y);
+        if(GameHelper.checkCollisions(bounds)){
+            pos.y= lastValidPos.y;
+        }else{
+            lastValidPos.y=pos.y;
+        }
+        pos.set(lastValidPos);
+        bounds.setPosition(pos.x+OFFSET_X,pos.y+OFFSET_Y);
     }
 }

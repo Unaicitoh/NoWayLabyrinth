@@ -34,6 +34,7 @@ public abstract class Spell implements Poolable {
 	private static final float OFFSET_X = 2f;
 	private static final float OFFSET_Y = 2.5f;
 	private static final float LIFE_DURATION = 3f;
+	private float playerMaxVel;
 	protected AttackType attackType;
 	
 	protected void init(Player player, AttackType attackType) {
@@ -42,6 +43,7 @@ public abstract class Spell implements Poolable {
 		if(attackType==AttackType.STRONG) velMultiplier =2.0f;
 		else velMultiplier =2.5f;
 		pos= new Vector2(player.getPos());
+		playerMaxVel=player.maxVel;
 		vel=new Vector2(player.getVel().x* velMultiplier,player.getVel().y* velMultiplier);
 		size = new Vector2(TILE_SIZE, TILE_SIZE);
 		playerLastDir=player.lastDir;
@@ -51,21 +53,21 @@ public abstract class Spell implements Poolable {
 	
 	public void update(float delta) {
 		timeAlive+=delta;
-		vel.x = MathUtils.clamp(vel.x, -Player.maxVel* velMultiplier, Player.maxVel* velMultiplier);
-		vel.y = MathUtils.clamp(vel.y, -Player.maxVel* velMultiplier, Player.maxVel* velMultiplier);
+		vel.x = MathUtils.clamp(vel.x, -playerMaxVel* velMultiplier, playerMaxVel* velMultiplier);
+		vel.y = MathUtils.clamp(vel.y, -playerMaxVel* velMultiplier, playerMaxVel* velMultiplier);
 		if(vel.x==0 && vel.y==0) {
 			switch (playerLastDir) {
 			case LEFT:
-				vel.x=-Player.maxVel* velMultiplier;
+				vel.x=-playerMaxVel* velMultiplier;
 				break;
 			case DOWN:
-				vel.y=-Player.maxVel* velMultiplier;
+				vel.y=-playerMaxVel* velMultiplier;
 				break;
 			case RIGHT:
-				vel.x=Player.maxVel* velMultiplier;
+				vel.x=playerMaxVel* velMultiplier;
 				break;
 			case UP:
-				vel.y=Player.maxVel* velMultiplier;
+				vel.y=playerMaxVel* velMultiplier;
 				break;
 				
 			}

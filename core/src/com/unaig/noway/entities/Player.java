@@ -111,8 +111,11 @@ public class Player extends Entity implements InputProcessor{
 		stateTime+=delta;
 		vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
 		vel.y = MathUtils.clamp(vel.y, -maxVel, maxVel);
+		checkWallCollisions(delta);
+	}
+
+	private void checkWallCollisions(float delta) {
 		Vector2 lastValidPos = new Vector2(pos);
-		    
 		// Move horizontally
 		pos.x += vel.x * delta;
 		bounds.setPosition(pos.x+OFFSET_X, pos.y);
@@ -121,7 +124,6 @@ public class Player extends Entity implements InputProcessor{
 		} else {
 			lastValidPos.x = pos.x;
 		}
-		bounds.setPosition(pos.x+OFFSET_X, pos.y);
 
 		// Move vertically
 		pos.y += vel.y * delta;
@@ -131,21 +133,19 @@ public class Player extends Entity implements InputProcessor{
 		} else {
 			lastValidPos.y = pos.y;
 		}
-		bounds.setPosition(pos.x+OFFSET_X, pos.y);
 		pos.set(lastValidPos);
-			
+		bounds.setPosition(pos.x+OFFSET_X, pos.y);
 	}
-		
-	
+
 
 	@Override
 	public boolean keyDown(int keycode) {
 		switch (keycode) {
-			case Keys.D -> vel.x = maxVel;
-			case Keys.A -> vel.x = -maxVel;
-			case Keys.W -> vel.y = maxVel;
-			case Keys.S -> vel.y = -maxVel;
-			case Keys.SPACE -> changeElement();
+			case Keys.D: vel.x = maxVel; break;
+			case Keys.A:vel.x = -maxVel; break;
+			case Keys.W:vel.y = maxVel; break;
+			case Keys.S:vel.y = -maxVel; break;
+			case Keys.SPACE:changeElement(); break;
 		}
 		return true;
 	}

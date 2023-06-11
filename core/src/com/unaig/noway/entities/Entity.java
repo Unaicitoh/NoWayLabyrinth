@@ -16,7 +16,7 @@ public class Entity {
 	protected ObjectMap<String, Animation<AtlasRegion>> animations;
 	protected Rectangle bounds;
 	public Direction lastDir;
-	public static float maxVel;
+	public float maxVel;
 	protected float stateTime;
 
 	public Vector2 getPos() {

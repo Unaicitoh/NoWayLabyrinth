@@ -59,11 +59,12 @@ public class GameScreen extends ScreenAdapter {
 		batch.begin();
 		poolEngine.render(batch, delta);
 		player.render((SpriteBatch) renderer.getBatch(),delta);
-		spider.render((SpriteBatch) renderer.getBatch(),delta,player.getPos());
+		spider.render((SpriteBatch) renderer.getBatch(),delta,player);
 		batch.end();
 		
 		shaper.begin(ShapeType.Line);
 		shaper.rect(player.getBounds().x, player.getBounds().y, player.getBounds().width, player.getBounds().height);
+		shaper.rect(spider.getBounds().x,spider.getBounds().y,spider.getBounds().width,spider.getBounds().height);
 		for(Spell s: poolEngine.spells) {
 			shaper.rect(s.getSpellBounds().x, s.getSpellBounds().y, s.getSpellBounds().width, s.getSpellBounds().height);
 
@@ -82,9 +83,9 @@ public class GameScreen extends ScreenAdapter {
 			((OrthographicCamera)viewport.getCamera()).zoom+=0.15;
 		}
 		if(Gdx.input.isKeyJustPressed(Keys.RIGHT)) {
-			Player.maxVel+= TILE_SIZE;
+			player.maxVel+= TILE_SIZE;
 		}else if(Gdx.input.isKeyJustPressed(Keys.LEFT)) {
-			Player.maxVel-= TILE_SIZE;
+			player.maxVel-= TILE_SIZE;
 		}
 		
 //		Gdx.app.log(TAG, ""+Gdx.graphics.getFramesPerSecond());
