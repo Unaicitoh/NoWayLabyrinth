@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.engines.PoolEngine;
-import com.unaig.noway.entities.enemies.SpiderEnemy;
+import com.unaig.noway.entities.enemies.Enemy;
 import com.unaig.noway.entities.spells.Spell;
 
 import static com.unaig.noway.util.Constants.TILE_SIZE;
@@ -30,7 +30,7 @@ public class GameScreen extends ScreenAdapter {
 	private ShapeRenderer shaper;
 	private static final float CAM_SPEED=5f;
 	private Player player;
-	private SpiderEnemy spider;
+	private Enemy spider;
 	private PoolEngine poolEngine;
 	@Override
 	public void show() {
@@ -39,7 +39,7 @@ public class GameScreen extends ScreenAdapter {
 		batch = (SpriteBatch) renderer.getBatch();
 		poolEngine = new PoolEngine();
 		player = new Player(poolEngine);
-		spider =new SpiderEnemy(poolEngine);
+		Enemy.create(poolEngine);
 		Gdx.input.setInputProcessor(player);
 		((OrthographicCamera)viewport.getCamera()).zoom=1/5f;
 		shaper=new ShapeRenderer();
@@ -57,14 +57,14 @@ public class GameScreen extends ScreenAdapter {
 		renderer.render();
 		
 		batch.begin();
-		poolEngine.render(batch, delta);
+		poolEngine.renderSpells(batch, delta);
 		player.render((SpriteBatch) renderer.getBatch(),delta);
-		spider.render((SpriteBatch) renderer.getBatch(),delta,player);
+		poolEngine.renderEnemies(batch, delta, player);
+
 		batch.end();
 		
 		shaper.begin(ShapeType.Line);
 		shaper.rect(player.getBounds().x, player.getBounds().y, player.getBounds().width, player.getBounds().height);
-		shaper.rect(spider.getBounds().x,spider.getBounds().y,spider.getBounds().width,spider.getBounds().height);
 		for(Spell s: poolEngine.spells) {
 			shaper.rect(s.getSpellBounds().x, s.getSpellBounds().y, s.getSpellBounds().width, s.getSpellBounds().height);
 

@@ -2,22 +2,28 @@ package com.unaig.noway.engines;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.unaig.noway.entities.Player;
+import com.unaig.noway.entities.enemies.Enemy;
 import com.unaig.noway.entities.spells.Spell;
 
 public class PoolEngine {
 
 	public Array<Spell> spells;
-	
+	private Array<Enemy> enemies;
+
 	public PoolEngine() {
 		spells=new Array<>();
+		enemies= new Array<>();
 	}
 	
 	public void add(Spell spell) {
 		spells.add(spell);
 	}
-	
-	
-	public void render(SpriteBatch batch, float delta) {
+
+	public void add(Enemy enemy) {
+		enemies.add(enemy);
+	}
+	public void renderSpells(SpriteBatch batch, float delta) {
 		for(Spell s: spells) {
 			if(!s.isAlive) {
 				s.reset();
@@ -25,7 +31,13 @@ public class PoolEngine {
 				spells.removeValue(s, false);
 				continue;
 			}
-			s.draw(batch,delta);
+			s.render(batch,delta);
+		}
+
+	}
+	public void renderEnemies(SpriteBatch batch, float delta, Player player){
+		for(Enemy e: enemies){
+			e.render(batch,delta,player);
 		}
 	}
 	

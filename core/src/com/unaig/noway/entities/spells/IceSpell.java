@@ -12,7 +12,6 @@ import static com.unaig.noway.util.Constants.*;
 
 public class IceSpell extends Spell{
 
-
 	private static Pool<IceSpell> spellPool = Pools.get(IceSpell.class);
 
 	public static void create(PoolEngine pool, Player player, AttackType type) {

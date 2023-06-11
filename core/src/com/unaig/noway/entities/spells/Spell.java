@@ -80,9 +80,10 @@ public abstract class Spell implements Poolable {
 		if(GameHelper.checkCollisions(spellBounds) || timeAlive>LIFE_DURATION) {
 			isAlive=false;
 		}
+
 	}
 	
-	public void draw(SpriteBatch batch, float delta) {
+	public void render(SpriteBatch batch, float delta) {
 		update(delta);
 		batch.draw(animation.getKeyFrame(timeAlive), pos.x, pos.y, size.x,size.y);
 	}
