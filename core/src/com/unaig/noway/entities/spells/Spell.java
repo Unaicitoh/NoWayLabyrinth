@@ -11,7 +11,7 @@ import com.unaig.noway.entities.Player;
 import com.unaig.noway.util.AttackType;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
-
+import static com.unaig.noway.util.AttackType.*;
 import static com.unaig.noway.util.Constants.TILE_SIZE;
 
 public abstract class Spell implements Poolable {
@@ -40,7 +40,7 @@ public abstract class Spell implements Poolable {
 	protected void init(Player player, AttackType attackType) {
 		isAlive=true;
 		timeAlive=0;
-		if(attackType==AttackType.STRONG) velMultiplier =2.0f;
+		if(attackType== STRONG) velMultiplier =2.0f;
 		else velMultiplier =2.5f;
 		pos= new Vector2(player.getPos());
 		playerMaxVel=player.maxVel;
@@ -90,14 +90,17 @@ public abstract class Spell implements Poolable {
 
 	@Override
 	public void reset() {
-		isAlive=false;
 		isAlive=true;
 		timeAlive=0;
 		pos=new Vector2();
 		vel=new Vector2();
+		size=new Vector2();
 		spellBounds= new Rectangle();
 		playerLastDir=null;
-		velMultiplier = 2.5f;
+		playerMaxVel=0;
+		velMultiplier = 0;
+		attackType=null;
+		animation=null;
 	}
 	
 	public abstract void release();

@@ -1,47 +1,37 @@
 package com.unaig.noway.entities.enemies;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
-import com.unaig.noway.data.Assets;
+import com.badlogic.gdx.utils.Pool.Poolable;
 import com.unaig.noway.entities.Entity;
 import com.unaig.noway.entities.Player;
-import com.unaig.noway.engines.PoolEngine;
-import com.unaig.noway.entities.spells.IceSpell;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
 
-import static com.unaig.noway.util.Constants.*;
 import static com.unaig.noway.util.Constants.TILE_SIZE;
 
-public class Enemy extends Entity implements Pool.Poolable {
+public abstract class Enemy extends Entity implements Poolable {
 
-    public static final String TAG = Player.class.getName();
+    public static final String TAG = Enemy.class.getName();
 
-    private static Pool<Enemy> spiderPool = Pools.get(Enemy.class);
-
-    private static final float FRAME_DURATION = .09f;
-    private static final float ATTACK_FRAME_DURATION = .15f;
+    protected static final float FRAME_DURATION = .09f;
+    protected static final float ATTACK_FRAME_DURATION = .15f;
     private final float OFFSET_X = 2f;
     private final float OFFSET_Y = 2f;
+    public boolean isAlive;
     private float attackRange;
-    private Vector2 playerPos;
-    private Rectangle playerBounds;
-    private boolean attacking;
+    protected Vector2 playerPos;
+    protected Rectangle playerBounds;
+    protected boolean attacking;
     private float attackCooldown;
+    private float patrolCooldown;
+    private Vector2 lastPatrolVel;
 
-    public static void create(PoolEngine poolEngine) {
-        Enemy enemy = spiderPool.obtain();
-        enemy.init();
-        poolEngine.add(enemy);
-    }
+
 
     protected void init() {
         pos = new Vector2(TILE_SIZE*2, TILE_SIZE*2);
@@ -56,63 +46,21 @@ public class Enemy extends Entity implements Pool.Poolable {
         playerBounds = new Rectangle();
         playerPos=new Vector2();
         attacking=false;
-        attackCooldown=0f;
-        loadSpiderAnimations(animations);
+        attackCooldown =0f;
+        patrolCooldown =1.75f;
+        lastPatrolVel= new Vector2();
+        isAlive=true;
     }
 
-    private void loadSpiderAnimations(ObjectMap<String, Animation<TextureAtlas.AtlasRegion>> animations) {
-        animations.put(SPIDER_ANIM_RIGHT, new Animation<>(FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ANIM_RIGHT), Animation.PlayMode.LOOP));
-        animations.put(SPIDER_ANIM_LEFT, new Animation<>(FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ANIM_LEFT), Animation.PlayMode.LOOP));
-        animations.put(SPIDER_ANIM_UP, new Animation<>(FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ANIM_UP), Animation.PlayMode.LOOP));
-        animations.put(SPIDER_ANIM_DOWN, new Animation<>(FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ANIM_DOWN), Animation.PlayMode.LOOP));
-        animations.put(SPIDER_ATTACK_RIGHT, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ATTACK_RIGHT), Animation.PlayMode.LOOP));
-        animations.put(SPIDER_ATTACK_LEFT, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ATTACK_LEFT), Animation.PlayMode.LOOP));
-        animations.put(SPIDER_ATTACK_UP, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ATTACK_UP), Animation.PlayMode.LOOP));
-        animations.put(SPIDER_ATTACK_DOWN, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ATTACK_DOWN), Animation.PlayMode.LOOP));
-        animations.put(SPIDER_DEAD_ANIM, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_DEAD_ANIM), Animation.PlayMode.NORMAL));
-    }
-
-    public void render(SpriteBatch batch, float delta, Player player) {
-        playerBounds.set(player.getBounds());
-        playerPos.set(player.getPos());
-        update(delta);
-        if (!attacking) {
-            if(vel.x<0) {
-                GameHelper.drawEntity(batch,animations.get(SPIDER_ANIM_LEFT).getKeyFrame(stateTime),pos,size);
-                lastDir= Direction.LEFT;
-            }else if(vel.x>0) {
-                GameHelper.drawEntity(batch,animations.get(SPIDER_ANIM_RIGHT).getKeyFrame(stateTime),pos,size);
-                lastDir= Direction.RIGHT;
-
-            }else if(vel.y>0) {
-                GameHelper.drawEntity(batch,animations.get(SPIDER_ANIM_UP).getKeyFrame(stateTime),pos,size);
-                lastDir= Direction.UP;
-
-            }else if(vel.y<0) {
-                GameHelper.drawEntity(batch,animations.get(SPIDER_ANIM_DOWN).getKeyFrame(stateTime),pos,size);
-                lastDir= Direction.DOWN;
-
-            }else {
-                if(lastDir==Direction.RIGHT) GameHelper.drawEntity(batch,Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_RIGHT, 0),pos,size);
-                else if (lastDir==Direction.LEFT) GameHelper.drawEntity(batch,Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_LEFT, 0),pos,size);
-                else if (lastDir==Direction.UP) GameHelper.drawEntity(batch,Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_UP, 0),pos,size);
-                else if (lastDir==Direction.DOWN) GameHelper.drawEntity(batch,Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_DOWN, 0),pos,size);
-            }
-        } else {
-            if(lastDir==Direction.RIGHT) {
-                GameHelper.drawEntity(batch,animations.get(SPIDER_ATTACK_RIGHT).getKeyFrame(stateTime),pos,size);
-                if(attackCooldown<=0){
-                    damagePlayer();
-                }
-            } else if(lastDir==Direction.LEFT) GameHelper.drawEntity(batch,animations.get(SPIDER_ATTACK_LEFT).getKeyFrame(stateTime),pos,size);
-            else if(lastDir==Direction.UP) GameHelper.drawEntity(batch,animations.get(SPIDER_ATTACK_UP).getKeyFrame(stateTime),pos,size);
-            else if(lastDir==Direction.DOWN) GameHelper.drawEntity(batch,animations.get(SPIDER_ATTACK_DOWN).getKeyFrame(stateTime),pos,size);
-
-        }
-    }
+    public abstract void render(SpriteBatch batch, float delta, Player player);
 
     public void update(float delta) {
         stateTime+=delta;
+        attackCooldown -=delta;
+        patrolCooldown -=delta;
+
+        vel.x= MathUtils.clamp(vel.x,-maxVel,maxVel);
+        vel.y= MathUtils.clamp(vel.y,-maxVel,maxVel);
         if(isPlayerInRange()){
             if(bounds.overlaps(playerBounds)){
                 attackPlayer(delta);
@@ -120,23 +68,54 @@ public class Enemy extends Entity implements Pool.Poolable {
                 chaseMode(delta);
             }
         }else{
-            patrolMode();
-            vel.x=0;
-            vel.y=0;
+            patrolMode(delta);
         }
     }
 
-    private void damagePlayer() {
-        attackCooldown=1.5f;
-        Gdx.app.log(TAG,"damaging player");
-    }
+    private void patrolMode(float delta) {
+        float x = Math.round(MathUtils.random(-maxVel,maxVel));
+        float y = Math.round(MathUtils.random(-maxVel,maxVel));
+        int rnd = MathUtils.random(9);
 
-    private void patrolMode() {
+        if(patrolCooldown<=0){
+            patrolCooldown=1.75f;
+            if(x<0){
+                vel.x=-maxVel;
+            }else if(x>0){
+                vel.x=maxVel;
+            } else{
+                vel.x=0;
+            }
+            if (y<0) {
+                vel.y=-maxVel;
+            }else if(y>0){
+                vel.y=maxVel;
+            }else{
+                vel.y=0;
+            }
+            if(rnd>8){
+                vel.set(0,0);
+            }else if(rnd>7){
+                vel.set(0,maxVel);
+            }else if(rnd>6) {
+                vel.set(0, -maxVel);
+            }
+            lastPatrolVel.set(vel);
+        }
+        checkWallCollisions(delta,lastPatrolVel,true);
+
     }
 
     private void attackPlayer(float delta) {
         attacking=true;
-        attackCooldown-=delta;
+        if(attackCooldown <=0){
+            damagePlayer();
+        }
+    }
+
+    private void damagePlayer() {
+        attackCooldown =2f;
+        Gdx.app.log(TAG,"damaging player");
     }
 
     private boolean isPlayerInRange() {
@@ -145,8 +124,6 @@ public class Enemy extends Entity implements Pool.Poolable {
 
     private void chaseMode(float delta) {
         attacking=false;
-        vel.x= MathUtils.clamp(vel.x,-maxVel,maxVel);
-        vel.y= MathUtils.clamp(vel.y,-maxVel,maxVel);
         Vector2 direction=playerPos.sub(pos);
         if(Math.round(direction.x)>0){
             vel.x=maxVel;
@@ -162,15 +139,19 @@ public class Enemy extends Entity implements Pool.Poolable {
         }else {
             vel.y = 0;
         }
-        checkWallCollisions(delta,direction);
+        checkWallCollisions(delta,direction,false);
 
     }
 
-    private void checkWallCollisions(float delta,Vector2 direction) {
+    private void checkWallCollisions(float delta,Vector2 direction, boolean patrolling) {
         Vector2 lastValidPos = new Vector2(pos);
         int directionX = Math.round(direction.x);
         Vector2 sclDir= new Vector2(directionX,0).nor();
-        pos.add(sclDir.scl(maxVel* delta));
+        if(!patrolling){
+            pos.add(sclDir.scl(maxVel* delta));
+        }else{
+            pos.add(sclDir.scl(maxVel/2.5f* delta));
+        }
         bounds.setPosition(pos.x+OFFSET_X,pos.y+OFFSET_Y);
         if(GameHelper.checkCollisions(bounds)){
             pos.x= lastValidPos.x;
@@ -180,7 +161,11 @@ public class Enemy extends Entity implements Pool.Poolable {
 
         int directionY = Math.round(direction.y);
         sclDir.set(0,directionY).nor();
-        pos.add(sclDir.scl(maxVel* delta));
+        if(!patrolling){
+            pos.add(sclDir.scl(maxVel* delta));
+        }else{
+            pos.add(sclDir.scl(maxVel/2.5f* delta));
+        }
         bounds.setPosition(pos.x+OFFSET_X,pos.y+OFFSET_Y);
         if(GameHelper.checkCollisions(bounds)){
             pos.y= lastValidPos.y;
@@ -193,6 +178,23 @@ public class Enemy extends Entity implements Pool.Poolable {
 
     @Override
     public void reset() {
-
+        isAlive=true;
+        pos=new Vector2();
+        vel=new Vector2();
+        size=new Vector2();
+        animations=new ObjectMap<>();
+        attackRange=0;
+        bounds= new Rectangle();
+        lastDir=null;
+        maxVel=0;
+        stateTime=0;
+        playerBounds= new Rectangle();
+        playerPos= new Vector2();
+        attacking=false;
+        attackCooldown=0;
+        patrolCooldown=0;
+        lastPatrolVel=new Vector2();
     }
+
+    public abstract void release();
 }

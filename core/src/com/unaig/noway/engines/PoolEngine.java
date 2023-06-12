@@ -28,7 +28,7 @@ public class PoolEngine {
 			if(!s.isAlive) {
 				s.reset();
 				s.release();
-				spells.removeValue(s, false);
+				spells.removeValue(s, true);
 				continue;
 			}
 			s.render(batch,delta);
@@ -37,6 +37,12 @@ public class PoolEngine {
 	}
 	public void renderEnemies(SpriteBatch batch, float delta, Player player){
 		for(Enemy e: enemies){
+			if(!e.isAlive) {
+				e.reset();
+				e.release();
+				enemies.removeValue(e, true);
+				continue;
+			}
 			e.render(batch,delta,player);
 		}
 	}

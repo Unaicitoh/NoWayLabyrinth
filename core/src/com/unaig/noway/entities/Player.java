@@ -20,11 +20,10 @@ import com.unaig.noway.data.Assets;
 import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.entities.spells.FireSpell;
 import com.unaig.noway.entities.spells.IceSpell;
-import com.unaig.noway.util.AttackType;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.ElementType;
 import com.unaig.noway.util.GameHelper;
-
+import static com.unaig.noway.util.AttackType.*;
 import static com.unaig.noway.util.Constants.*;
 import static com.unaig.noway.util.ElementType.*;
 
@@ -82,7 +81,11 @@ public class Player extends Entity implements InputProcessor{
 
 	public void render(SpriteBatch batch, float delta) {
 		update(delta);
-		
+		renderPlayerAnimations(batch);
+
+	}
+
+	private void renderPlayerAnimations(SpriteBatch batch) {
 		if(vel.x<0) {
 			GameHelper.drawEntity(batch,animations.get(PLAYER_ANIM_LEFT).getKeyFrame(stateTime),pos,size);
 			lastDir= Direction.LEFT;
@@ -104,7 +107,6 @@ public class Player extends Entity implements InputProcessor{
 			else if (lastDir==Direction.UP) GameHelper.drawEntity(batch,Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_UP, 0),pos,size);
 			else if (lastDir==Direction.DOWN) GameHelper.drawEntity(batch,Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_DOWN, 0),pos,size);
 		}
-		
 	}
 
 	public void update(float delta) {
@@ -211,15 +213,15 @@ public class Player extends Entity implements InputProcessor{
 		switch (button) {
 		case Buttons.LEFT:
 			if(elementType== FIRE)
-				FireSpell.create(poolEngine, this, AttackType.BASIC);
+				FireSpell.create(poolEngine, this, BASIC);
 			else if(elementType== ICE)
-				IceSpell.create(poolEngine, this, AttackType.BASIC);
+				IceSpell.create(poolEngine, this, BASIC);
 			break;
 		case Buttons.RIGHT:
 			if(elementType== FIRE)
-				FireSpell.create(poolEngine, this, AttackType.STRONG);
+				FireSpell.create(poolEngine, this, STRONG);
 			else if(elementType== ICE)
-				IceSpell.create(poolEngine, this, AttackType.STRONG);
+				IceSpell.create(poolEngine, this, STRONG);
 			break;
 		}
 		return true;

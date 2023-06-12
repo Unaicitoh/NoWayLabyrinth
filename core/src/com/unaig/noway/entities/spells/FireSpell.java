@@ -2,8 +2,8 @@ package com.unaig.noway.entities.spells;
 
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
-import com.unaig.noway.entities.Player;
 import com.unaig.noway.engines.PoolEngine;
+import com.unaig.noway.entities.Player;
 import com.unaig.noway.util.AttackType;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
@@ -12,7 +12,7 @@ import static com.unaig.noway.util.Constants.*;
 
 public class FireSpell extends Spell{
 
-
+	public static final String TAG = Spell.class.getName();
 	private static Pool<FireSpell> spellPool = Pools.get(FireSpell.class);
 
 	public static void create(PoolEngine pool, Player player, AttackType type) {

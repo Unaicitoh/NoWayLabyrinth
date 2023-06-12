@@ -2,8 +2,8 @@ package com.unaig.noway.entities.spells;
 
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
-import com.unaig.noway.entities.Player;
 import com.unaig.noway.engines.PoolEngine;
+import com.unaig.noway.entities.Player;
 import com.unaig.noway.util.AttackType;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
@@ -50,9 +50,9 @@ public class IceSpell extends Spell{
 		}else if(vel.x>0 && vel.y<0) {
 			animation = GameHelper.setAnimation(FRAME_DURATION, ICE_SPELL_RIGHT_DOWN);
 
-		}		
+		}
 	}
-	
+
 	private void strongAttackAnimations() {
 		if((vel.x<0 && vel.y==0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.LEFT)){
 			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, ICE2_SPELL_LEFT);

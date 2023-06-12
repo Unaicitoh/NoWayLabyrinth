@@ -13,9 +13,10 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.unaig.noway.data.Assets;
-import com.unaig.noway.entities.Player;
 import com.unaig.noway.engines.PoolEngine;
+import com.unaig.noway.entities.Player;
 import com.unaig.noway.entities.enemies.Enemy;
+import com.unaig.noway.entities.enemies.SpiderEnemy;
 import com.unaig.noway.entities.spells.Spell;
 
 import static com.unaig.noway.util.Constants.TILE_SIZE;
@@ -39,7 +40,7 @@ public class GameScreen extends ScreenAdapter {
 		batch = (SpriteBatch) renderer.getBatch();
 		poolEngine = new PoolEngine();
 		player = new Player(poolEngine);
-		Enemy.create(poolEngine);
+		SpiderEnemy.create(poolEngine);
 		Gdx.input.setInputProcessor(player);
 		((OrthographicCamera)viewport.getCamera()).zoom=1/5f;
 		shaper=new ShapeRenderer();
@@ -60,7 +61,6 @@ public class GameScreen extends ScreenAdapter {
 		poolEngine.renderSpells(batch, delta);
 		player.render((SpriteBatch) renderer.getBatch(),delta);
 		poolEngine.renderEnemies(batch, delta, player);
-
 		batch.end();
 		
 		shaper.begin(ShapeType.Line);
@@ -91,7 +91,6 @@ public class GameScreen extends ScreenAdapter {
 //		Gdx.app.log(TAG, ""+Gdx.graphics.getFramesPerSecond());
 
 	}
-		
 
 	@Override
 	public void resize(int width, int height) {

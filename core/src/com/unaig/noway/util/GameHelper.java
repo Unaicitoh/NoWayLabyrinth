@@ -55,7 +55,7 @@ public class GameHelper {
 	public static void drawEntity(SpriteBatch batch, AtlasRegion atlasRegion, Vector2 pos, Vector2 size) {
 		batch.draw(atlasRegion,pos.x,pos.y,size.x,size.y);
 	}
-	
+
 	private GameHelper() {}
 	
 }
