@@ -63,7 +63,7 @@ public abstract class Enemy extends Entity implements Poolable {
         vel.y= MathUtils.clamp(vel.y,-maxVel,maxVel);
         if(isPlayerInRange()){
             if(bounds.overlaps(playerBounds)){
-                attackPlayer(delta);
+                attackPlayer();
             }else{
                 chaseMode(delta);
             }
@@ -106,7 +106,7 @@ public abstract class Enemy extends Entity implements Poolable {
 
     }
 
-    private void attackPlayer(float delta) {
+    private void attackPlayer() {
         attacking=true;
         if(attackCooldown <=0){
             damagePlayer();
