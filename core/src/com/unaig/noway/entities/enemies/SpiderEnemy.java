@@ -3,6 +3,7 @@ package com.unaig.noway.entities.enemies;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Pool;
 import com.unaig.noway.data.Assets;
@@ -30,15 +31,17 @@ public class SpiderEnemy extends Enemy{
     }
 
     protected void init(){
+        maxHp=100;
         super.init();
         loadSpiderAnimations(animations);
     }
 
     @Override
-    public void render(SpriteBatch batch, float delta, Player player) {
-        playerBounds.set(player.getBounds());
-        playerPos.set(player.getPos());
-        update(delta);
+    public void render(SpriteBatch batch, ShapeRenderer shaper, float delta, Player player) {
+        update(delta, player);
+        if(drawHp){
+            hpbar.render(shaper,delta,pos,hp);
+        }
         renderSpiderAnimations(batch);
 
     }

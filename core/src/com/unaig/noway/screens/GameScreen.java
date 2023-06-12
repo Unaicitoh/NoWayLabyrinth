@@ -3,6 +3,7 @@ package com.unaig.noway.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -55,13 +56,16 @@ public class GameScreen extends ScreenAdapter {
 		
 		renderer.setView((OrthographicCamera) viewport.getCamera());
 		renderer.render();
-		
+
+
+		shaper.begin(ShapeType.Filled);
 		batch.begin();
 		poolEngine.renderSpells(batch, delta);
-		player.render((SpriteBatch) renderer.getBatch(),delta);
-		poolEngine.renderEnemies(batch, delta, player);
+		player.render(batch,delta);
+		poolEngine.renderEnemies(batch,shaper, delta, player);
 		batch.end();
-		
+		shaper.end();
+
 		shaper.begin(ShapeType.Line);
 		shaper.rect(player.getBounds().x, player.getBounds().y, player.getBounds().width, player.getBounds().height);
 		for(Spell s: poolEngine.spells) {
@@ -72,7 +76,6 @@ public class GameScreen extends ScreenAdapter {
 			shaper.rect(e.getBounds().x, e.getBounds().y, e.getBounds().width, e.getBounds().height);
 
 		}
-//
 		shaper.end();
 		
 		if(Gdx.input.isKeyJustPressed(Keys.UP)) {

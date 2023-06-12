@@ -1,6 +1,7 @@
 package com.unaig.noway.engines;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.entities.enemies.Enemy;
@@ -35,7 +36,7 @@ public class PoolEngine {
 		}
 
 	}
-	public void renderEnemies(SpriteBatch batch, float delta, Player player){
+	public void renderEnemies(SpriteBatch batch, ShapeRenderer shaper, float delta, Player player){
 		for(Enemy e: enemies){
 			if(!e.isAlive) {
 				e.reset();
@@ -43,7 +44,7 @@ public class PoolEngine {
 				enemies.removeValue(e, true);
 				continue;
 			}
-			e.render(batch,delta,player);
+			e.render(batch, shaper,delta,player);
 		}
 	}
 	

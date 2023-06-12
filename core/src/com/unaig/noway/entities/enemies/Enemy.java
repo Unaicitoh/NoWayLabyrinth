@@ -1,7 +1,9 @@
 package com.unaig.noway.entities.enemies;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -9,10 +11,11 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.unaig.noway.entities.Entity;
 import com.unaig.noway.entities.Player;
-import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
+import com.unaig.noway.util.HPBar;
 
 import static com.unaig.noway.util.Constants.TILE_SIZE;
+import static com.unaig.noway.util.Direction.*;
 
 public abstract class Enemy extends Entity implements Poolable {
 
@@ -30,7 +33,10 @@ public abstract class Enemy extends Entity implements Poolable {
     private float attackCooldown;
     private float patrolCooldown;
     private Vector2 lastPatrolVel;
-
+    protected int hp;
+    protected HPBar hpbar;
+    protected int maxHp;
+    protected boolean drawHp;
 
 
     protected void init() {
@@ -39,7 +45,14 @@ public abstract class Enemy extends Entity implements Poolable {
         size = new Vector2(TILE_SIZE, TILE_SIZE);
         maxVel = TILE_SIZE*2.5f;
         bounds = new Rectangle(pos.x+OFFSET_X, pos.y+OFFSET_Y, size.x-OFFSET_X*2, size.y-OFFSET_Y*2);
-        lastDir= Direction.RIGHT;
+        int rndDir = MathUtils.random(3);
+        switch (rndDir){
+            case 0: lastDir= DOWN; break;
+            case 1: lastDir = LEFT; break;
+            case 2: lastDir = RIGHT; break;
+            case 3: lastDir = UP; break;
+        }
+
         animations=new ObjectMap<>();
         stateTime=0f;
         attackRange=TILE_SIZE*4;
@@ -50,11 +63,16 @@ public abstract class Enemy extends Entity implements Poolable {
         patrolCooldown =1.6f;
         lastPatrolVel= new Vector2();
         isAlive=true;
+        drawHp=false;
+        hp= maxHp;
+        hpbar = new HPBar(hp, maxHp,size, Color.GREEN);
     }
 
-    public abstract void render(SpriteBatch batch, float delta, Player player);
+    public abstract void render(SpriteBatch batch,ShapeRenderer shaper, float delta, Player player);
 
-    public void update(float delta) {
+    public void update(float delta, Player player) {
+        playerBounds.set(player.getBounds());
+        playerPos.set(player.getPos());
         stateTime+=delta;
         attackCooldown -=delta;
         patrolCooldown -=delta;
@@ -62,12 +80,14 @@ public abstract class Enemy extends Entity implements Poolable {
         vel.x= MathUtils.clamp(vel.x,-maxVel,maxVel);
         vel.y= MathUtils.clamp(vel.y,-maxVel,maxVel);
         if(isPlayerInRange()){
+            drawHp = true;
             if(bounds.overlaps(playerBounds)){
                 attackPlayer();
             }else{
                 chaseMode(delta);
             }
         }else{
+            drawHp = false;
             patrolMode(delta);
         }
     }
@@ -192,6 +212,8 @@ public abstract class Enemy extends Entity implements Poolable {
         attacking=false;
         attackCooldown=0;
         patrolCooldown=0;
+        hp=0;
+        drawHp=false;
     }
 
     public abstract void release();

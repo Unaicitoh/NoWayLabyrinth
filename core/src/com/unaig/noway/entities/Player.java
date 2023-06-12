@@ -112,7 +112,7 @@ public class Player extends Entity implements InputProcessor{
 		}
 	}
 
-	public void update(float delta) {
+	private void update(float delta) {
 		stateTime+=delta;
 		vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
 		vel.y = MathUtils.clamp(vel.y, -maxVel, maxVel);
