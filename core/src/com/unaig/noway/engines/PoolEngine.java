@@ -1,5 +1,6 @@
 package com.unaig.noway.engines;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.unaig.noway.entities.Player;
@@ -9,7 +10,7 @@ import com.unaig.noway.entities.spells.Spell;
 public class PoolEngine {
 
 	public Array<Spell> spells;
-	private Array<Enemy> enemies;
+	public Array<Enemy> enemies;
 
 	public PoolEngine() {
 		spells=new Array<>();

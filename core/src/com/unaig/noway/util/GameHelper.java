@@ -17,10 +17,7 @@ import com.unaig.noway.data.Assets;
 public class GameHelper {
 
 	public static final String TAG = GameHelper.class.getName();
-	
-	public static Array<Rectangle> rects = new Array<>();
-	public static Array<Polygon> polys = new Array<>();
-	
+
 	public static boolean checkCollisions(Rectangle r) {
 		MapObjects collisions = Assets.instance.labMap.getLayers().get("Collisions").getObjects();
 		for (int i = 0; i < collisions.getCount(); i++)
@@ -29,7 +26,6 @@ public class GameHelper {
 		    if (mapObject instanceof RectangleMapObject)
 		    {
 		        Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-		        rects.add(rectangle);
 		        if(r.overlaps(rectangle)) {
 		        	return true;		        		
 		        }
@@ -38,8 +34,6 @@ public class GameHelper {
 		    else if (mapObject instanceof PolygonMapObject)
 		    {
 		        Polygon polygon = ((PolygonMapObject) mapObject).getPolygon();
-		        polys.add(polygon);
-		        
 		        if(r.overlaps(polygon.getBoundingRectangle())) {
 		        	return true;
 	            }

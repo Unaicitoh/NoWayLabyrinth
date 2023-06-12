@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.entities.Player;
@@ -17,7 +16,12 @@ import static com.unaig.noway.util.Constants.*;
 
 public class SpiderEnemy extends Enemy{
 
-    private static Pool<SpiderEnemy> spiderPool = Pools.get(SpiderEnemy.class);
+    private static final Pool<SpiderEnemy> spiderPool = new Pool<SpiderEnemy>() {
+        @Override
+        protected SpiderEnemy newObject() {
+            return new SpiderEnemy();
+        }
+    };
     public static void create(PoolEngine poolEngine) {
         SpiderEnemy enemy = spiderPool.obtain();
         enemy.init();

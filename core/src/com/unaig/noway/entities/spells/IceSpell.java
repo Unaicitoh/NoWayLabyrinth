@@ -1,7 +1,6 @@
 package com.unaig.noway.entities.spells;
 
 import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
 import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.util.AttackType;
@@ -12,10 +11,15 @@ import static com.unaig.noway.util.Constants.*;
 
 public class IceSpell extends Spell{
 
-	private static Pool<IceSpell> spellPool = Pools.get(IceSpell.class);
+	private static final Pool<IceSpell> iceSpellPool = new Pool<IceSpell>() {
+		@Override
+		protected IceSpell newObject() {
+			return new IceSpell();
+		}
+	};
 
 	public static void create(PoolEngine pool, Player player, AttackType type) {
-		IceSpell spell = spellPool.obtain();
+		IceSpell spell = iceSpellPool.obtain();
 		spell.init(player, type);
 		pool.add(spell);
 	}
@@ -33,13 +37,13 @@ public class IceSpell extends Spell{
 		}		
 	}
 	private void basicAttackAnimations() {
-		if((vel.x<0 && vel.y==0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.LEFT)){
+		if((vel.x<0 && vel.y==0) || (vel.x==0 && vel.y==0 && lastDir==Direction.LEFT)){
 			animation = GameHelper.setAnimation(FRAME_DURATION, ICE_SPELL_LEFT);
-		}else if((vel.x>0 && vel.y==0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.RIGHT)) {
+		}else if((vel.x>0 && vel.y==0) || (vel.x==0 && vel.y==0 && lastDir==Direction.RIGHT)) {
 			animation = GameHelper.setAnimation(FRAME_DURATION, ICE_SPELL_RIGHT);
-		}else if((vel.x==0 && vel.y>0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.UP)) {
+		}else if((vel.x==0 && vel.y>0) || (vel.x==0 && vel.y==0 && lastDir==Direction.UP)) {
 			animation = GameHelper.setAnimation(FRAME_DURATION, ICE_SPELL_UP);
-		}else if((vel.x==0 && vel.y<0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.DOWN)) {
+		}else if((vel.x==0 && vel.y<0) || (vel.x==0 && vel.y==0 && lastDir==Direction.DOWN)) {
 			animation = GameHelper.setAnimation(FRAME_DURATION, ICE_SPELL_DOWN);
 		}else if(vel.x<0 && vel.y>0) {
 			animation = GameHelper.setAnimation(FRAME_DURATION, ICE_SPELL_LEFT_UP);
@@ -54,13 +58,13 @@ public class IceSpell extends Spell{
 	}
 
 	private void strongAttackAnimations() {
-		if((vel.x<0 && vel.y==0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.LEFT)){
+		if((vel.x<0 && vel.y==0) || (vel.x==0 && vel.y==0 && lastDir==Direction.LEFT)){
 			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, ICE2_SPELL_LEFT);
-		}else if((vel.x>0 && vel.y==0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.RIGHT)) {
+		}else if((vel.x>0 && vel.y==0) || (vel.x==0 && vel.y==0 && lastDir==Direction.RIGHT)) {
 			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, ICE2_SPELL_RIGHT);
-		}else if((vel.x==0 && vel.y>0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.UP)) {
+		}else if((vel.x==0 && vel.y>0) || (vel.x==0 && vel.y==0 && lastDir==Direction.UP)) {
 			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, ICE2_SPELL_UP);
-		}else if((vel.x==0 && vel.y<0) || (vel.x==0 && vel.y==0 && playerLastDir==Direction.DOWN)) {
+		}else if((vel.x==0 && vel.y<0) || (vel.x==0 && vel.y==0 && lastDir==Direction.DOWN)) {
 			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, ICE2_SPELL_DOWN);
 		}else if(vel.x<0 && vel.y>0) {
 			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, ICE2_SPELL_LEFT_UP);
@@ -75,7 +79,7 @@ public class IceSpell extends Spell{
 	}
 	@Override
 	public void release() {
-		spellPool.free(this);
+		iceSpellPool.free(this);
 	}
 	
 }

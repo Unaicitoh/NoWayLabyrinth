@@ -31,7 +31,6 @@ public class GameScreen extends ScreenAdapter {
 	private ShapeRenderer shaper;
 	private static final float CAM_SPEED=5f;
 	private Player player;
-	private Enemy spider;
 	private PoolEngine poolEngine;
 	@Override
 	public void show() {
@@ -66,15 +65,14 @@ public class GameScreen extends ScreenAdapter {
 		shaper.begin(ShapeType.Line);
 		shaper.rect(player.getBounds().x, player.getBounds().y, player.getBounds().width, player.getBounds().height);
 		for(Spell s: poolEngine.spells) {
-			shaper.rect(s.getSpellBounds().x, s.getSpellBounds().y, s.getSpellBounds().width, s.getSpellBounds().height);
+			shaper.rect(s.getBounds().x, s.getBounds().y, s.getBounds().width, s.getBounds().height);
 
 		}
-//		for(Rectangle r: GameHelper.rects) {
-//			shaper.rect(r.x,r.y,r.width,r.height);
-//		}
-//		for(Polygon p: GameHelper.polys) {
-//			shaper.polygon(p.getTransformedVertices());
-//		}
+		for(Enemy e: poolEngine.enemies) {
+			shaper.rect(e.getBounds().x, e.getBounds().y, e.getBounds().width, e.getBounds().height);
+
+		}
+//
 		shaper.end();
 		
 		if(Gdx.input.isKeyJustPressed(Keys.UP)) {

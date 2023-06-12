@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import com.unaig.noway.entities.Entity;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.util.AttackType;
 import com.unaig.noway.util.Direction;
@@ -14,7 +15,7 @@ import com.unaig.noway.util.GameHelper;
 import static com.unaig.noway.util.AttackType.*;
 import static com.unaig.noway.util.Constants.TILE_SIZE;
 
-public abstract class Spell implements Poolable {
+public abstract class Spell extends Entity implements Poolable {
 
 	public static final String TAG = Spell.class.getName();
 
@@ -23,12 +24,6 @@ public abstract class Spell implements Poolable {
 	
 	public boolean isAlive;
 	private float timeAlive;
-	
-	private Vector2 pos;
-	protected Vector2 vel;
-	private Vector2 size;
-	private Rectangle spellBounds;
-	protected Direction playerLastDir;
 	protected Animation<AtlasRegion> animation;
 	protected float velMultiplier;
 	private static final float OFFSET_X = 2f;
@@ -46,8 +41,8 @@ public abstract class Spell implements Poolable {
 		playerMaxVel=player.maxVel;
 		vel=new Vector2(player.getVel().x* velMultiplier,player.getVel().y* velMultiplier);
 		size = new Vector2(TILE_SIZE, TILE_SIZE);
-		playerLastDir=player.lastDir;
-		spellBounds= new Rectangle(pos.x+OFFSET_X,pos.y+OFFSET_Y,size.x-OFFSET_X*2,size.y-OFFSET_Y*2);	
+		lastDir=player.lastDir;
+		bounds = new Rectangle(pos.x+OFFSET_X,pos.y+OFFSET_Y,size.x-OFFSET_X*2,size.y-OFFSET_Y*2);
 		this.attackType=attackType;
 	}
 	
@@ -56,7 +51,7 @@ public abstract class Spell implements Poolable {
 		vel.x = MathUtils.clamp(vel.x, -playerMaxVel* velMultiplier, playerMaxVel* velMultiplier);
 		vel.y = MathUtils.clamp(vel.y, -playerMaxVel* velMultiplier, playerMaxVel* velMultiplier);
 		if(vel.x==0 && vel.y==0) {
-			switch (playerLastDir) {
+			switch (lastDir) {
 			case LEFT:
 				vel.x=-playerMaxVel* velMultiplier;
 				break;
@@ -74,10 +69,10 @@ public abstract class Spell implements Poolable {
 		}else {
 			pos.x+=vel.x*delta;
 			pos.y+=vel.y*delta;
-			spellBounds.setPosition(pos.x+OFFSET_X,pos.y+OFFSET_Y);
+			bounds.setPosition(pos.x+OFFSET_X,pos.y+OFFSET_Y);
 		}
 		
-		if(GameHelper.checkCollisions(spellBounds) || timeAlive>LIFE_DURATION) {
+		if(GameHelper.checkCollisions(bounds) || timeAlive>LIFE_DURATION) {
 			isAlive=false;
 		}
 
@@ -95,8 +90,8 @@ public abstract class Spell implements Poolable {
 		pos=new Vector2();
 		vel=new Vector2();
 		size=new Vector2();
-		spellBounds= new Rectangle();
-		playerLastDir=null;
+		bounds = new Rectangle();
+		lastDir=null;
 		playerMaxVel=0;
 		velMultiplier = 0;
 		attackType=null;
@@ -104,14 +99,6 @@ public abstract class Spell implements Poolable {
 	}
 	
 	public abstract void release();
-
-	public Rectangle getSpellBounds() {
-		return spellBounds;
-	}
-
-	public void setSpellBounds(Rectangle spellBounds) {
-		this.spellBounds = spellBounds;
-	}
 
 
 }

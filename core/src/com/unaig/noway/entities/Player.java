@@ -66,7 +66,7 @@ public class Player extends Entity implements InputProcessor{
 		vel = new Vector2(0,0);
 		maxVel = TILE_SIZE*3;
 		bounds = new Rectangle(pos.x+OFFSET_X, pos.y, size.x-OFFSET_X*2, size.y);
-		lastDir=Direction.RIGHT;
+		lastDir=Direction.DOWN;
 		animations=new ObjectMap<>();
 		stateTime=0f;
 		loadPlayerAnimations(animations);
