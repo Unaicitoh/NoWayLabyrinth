@@ -1,6 +1,5 @@
 package com.unaig.noway.engines;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.unaig.noway.entities.Player;

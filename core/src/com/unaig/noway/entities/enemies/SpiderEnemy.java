@@ -11,7 +11,8 @@ import com.unaig.noway.entities.Player;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
 
-import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.*;
+import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP;
+import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.NORMAL;
 import static com.unaig.noway.util.Constants.*;
 
 public class SpiderEnemy extends Enemy{

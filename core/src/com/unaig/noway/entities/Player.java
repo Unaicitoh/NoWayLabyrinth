@@ -6,7 +6,6 @@ import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapObject;
@@ -24,10 +23,12 @@ import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.ElementType;
 import com.unaig.noway.util.GameHelper;
 
-import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.*;
-import static com.unaig.noway.util.AttackType.*;
+import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP;
+import static com.unaig.noway.util.AttackType.BASIC;
+import static com.unaig.noway.util.AttackType.STRONG;
 import static com.unaig.noway.util.Constants.*;
-import static com.unaig.noway.util.ElementType.*;
+import static com.unaig.noway.util.ElementType.FIRE;
+import static com.unaig.noway.util.ElementType.ICE;
 
 public class Player extends Entity implements InputProcessor{
 

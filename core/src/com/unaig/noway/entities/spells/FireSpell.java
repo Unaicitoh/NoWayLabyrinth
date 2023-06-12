@@ -4,7 +4,6 @@ import com.badlogic.gdx.utils.Pool;
 import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.util.AttackType;
-import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
 
 import static com.unaig.noway.util.Constants.*;

@@ -10,9 +10,9 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 import com.unaig.noway.entities.Entity;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.util.AttackType;
-import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
-import static com.unaig.noway.util.AttackType.*;
+
+import static com.unaig.noway.util.AttackType.STRONG;
 import static com.unaig.noway.util.Constants.TILE_SIZE;
 
 public abstract class Spell extends Entity implements Poolable {
@@ -89,8 +89,6 @@ public abstract class Spell extends Entity implements Poolable {
 		vel=new Vector2();
 		size=new Vector2();
 		bounds = new Rectangle();
-		lastDir=null;
-		playerMaxVel=0;
 		velMultiplier = 0;
 		attackType=null;
 		animation=null;

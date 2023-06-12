@@ -185,7 +185,6 @@ public abstract class Enemy extends Entity implements Poolable {
         animations=new ObjectMap<>();
         attackRange=0;
         bounds= new Rectangle();
-        lastDir=null;
         maxVel=0;
         stateTime=0;
         playerBounds= new Rectangle();
@@ -193,7 +192,6 @@ public abstract class Enemy extends Entity implements Poolable {
         attacking=false;
         attackCooldown=0;
         patrolCooldown=0;
-        lastPatrolVel=new Vector2();
     }
 
     public abstract void release();
