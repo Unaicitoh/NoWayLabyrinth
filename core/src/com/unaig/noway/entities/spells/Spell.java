@@ -17,8 +17,6 @@ import static com.unaig.noway.util.Constants.TILE_SIZE;
 
 public abstract class Spell extends Entity implements Poolable {
 
-	public static final String TAG = Spell.class.getName();
-
 	protected static final float FRAME_DURATION = .06f;
 	protected static final float FRAME_DURATION_STRONG = .075f;
 	

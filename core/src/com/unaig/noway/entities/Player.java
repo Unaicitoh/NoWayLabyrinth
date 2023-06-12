@@ -23,6 +23,8 @@ import com.unaig.noway.entities.spells.IceSpell;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.ElementType;
 import com.unaig.noway.util.GameHelper;
+
+import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.*;
 import static com.unaig.noway.util.AttackType.*;
 import static com.unaig.noway.util.Constants.*;
 import static com.unaig.noway.util.ElementType.*;
@@ -73,10 +75,10 @@ public class Player extends Entity implements InputProcessor{
 	}
 
 	private void loadPlayerAnimations(ObjectMap<String, Animation<TextureAtlas.AtlasRegion>> animations) {
-		animations.put(PLAYER_ANIM_RIGHT, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(PLAYER_ANIM_RIGHT), PlayMode.LOOP));
-		animations.put(PLAYER_ANIM_LEFT, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(PLAYER_ANIM_LEFT), PlayMode.LOOP));
-		animations.put(PLAYER_ANIM_UP, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(PLAYER_ANIM_UP), PlayMode.LOOP));
-		animations.put(PLAYER_ANIM_DOWN, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(PLAYER_ANIM_DOWN), PlayMode.LOOP));
+		animations.put(PLAYER_ANIM_RIGHT, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(PLAYER_ANIM_RIGHT), LOOP));
+		animations.put(PLAYER_ANIM_LEFT, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(PLAYER_ANIM_LEFT), LOOP));
+		animations.put(PLAYER_ANIM_UP, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(PLAYER_ANIM_UP), LOOP));
+		animations.put(PLAYER_ANIM_DOWN, new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions(PLAYER_ANIM_DOWN), LOOP));
 	}
 
 	public void render(SpriteBatch batch, float delta) {
@@ -224,6 +226,7 @@ public class Player extends Entity implements InputProcessor{
 				IceSpell.create(poolEngine, this, STRONG);
 			break;
 		}
+		stateTime=0;
 		return true;
 	}
 

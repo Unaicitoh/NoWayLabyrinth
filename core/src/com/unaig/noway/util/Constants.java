@@ -23,7 +23,6 @@ public class Constants {
 	public static final String SPIDER_ATTACK_RIGHT ="spiderAttackRight";
 	public static final String SPIDER_DEAD_ANIM ="spiderDead";
 
-
 	//Fire spells animations
 	////Basic
 	public static final String FIRE_SPELL_LEFT ="fireLeft";

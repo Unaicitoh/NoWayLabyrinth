@@ -8,8 +8,11 @@ import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
 
 import static com.unaig.noway.util.Constants.*;
+import static com.unaig.noway.util.Direction.*;
 
 public class IceSpell extends Spell{
+
+	public static final String TAG = IceSpell.class.getName();
 
 	private static final Pool<IceSpell> iceSpellPool = new Pool<IceSpell>() {
 		@Override
@@ -37,13 +40,13 @@ public class IceSpell extends Spell{
 		}		
 	}
 	private void basicAttackAnimations() {
-		if((vel.x<0 && vel.y==0) || (vel.x==0 && vel.y==0 && lastDir==Direction.LEFT)){
+		if((vel.x<0 && vel.y==0) || (vel.x==0 && vel.y==0 && lastDir== LEFT)){
 			animation = GameHelper.setAnimation(FRAME_DURATION, ICE_SPELL_LEFT);
-		}else if((vel.x>0 && vel.y==0) || (vel.x==0 && vel.y==0 && lastDir==Direction.RIGHT)) {
+		}else if((vel.x>0 && vel.y==0) || (vel.x==0 && vel.y==0 && lastDir==RIGHT)) {
 			animation = GameHelper.setAnimation(FRAME_DURATION, ICE_SPELL_RIGHT);
-		}else if((vel.x==0 && vel.y>0) || (vel.x==0 && vel.y==0 && lastDir==Direction.UP)) {
+		}else if((vel.x==0 && vel.y>0) || (vel.x==0 && vel.y==0 && lastDir==UP)) {
 			animation = GameHelper.setAnimation(FRAME_DURATION, ICE_SPELL_UP);
-		}else if((vel.x==0 && vel.y<0) || (vel.x==0 && vel.y==0 && lastDir==Direction.DOWN)) {
+		}else if((vel.x==0 && vel.y<0) || (vel.x==0 && vel.y==0 && lastDir==DOWN)) {
 			animation = GameHelper.setAnimation(FRAME_DURATION, ICE_SPELL_DOWN);
 		}else if(vel.x<0 && vel.y>0) {
 			animation = GameHelper.setAnimation(FRAME_DURATION, ICE_SPELL_LEFT_UP);
@@ -58,13 +61,12 @@ public class IceSpell extends Spell{
 	}
 
 	private void strongAttackAnimations() {
-		if((vel.x<0 && vel.y==0) || (vel.x==0 && vel.y==0 && lastDir==Direction.LEFT)){
+		if((vel.x<0 && vel.y==0) || (vel.x==0 && vel.y==0 && lastDir== LEFT)){
 			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, ICE2_SPELL_LEFT);
-		}else if((vel.x>0 && vel.y==0) || (vel.x==0 && vel.y==0 && lastDir==Direction.RIGHT)) {
+		}else if((vel.x>0 && vel.y==0) || (vel.x==0 && vel.y==0 && lastDir==RIGHT)) {
 			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, ICE2_SPELL_RIGHT);
-		}else if((vel.x==0 && vel.y>0) || (vel.x==0 && vel.y==0 && lastDir==Direction.UP)) {
+		}else if((vel.x==0 && vel.y>0) || (vel.x==0 && vel.y==0 && lastDir==UP)) {
 			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, ICE2_SPELL_UP);
-		}else if((vel.x==0 && vel.y<0) || (vel.x==0 && vel.y==0 && lastDir==Direction.DOWN)) {
 			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, ICE2_SPELL_DOWN);
 		}else if(vel.x<0 && vel.y>0) {
 			animation = GameHelper.setAnimation(FRAME_DURATION_STRONG, ICE2_SPELL_LEFT_UP);

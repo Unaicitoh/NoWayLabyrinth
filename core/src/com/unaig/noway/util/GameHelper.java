@@ -14,9 +14,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.unaig.noway.data.Assets;
 
-public class GameHelper {
+import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP;
 
-	public static final String TAG = GameHelper.class.getName();
+public class GameHelper {
 
 	public static boolean checkCollisions(Rectangle r) {
 		MapObjects collisions = Assets.instance.labMap.getLayers().get("Collisions").getObjects();
@@ -43,7 +43,7 @@ public class GameHelper {
 	}
 	
 	public static Animation<AtlasRegion> setAnimation(float duration, String animationName) {
-		return new Animation<>(duration, Assets.instance.playerAtlas.findRegions(animationName), PlayMode.LOOP);
+		return new Animation<>(duration, Assets.instance.playerAtlas.findRegions(animationName), LOOP);
 	}
 	
 	public static void drawEntity(SpriteBatch batch, AtlasRegion atlasRegion, Vector2 pos, Vector2 size) {

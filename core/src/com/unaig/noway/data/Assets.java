@@ -6,8 +6,6 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
 public class Assets {
 
-	public static final String TAG = Assets.class.getName();
-	
 	//Singleton
 	public static final Assets instance= new Assets();
 	private Assets() {}

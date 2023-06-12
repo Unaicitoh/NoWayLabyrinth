@@ -47,7 +47,7 @@ public abstract class Enemy extends Entity implements Poolable {
         playerPos=new Vector2();
         attacking=false;
         attackCooldown =0f;
-        patrolCooldown =1.75f;
+        patrolCooldown =1.6f;
         lastPatrolVel= new Vector2();
         isAlive=true;
     }
