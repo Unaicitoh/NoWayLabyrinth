@@ -38,7 +38,7 @@ public class PoolEngine {
 
     }
 
-    public void renderEnemies(SpriteBatch batch, ShapeDrawer shaper, float delta, Player player) {
+    public void renderEnemies(SpriteBatch batch, ShapeDrawer shaper, float delta, Player player, Array<Spell> spells) {
         for (Enemy e : enemies) {
             if (!e.isAlive) {
                 e.reset();
@@ -46,7 +46,7 @@ public class PoolEngine {
                 enemies.removeValue(e, true);
                 continue;
             }
-            e.render(batch, shaper, delta, player);
+            e.render(batch, shaper, delta, player, spells);
         }
     }
 

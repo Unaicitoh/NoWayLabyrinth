@@ -7,38 +7,73 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
+import static com.badlogic.gdx.graphics.Color.*;
+
 public class HPBar {
 
     public static final String TAG = HPBar.class.getName();
 
-    private Rectangle outline;
-    private Rectangle content;
-    private int hp;
-    private int maxHp;
-    private Vector2 size;
+    private final Rectangle outline;
+    private final Rectangle content;
+    private float visualHp;
+    private final int maxHp;
+    private final Vector2 size;
     private Color color;
 
-    public HPBar(int hp, int maxHp, Vector2 size, Color color) {
-        this.hp = hp;
+    public HPBar(int maxHp, Vector2 size) {
         this.maxHp = maxHp;
         this.size = size;
-        this.color = color;
-        content=new Rectangle();
+        visualHp = maxHp;
+        color = GREEN;
+        content = new Rectangle();
+        outline = new Rectangle();
     }
 
-    public void render(ShapeDrawer shaper, float delta, Vector2 pos, int hp){
+    public void render(ShapeDrawer shaper, float delta, Vector2 pos, float hp) {
         update(delta, pos, hp);
+        renderHPBackground(shaper);
+        if (hp <= maxHp / 4f) {
+            this.color = FIREBRICK;
+        } else if (hp <= maxHp / 2f) {
+            this.color = YELLOW;
+        } else {
+            this.color = GREEN;
+        }
         shaper.setColor(color);
-        shaper.rectangle(content);
-        shaper.setColor(Color.WHITE);
+        shaper.filledRectangle(content);
+
+        float x = (this.visualHp - hp);
+        shaper.setColor(RED);
+        shaper.filledRectangle(content.x + hp * size.x / maxHp, content.y, x * size.x / maxHp, content.height);
+        shaper.setColor(WHITE);
     }
 
-    private void update(float delta, Vector2 pos, int hp){
-        hp= MathUtils.clamp(hp,0,maxHp);
-        this.hp=hp;
-        Gdx.app.log(TAG,"size"+size);
-        Gdx.app.log(TAG,"content"+content.x);
+    private void renderHPBackground(ShapeDrawer shaper) {
+        float hpOutline = .5f;
+        shaper.setColor(BLACK);
+        shaper.filledRectangle(content.x - hpOutline, content.y - hpOutline, size.x + hpOutline * 2, content.height + hpOutline * 2);
 
-        content.set(pos.x,pos.y+size.y,hp*size.x/maxHp,size.y/3);
+        shaper.setColor(GRAY);
+        shaper.filledRectangle(content.x, content.y, size.x, content.height);
+    }
+
+    private void update(float delta, Vector2 pos, float hp) {
+        hp = MathUtils.clamp(hp, 0, maxHp);
+//        Gdx.app.log(TAG,""+hp);
+//        Gdx.app.log(TAG,""+visualHp);
+//        Gdx.app.log(TAG,"rendering");
+        if (visualHp > hp) {
+            visualHp = Math.max(hp, visualHp - delta * 35);
+
+        } else if (visualHp < hp) {
+            visualHp = Math.min(hp, visualHp + delta * 35);
+        }
+
+        content.set(pos.x, pos.y + size.y, visualHp * size.x / maxHp, size.y / 9);
+        outline.set(content);
+    }
+
+    public float getVisualHp() {
+        return visualHp;
     }
 }

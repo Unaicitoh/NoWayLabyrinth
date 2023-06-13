@@ -17,6 +17,7 @@ public class Entity {
     public Direction lastDir;
     public float maxVel;
     protected float stateTime;
+    public int attackDamage;
 
     public Vector2 getPos() {
         return pos;

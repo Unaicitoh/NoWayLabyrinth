@@ -59,8 +59,7 @@ public class GameScreen extends ScreenAdapter {
         batch.begin();
         poolEngine.renderSpells(batch, delta);
         player.render(batch, delta);
-        poolEngine.renderEnemies(batch, shaper, delta, player);
-
+        poolEngine.renderEnemies(batch, shaper, delta, player, poolEngine.spells);
         shaper.rectangle(player.getBounds());
         for (Spell s : poolEngine.spells) {
             shaper.rectangle(s.getBounds());

@@ -3,12 +3,13 @@ package com.unaig.noway.entities.enemies;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Pool;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.entities.Player;
+import com.unaig.noway.entities.spells.Spell;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -39,9 +40,9 @@ public class SpiderEnemy extends Enemy {
     }
 
     @Override
-    public void render(SpriteBatch batch, ShapeDrawer shaper, float delta, Player player) {
-        update(delta, player);
-        if (drawHp) {
+    public void render(SpriteBatch batch, ShapeDrawer shaper, float delta, Player player, Array<Spell> spells) {
+        update(delta, player, spells);
+        if (drawHp && !isDead) {
             hpbar.render(shaper, delta, pos, hp);
         }
         renderSpiderAnimations(batch);
@@ -49,7 +50,7 @@ public class SpiderEnemy extends Enemy {
     }
 
     private void renderSpiderAnimations(SpriteBatch batch) {
-        if (!attacking) {
+        if (!attacking && !isDead) {
             if (vel.x < 0) {
                 GameHelper.drawEntity(batch, animations.get(SPIDER_ANIM_LEFT).getKeyFrame(stateTime), pos, size);
                 lastDir = Direction.LEFT;
@@ -75,7 +76,7 @@ public class SpiderEnemy extends Enemy {
                 else if (lastDir == Direction.DOWN)
                     GameHelper.drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_DOWN, 0), pos, size);
             }
-        } else {
+        } else if (attacking && !isDead) {
             if (lastDir == Direction.RIGHT)
                 GameHelper.drawEntity(batch, animations.get(SPIDER_ATTACK_RIGHT).getKeyFrame(stateTime), pos, size);
             else if (lastDir == Direction.LEFT)
@@ -84,6 +85,9 @@ public class SpiderEnemy extends Enemy {
                 GameHelper.drawEntity(batch, animations.get(SPIDER_ATTACK_UP).getKeyFrame(stateTime), pos, size);
             else if (lastDir == Direction.DOWN)
                 GameHelper.drawEntity(batch, animations.get(SPIDER_ATTACK_DOWN).getKeyFrame(stateTime), pos, size);
+
+        } else {
+            GameHelper.drawEntity(batch, animations.get(SPIDER_DEAD_ANIM).getKeyFrame(stateTime), pos, size);
 
         }
     }
@@ -97,7 +101,7 @@ public class SpiderEnemy extends Enemy {
         animations.put(SPIDER_ATTACK_LEFT, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ATTACK_LEFT), LOOP));
         animations.put(SPIDER_ATTACK_UP, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ATTACK_UP), LOOP));
         animations.put(SPIDER_ATTACK_DOWN, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ATTACK_DOWN), LOOP));
-        animations.put(SPIDER_DEAD_ANIM, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_DEAD_ANIM), NORMAL));
+        animations.put(SPIDER_DEAD_ANIM, new Animation<>(DEAD_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_DEAD_ANIM), NORMAL));
     }
 
     @Override

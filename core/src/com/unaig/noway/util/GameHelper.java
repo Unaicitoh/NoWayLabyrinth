@@ -16,38 +16,35 @@ import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP;
 
 public class GameHelper {
 
-	public static boolean checkCollisions(Rectangle r) {
-		MapObjects collisions = Assets.instance.labMap.getLayers().get("Collisions").getObjects();
-		for (int i = 0; i < collisions.getCount(); i++)
-		{
-		    MapObject mapObject = collisions.get(i);
-		    if (mapObject instanceof RectangleMapObject)
-		    {
-		        Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-		        if(r.overlaps(rectangle)) {
-		        	return true;		        		
-		        }
-		        
-		    }
-		    else if (mapObject instanceof PolygonMapObject)
-		    {
-		        Polygon polygon = ((PolygonMapObject) mapObject).getPolygon();
-		        if(r.overlaps(polygon.getBoundingRectangle())) {
-		        	return true;
-	            }
-		    }
-		}
-		return false;
-	}
-	
-	public static Animation<AtlasRegion> setAnimation(float duration, String animationName) {
-		return new Animation<>(duration, Assets.instance.playerAtlas.findRegions(animationName), LOOP);
-	}
-	
-	public static void drawEntity(SpriteBatch batch, AtlasRegion atlasRegion, Vector2 pos, Vector2 size) {
-		batch.draw(atlasRegion,pos.x,pos.y,size.x,size.y);
-	}
+    public static boolean checkCollisions(Rectangle r) {
+        MapObjects collisions = Assets.instance.labMap.getLayers().get("Collisions").getObjects();
+        for (int i = 0; i < collisions.getCount(); i++) {
+            MapObject mapObject = collisions.get(i);
+            if (mapObject instanceof RectangleMapObject) {
+                Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+                if (r.overlaps(rectangle)) {
+                    return true;
+                }
 
-	private GameHelper() {}
-	
+            } else if (mapObject instanceof PolygonMapObject) {
+                Polygon polygon = ((PolygonMapObject) mapObject).getPolygon();
+                if (r.overlaps(polygon.getBoundingRectangle())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static Animation<AtlasRegion> setAnimation(float duration, String animationName) {
+        return new Animation<>(duration, Assets.instance.playerAtlas.findRegions(animationName), LOOP);
+    }
+
+    public static void drawEntity(SpriteBatch batch, AtlasRegion atlasRegion, Vector2 pos, Vector2 size) {
+        batch.draw(atlasRegion, pos.x, pos.y, size.x, size.y);
+    }
+
+    private GameHelper() {
+    }
+
 }

@@ -33,8 +33,13 @@ public abstract class Spell extends Entity implements Poolable {
     protected void init(Player player, AttackType attackType) {
         isAlive = true;
         timeAlive = 0;
-        if (attackType == STRONG) velMultiplier = 2.0f;
-        else velMultiplier = 2.5f;
+        if (attackType == STRONG) {
+            velMultiplier = 2.0f;
+            attackDamage = 25 * player.attackDamage;
+        } else {
+            velMultiplier = 2.5f;
+            attackDamage = 10 * player.attackDamage;
+        }
         pos = new Vector2(player.getPos());
         playerMaxVel = player.maxVel;
         vel = new Vector2(player.getVel().x * velMultiplier, player.getVel().y * velMultiplier);
@@ -97,4 +102,7 @@ public abstract class Spell extends Entity implements Poolable {
     public abstract void release();
 
 
+    public int getDamage() {
+        return attackDamage;
+    }
 }

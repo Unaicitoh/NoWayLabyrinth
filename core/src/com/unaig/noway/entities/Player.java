@@ -36,6 +36,13 @@ public class Player extends Entity implements InputProcessor {
 
     public PoolEngine poolEngine;
     private ElementType elementType;
+
+    private float fireCooldown;
+    private float fire2Cooldown;
+    private float iceCooldown;
+    private float ice2Cooldown;
+    public static final float BASIC_ATTACK_COOLDOWN = .5f;
+    public static final float STRONG_ATTACK_COOLDOWN = 2f;
     private static final float OFFSET_X = 2f;
     private static final float FRAME_DURATION = 0.1f;
 
@@ -70,6 +77,11 @@ public class Player extends Entity implements InputProcessor {
         lastDir = Direction.DOWN;
         animations = new ObjectMap<>();
         stateTime = 0f;
+        attackDamage = 1;
+        fireCooldown = 0;
+        iceCooldown = 0;
+        fire2Cooldown = 0;
+        ice2Cooldown = 0;
         loadPlayerAnimations(animations);
     }
 
@@ -116,6 +128,7 @@ public class Player extends Entity implements InputProcessor {
 
     private void update(float delta) {
         stateTime += delta;
+        updateCooldowns(delta);
         vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
         vel.y = MathUtils.clamp(vel.y, -maxVel, maxVel);
         checkWallCollisions(delta);
@@ -144,6 +157,12 @@ public class Player extends Entity implements InputProcessor {
         bounds.setPosition(pos.x + OFFSET_X, pos.y);
     }
 
+    private void updateCooldowns(float delta) {
+        fireCooldown -= delta;
+        fire2Cooldown -= delta;
+        iceCooldown -= delta;
+        ice2Cooldown -= delta;
+    }
 
     @Override
     public boolean keyDown(int keycode) {
@@ -227,19 +246,28 @@ public class Player extends Entity implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         switch (button) {
             case Buttons.LEFT:
-                if (elementType == FIRE)
+                if (elementType == FIRE && fireCooldown <= 0f) {
+                    stateTime = 0;
+                    fireCooldown = BASIC_ATTACK_COOLDOWN;
                     FireSpell.create(poolEngine, this, BASIC);
-                else if (elementType == ICE)
+                } else if (elementType == ICE && iceCooldown <= 0f) {
+                    stateTime = 0;
+                    iceCooldown = BASIC_ATTACK_COOLDOWN;
                     IceSpell.create(poolEngine, this, BASIC);
+                }
                 break;
             case Buttons.RIGHT:
-                if (elementType == FIRE)
+                if (elementType == FIRE && fire2Cooldown <= 0f) {
+                    stateTime = 0;
+                    fire2Cooldown = STRONG_ATTACK_COOLDOWN;
                     FireSpell.create(poolEngine, this, STRONG);
-                else if (elementType == ICE)
+                } else if (elementType == ICE && ice2Cooldown <= 0f) {
+                    stateTime = 0;
+                    ice2Cooldown = STRONG_ATTACK_COOLDOWN;
                     IceSpell.create(poolEngine, this, STRONG);
+                }
                 break;
         }
-        stateTime = 0;
         return true;
     }
 

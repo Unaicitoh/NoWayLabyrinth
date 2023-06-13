@@ -1,16 +1,16 @@
 package com.unaig.noway.entities.enemies;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.unaig.noway.entities.Entity;
 import com.unaig.noway.entities.Player;
+import com.unaig.noway.entities.spells.Spell;
 import com.unaig.noway.util.GameHelper;
 import com.unaig.noway.util.HPBar;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -24,6 +24,8 @@ public abstract class Enemy extends Entity implements Poolable {
 
     protected static final float FRAME_DURATION = .09f;
     protected static final float ATTACK_FRAME_DURATION = .15f;
+    protected static final float DEAD_FRAME_DURATION = .30f;
+
     private final float OFFSET_X = 2f;
     private final float OFFSET_Y = 2f;
     public boolean isAlive;
@@ -34,10 +36,13 @@ public abstract class Enemy extends Entity implements Poolable {
     private float attackCooldown;
     private float patrolCooldown;
     private Vector2 lastPatrolVel;
-    protected int hp;
+    protected float hp;
     protected HPBar hpbar;
     protected int maxHp;
     protected boolean drawHp;
+    private float timeFromDamage;
+    private float timeToDie;
+    protected boolean isDead;
 
 
     protected void init() {
@@ -74,30 +79,64 @@ public abstract class Enemy extends Entity implements Poolable {
         isAlive = true;
         drawHp = false;
         hp = maxHp;
-        hpbar = new HPBar(hp, maxHp, size, Color.GREEN);
+        timeFromDamage = 0f;
+        isDead = false;
+        timeToDie = 5f;
+        hpbar = new HPBar(maxHp, size);
     }
 
-    public abstract void render(SpriteBatch batch, ShapeDrawer shaper, float delta, Player player);
+    public abstract void render(SpriteBatch batch, ShapeDrawer shaper, float delta, Player player, Array<Spell> spells);
 
-    public void update(float delta, Player player) {
-        playerBounds.set(player.getBounds());
-        playerPos.set(player.getPos());
+    public void update(float delta, Player player, Array<Spell> spells) {
         stateTime += delta;
         attackCooldown -= delta;
         patrolCooldown -= delta;
-
+        timeFromDamage += delta;
+        if (isDead) {
+            timeToDie -= delta;
+            if (timeToDie <= 0f) {
+                isAlive = false;
+            }
+        }
+        playerBounds.set(player.getBounds());
+        playerPos.set(player.getPos());
         vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
         vel.y = MathUtils.clamp(vel.y, -maxVel, maxVel);
-        if (isPlayerInRange()) {
-            drawHp = true;
-            if (bounds.overlaps(playerBounds)) {
-                attackPlayer();
+        Gdx.app.log(TAG, "visal" + hpbar.getVisualHp());
+        checkHitFromSpell(spells, delta);
+        if (hpbar.getVisualHp() <= 0 && !isDead) {
+            isDead = true;
+            stateTime = 0f;
+        }
+        if (timeFromDamage > 10f) {
+            hp = Math.min(maxHp, hp + delta * 10);
+        }
+        if (!isDead) {
+            if ((isPlayerInRange() || hp < maxHp)) {
+                drawHp = true;
+                if (bounds.overlaps(playerBounds)) {
+                    attackPlayer();
+                } else {
+                    chaseMode(delta);
+                }
             } else {
-                chaseMode(delta);
+                drawHp = false;
+                patrolMode(delta);
             }
-        } else {
-            drawHp = false;
-            patrolMode(delta);
+        }
+
+    }
+
+    private void checkHitFromSpell(Array<Spell> spells, float delta) {
+        for (Spell s : spells) {
+            if (bounds.overlaps(s.getBounds())) {
+                s.isAlive = false;
+                timeFromDamage = 0;
+                hp -= s.getDamage();
+                if (hp <= 0f) {
+                    hp = 0f;
+                }
+            }
         }
     }
 
@@ -105,8 +144,7 @@ public abstract class Enemy extends Entity implements Poolable {
         float x = Math.round(MathUtils.random(-maxVel, maxVel));
         float y = Math.round(MathUtils.random(-maxVel, maxVel));
         int rnd = MathUtils.random(9);
-
-        if (patrolCooldown <= 0) {
+        if (patrolCooldown <= 0f) {
             patrolCooldown = 1.75f;
             if (x < 0) {
                 vel.x = -maxVel;
@@ -137,7 +175,7 @@ public abstract class Enemy extends Entity implements Poolable {
 
     private void attackPlayer() {
         attacking = true;
-        if (attackCooldown <= 0) {
+        if (attackCooldown <= 0f) {
             damagePlayer();
         }
     }
@@ -221,8 +259,13 @@ public abstract class Enemy extends Entity implements Poolable {
         attacking = false;
         attackCooldown = 0;
         patrolCooldown = 0;
+        hpbar = null;
         hp = 0;
         drawHp = false;
+        timeFromDamage = 0f;
+        isDead = false;
+        timeToDie = 0f;
+        maxHp = 0;
     }
 
     public abstract void release();
