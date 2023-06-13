@@ -28,6 +28,7 @@ allprojects {
         ashleyVersion = '1.7.4'
         aiVersion = '1.8.2'
         gdxControllersVersion = '2.2.1'
+        shapedrawerVersion = '2.6.0'
     }
 
     repositories {
@@ -65,7 +66,7 @@ project(":html") {
         api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
         api "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
         api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
-        
+        implementation "space.earlygrey:shapedrawer:$shapedrawerVersion:sources"
     }
 }
 
@@ -75,6 +76,6 @@ project(":core") {
 
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        
+        implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
     }
 }

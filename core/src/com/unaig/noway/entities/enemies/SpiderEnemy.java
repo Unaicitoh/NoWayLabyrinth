@@ -11,12 +11,13 @@ import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.GameHelper;
+import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP;
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.NORMAL;
 import static com.unaig.noway.util.Constants.*;
 
-public class SpiderEnemy extends Enemy{
+public class SpiderEnemy extends Enemy {
 
     private static final Pool<SpiderEnemy> spiderPool = new Pool<SpiderEnemy>() {
         @Override
@@ -24,23 +25,24 @@ public class SpiderEnemy extends Enemy{
             return new SpiderEnemy();
         }
     };
+
     public static void create(PoolEngine poolEngine) {
         SpiderEnemy enemy = spiderPool.obtain();
         enemy.init();
         poolEngine.add(enemy);
     }
 
-    protected void init(){
-        maxHp=100;
+    protected void init() {
+        maxHp = 100;
         super.init();
         loadSpiderAnimations(animations);
     }
 
     @Override
-    public void render(SpriteBatch batch, ShapeRenderer shaper, float delta, Player player) {
+    public void render(SpriteBatch batch, ShapeDrawer shaper, float delta, Player player) {
         update(delta, player);
-        if(drawHp){
-            hpbar.render(shaper,delta,pos,hp);
+        if (drawHp) {
+            hpbar.render(shaper, delta, pos, hp);
         }
         renderSpiderAnimations(batch);
 
@@ -48,32 +50,40 @@ public class SpiderEnemy extends Enemy{
 
     private void renderSpiderAnimations(SpriteBatch batch) {
         if (!attacking) {
-            if(vel.x<0) {
-                GameHelper.drawEntity(batch,animations.get(SPIDER_ANIM_LEFT).getKeyFrame(stateTime),pos,size);
-                lastDir= Direction.LEFT;
-            }else if(vel.x>0) {
-                GameHelper.drawEntity(batch,animations.get(SPIDER_ANIM_RIGHT).getKeyFrame(stateTime),pos,size);
-                lastDir= Direction.RIGHT;
+            if (vel.x < 0) {
+                GameHelper.drawEntity(batch, animations.get(SPIDER_ANIM_LEFT).getKeyFrame(stateTime), pos, size);
+                lastDir = Direction.LEFT;
+            } else if (vel.x > 0) {
+                GameHelper.drawEntity(batch, animations.get(SPIDER_ANIM_RIGHT).getKeyFrame(stateTime), pos, size);
+                lastDir = Direction.RIGHT;
 
-            }else if(vel.y>0) {
-                GameHelper.drawEntity(batch,animations.get(SPIDER_ANIM_UP).getKeyFrame(stateTime),pos,size);
-                lastDir= Direction.UP;
+            } else if (vel.y > 0) {
+                GameHelper.drawEntity(batch, animations.get(SPIDER_ANIM_UP).getKeyFrame(stateTime), pos, size);
+                lastDir = Direction.UP;
 
-            }else if(vel.y<0) {
-                GameHelper.drawEntity(batch,animations.get(SPIDER_ANIM_DOWN).getKeyFrame(stateTime),pos,size);
-                lastDir= Direction.DOWN;
+            } else if (vel.y < 0) {
+                GameHelper.drawEntity(batch, animations.get(SPIDER_ANIM_DOWN).getKeyFrame(stateTime), pos, size);
+                lastDir = Direction.DOWN;
 
-            }else {
-                if(lastDir==Direction.RIGHT) GameHelper.drawEntity(batch,Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_RIGHT, 0),pos,size);
-                else if (lastDir==Direction.LEFT) GameHelper.drawEntity(batch,Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_LEFT, 0),pos,size);
-                else if (lastDir==Direction.UP) GameHelper.drawEntity(batch,Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_UP, 0),pos,size);
-                else if (lastDir==Direction.DOWN) GameHelper.drawEntity(batch,Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_DOWN, 0),pos,size);
+            } else {
+                if (lastDir == Direction.RIGHT)
+                    GameHelper.drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_RIGHT, 0), pos, size);
+                else if (lastDir == Direction.LEFT)
+                    GameHelper.drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_LEFT, 0), pos, size);
+                else if (lastDir == Direction.UP)
+                    GameHelper.drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_UP, 0), pos, size);
+                else if (lastDir == Direction.DOWN)
+                    GameHelper.drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_DOWN, 0), pos, size);
             }
         } else {
-            if(lastDir==Direction.RIGHT) GameHelper.drawEntity(batch,animations.get(SPIDER_ATTACK_RIGHT).getKeyFrame(stateTime),pos,size);
-            else if(lastDir==Direction.LEFT) GameHelper.drawEntity(batch,animations.get(SPIDER_ATTACK_LEFT).getKeyFrame(stateTime),pos,size);
-            else if(lastDir==Direction.UP) GameHelper.drawEntity(batch,animations.get(SPIDER_ATTACK_UP).getKeyFrame(stateTime),pos,size);
-            else if(lastDir==Direction.DOWN) GameHelper.drawEntity(batch,animations.get(SPIDER_ATTACK_DOWN).getKeyFrame(stateTime),pos,size);
+            if (lastDir == Direction.RIGHT)
+                GameHelper.drawEntity(batch, animations.get(SPIDER_ATTACK_RIGHT).getKeyFrame(stateTime), pos, size);
+            else if (lastDir == Direction.LEFT)
+                GameHelper.drawEntity(batch, animations.get(SPIDER_ATTACK_LEFT).getKeyFrame(stateTime), pos, size);
+            else if (lastDir == Direction.UP)
+                GameHelper.drawEntity(batch, animations.get(SPIDER_ATTACK_UP).getKeyFrame(stateTime), pos, size);
+            else if (lastDir == Direction.DOWN)
+                GameHelper.drawEntity(batch, animations.get(SPIDER_ATTACK_DOWN).getKeyFrame(stateTime), pos, size);
 
         }
     }
@@ -89,6 +99,7 @@ public class SpiderEnemy extends Enemy{
         animations.put(SPIDER_ATTACK_DOWN, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ATTACK_DOWN), LOOP));
         animations.put(SPIDER_DEAD_ANIM, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_DEAD_ANIM), NORMAL));
     }
+
     @Override
     public void release() {
         spiderPool.free(this);

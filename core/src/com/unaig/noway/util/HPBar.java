@@ -2,11 +2,10 @@ package com.unaig.noway.util;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.unaig.noway.screens.GameScreen;
+import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class HPBar {
 
@@ -27,10 +26,10 @@ public class HPBar {
         content=new Rectangle();
     }
 
-    public void render(ShapeRenderer shaper, float delta, Vector2 pos, int hp){
+    public void render(ShapeDrawer shaper, float delta, Vector2 pos, int hp){
         update(delta, pos, hp);
         shaper.setColor(color);
-        shaper.rect(content.x,content.y,content.width, content.height);
+        shaper.rectangle(content);
         shaper.setColor(Color.WHITE);
     }
 

@@ -3,11 +3,8 @@ package com.unaig.noway.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -19,92 +16,85 @@ import com.unaig.noway.entities.Player;
 import com.unaig.noway.entities.enemies.Enemy;
 import com.unaig.noway.entities.enemies.SpiderEnemy;
 import com.unaig.noway.entities.spells.Spell;
+import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import static com.unaig.noway.util.Constants.TILE_SIZE;
 
 public class GameScreen extends ScreenAdapter {
-	public static final String TAG = GameScreen.class.getName();
+    public static final String TAG = GameScreen.class.getName();
 
-	private OrthogonalTiledMapRenderer renderer;
-	
-	private SpriteBatch batch;
-	private Viewport viewport;
-	private ShapeRenderer shaper;
-	private static final float CAM_SPEED=5f;
-	private Player player;
-	private PoolEngine poolEngine;
-	@Override
-	public void show() {
-		renderer = new OrthogonalTiledMapRenderer(Assets.instance.labMap);
-		viewport=new ExtendViewport(80* TILE_SIZE, 80* TILE_SIZE);
-		batch = (SpriteBatch) renderer.getBatch();
-		poolEngine = new PoolEngine();
-		player = new Player(poolEngine);
-		SpiderEnemy.create(poolEngine);
-		Gdx.input.setInputProcessor(player);
-		((OrthographicCamera)viewport.getCamera()).zoom=1/5f;
-		shaper=new ShapeRenderer();
-		viewport.getCamera().position.set(new Vector3(player.getPos(),0));
-	}
+    private OrthogonalTiledMapRenderer renderer;
 
-	@Override
-	public void render(float delta) {
-		ScreenUtils.clear(.15f,.15f, .15f, 1f);
-		viewport.apply();
-		viewport.getCamera().position.lerp(new Vector3(player.getPos(),0), CAM_SPEED*delta);
-		shaper.setProjectionMatrix(viewport.getCamera().combined);
-		
-		renderer.setView((OrthographicCamera) viewport.getCamera());
-		renderer.render();
+    private SpriteBatch batch;
+    private Viewport viewport;
+    private ShapeDrawer shaper;
+    private static final float CAM_SPEED = 5f;
+    private Player player;
+    private PoolEngine poolEngine;
+
+    @Override
+    public void show() {
+        renderer = new OrthogonalTiledMapRenderer(Assets.instance.labMap);
+        viewport = new ExtendViewport(80 * TILE_SIZE, 80 * TILE_SIZE);
+        batch = (SpriteBatch) renderer.getBatch();
+        poolEngine = new PoolEngine();
+        player = new Player(poolEngine);
+        SpiderEnemy.create(poolEngine);
+        Gdx.input.setInputProcessor(player);
+        ((OrthographicCamera) viewport.getCamera()).zoom = 1 / 5f;
+        shaper = new ShapeDrawer(batch, Assets.instance.playerAtlas.findRegion("whitePixel"));
+        viewport.getCamera().position.set(new Vector3(player.getPos(), 0));
+    }
+
+    @Override
+    public void render(float delta) {
+        ScreenUtils.clear(.15f, .15f, .15f, 1f);
+        viewport.apply();
+        viewport.getCamera().position.lerp(new Vector3(player.getPos(), 0), CAM_SPEED * delta);
+
+        renderer.setView((OrthographicCamera) viewport.getCamera());
+        renderer.render();
 
 
-		shaper.begin(ShapeType.Filled);
-		batch.begin();
-		poolEngine.renderSpells(batch, delta);
-		player.render(batch,delta);
-		poolEngine.renderEnemies(batch,shaper, delta, player);
-		batch.end();
-		shaper.end();
+        batch.begin();
+        poolEngine.renderSpells(batch, delta);
+        player.render(batch, delta);
+        poolEngine.renderEnemies(batch, shaper, delta, player);
 
-		shaper.begin(ShapeType.Line);
-		shaper.rect(player.getBounds().x, player.getBounds().y, player.getBounds().width, player.getBounds().height);
-		for(Spell s: poolEngine.spells) {
-			shaper.rect(s.getBounds().x, s.getBounds().y, s.getBounds().width, s.getBounds().height);
+        shaper.rectangle(player.getBounds());
+        for (Spell s : poolEngine.spells) {
+            shaper.rectangle(s.getBounds());
+        }
+        for (Enemy e : poolEngine.enemies) {
+            shaper.rectangle(e.getBounds());
 
-		}
-		for(Enemy e: poolEngine.enemies) {
-			shaper.rect(e.getBounds().x, e.getBounds().y, e.getBounds().width, e.getBounds().height);
+        }
+        batch.end();
+        if (Gdx.input.isKeyJustPressed(Keys.UP)) {
+            ((OrthographicCamera) viewport.getCamera()).zoom -= 0.15;
+        } else if (Gdx.input.isKeyJustPressed(Keys.DOWN)) {
+            ((OrthographicCamera) viewport.getCamera()).zoom += 0.15;
+        }
+        if (Gdx.input.isKeyJustPressed(Keys.RIGHT)) {
+            player.maxVel += TILE_SIZE;
+        } else if (Gdx.input.isKeyJustPressed(Keys.LEFT)) {
+            player.maxVel -= TILE_SIZE;
+        }
 
-		}
-		shaper.end();
-		
-		if(Gdx.input.isKeyJustPressed(Keys.UP)) {
-			((OrthographicCamera)viewport.getCamera()).zoom-=0.15;
-		}else if(Gdx.input.isKeyJustPressed(Keys.DOWN)) {
-			((OrthographicCamera)viewport.getCamera()).zoom+=0.15;
-		}
-		if(Gdx.input.isKeyJustPressed(Keys.RIGHT)) {
-			player.maxVel+= TILE_SIZE;
-		}else if(Gdx.input.isKeyJustPressed(Keys.LEFT)) {
-			player.maxVel-= TILE_SIZE;
-		}
-		
 //		Gdx.app.log(TAG, ""+Gdx.graphics.getFramesPerSecond());
 
-	}
+    }
 
-	@Override
-	public void resize(int width, int height) {
-		viewport.update(width, height);
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height);
+    }
 
-	}
 
-
-	@Override
-	public void dispose() {
-		poolEngine.clear();
-		batch.dispose();
-		shaper.dispose();
-		renderer.dispose();
-	}
+    @Override
+    public void dispose() {
+        poolEngine.clear();
+        batch.dispose();
+        renderer.dispose();
+    }
 }
