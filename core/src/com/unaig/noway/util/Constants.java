@@ -63,6 +63,9 @@ public class Constants {
     public static final String ICE2_SPELL_RIGHT_UP = "ice2RightUp";
     public static final String ICE2_SPELL_RIGHT_DOWN = "ice2RightDown";
 
+    //GameUI
+    public static final String GAME_UI_JSON = "skins/gameUI.json";
+
     private Constants() {
     }
 }

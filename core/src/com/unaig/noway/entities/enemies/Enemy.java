@@ -1,6 +1,5 @@
 package com.unaig.noway.entities.enemies;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -36,13 +35,10 @@ public abstract class Enemy extends Entity implements Poolable {
     private float attackCooldown;
     private float patrolCooldown;
     private Vector2 lastPatrolVel;
-    protected float hp;
     protected HPBar hpbar;
-    protected int maxHp;
     protected boolean drawHp;
     private float timeFromDamage;
     private float timeToDie;
-    protected boolean isDead;
 
 
     protected void init() {
@@ -102,7 +98,6 @@ public abstract class Enemy extends Entity implements Poolable {
         playerPos.set(player.getPos());
         vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
         vel.y = MathUtils.clamp(vel.y, -maxVel, maxVel);
-        Gdx.app.log(TAG, "visal" + hpbar.getVisualHp());
         checkHitFromSpell(spells, delta);
         if (hpbar.getVisualHp() <= 0 && !isDead) {
             isDead = true;
@@ -115,7 +110,7 @@ public abstract class Enemy extends Entity implements Poolable {
             if ((isPlayerInRange() || hp < maxHp)) {
                 drawHp = true;
                 if (bounds.overlaps(playerBounds)) {
-                    attackPlayer();
+                    attackPlayer(player);
                 } else {
                     chaseMode(delta);
                 }
@@ -173,16 +168,12 @@ public abstract class Enemy extends Entity implements Poolable {
 
     }
 
-    private void attackPlayer() {
+    private void attackPlayer(Player player) {
         attacking = true;
         if (attackCooldown <= 0f) {
-            damagePlayer();
+            attackCooldown = 2f;
+            player.setHp(Math.max(0, player.getHp() - attackDamage));
         }
-    }
-
-    private void damagePlayer() {
-        attackCooldown = 2f;
-        Gdx.app.log(TAG, "damaging player");
     }
 
     private boolean isPlayerInRange() {

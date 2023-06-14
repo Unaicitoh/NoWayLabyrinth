@@ -67,6 +67,8 @@ project(":html") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
         api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
         implementation "space.earlygrey:shapedrawer:$shapedrawerVersion:sources"
+        implementation 'com.github.raeleus.stripe:stripe:1.4.5:sources'
+        implementation "com.github.tommyettinger:regexodus:0.1.15:sources"
     }
 }
 
@@ -77,5 +79,6 @@ project(":core") {
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
+        implementation 'com.github.raeleus.stripe:stripe:1.4.5'
     }
 }

@@ -35,6 +35,7 @@ public class SpiderEnemy extends Enemy {
 
     protected void init() {
         maxHp = 100;
+        attackDamage = 15;
         super.init();
         loadSpiderAnimations(animations);
     }

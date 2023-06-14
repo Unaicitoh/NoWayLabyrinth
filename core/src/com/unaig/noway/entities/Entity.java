@@ -9,6 +9,9 @@ import com.unaig.noway.util.Direction;
 
 public class Entity {
 
+    protected float hp;
+    protected int maxHp;
+    protected boolean isDead;
     protected Vector2 pos;
     protected Vector2 vel;
     protected Vector2 size;
@@ -49,5 +52,17 @@ public class Entity {
 
     public void setSize(Vector2 size) {
         this.size = size;
+    }
+
+    public float getHp() {
+        return hp;
+    }
+
+    public int getMaxHp() {
+        return maxHp;
+    }
+
+    public void setHp(float hp) {
+        this.hp = hp;
     }
 }

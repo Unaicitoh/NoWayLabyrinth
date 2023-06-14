@@ -1,6 +1,5 @@
 package com.unaig.noway.util;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -59,9 +58,6 @@ public class HPBar {
 
     private void update(float delta, Vector2 pos, float hp) {
         hp = MathUtils.clamp(hp, 0, maxHp);
-//        Gdx.app.log(TAG,""+hp);
-//        Gdx.app.log(TAG,""+visualHp);
-//        Gdx.app.log(TAG,"rendering");
         if (visualHp > hp) {
             visualHp = Math.max(hp, visualHp - delta * 35);
 

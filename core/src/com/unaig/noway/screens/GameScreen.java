@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -18,6 +20,7 @@ import com.unaig.noway.entities.enemies.SpiderEnemy;
 import com.unaig.noway.entities.spells.Spell;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
+import static com.unaig.noway.util.Constants.GAME_UI_JSON;
 import static com.unaig.noway.util.Constants.TILE_SIZE;
 
 public class GameScreen extends ScreenAdapter {
@@ -25,11 +28,15 @@ public class GameScreen extends ScreenAdapter {
 
     private OrthogonalTiledMapRenderer renderer;
 
+    private Stage stage;
     private SpriteBatch batch;
     private Viewport viewport;
     private ShapeDrawer shaper;
     private static final float CAM_SPEED = 5f;
     private Player player;
+    private ProgressBar playerHPUI;
+    private ProgressBar playerMPUI;
+
     private PoolEngine poolEngine;
 
     @Override
@@ -37,6 +44,7 @@ public class GameScreen extends ScreenAdapter {
         renderer = new OrthogonalTiledMapRenderer(Assets.instance.labMap);
         viewport = new ExtendViewport(80 * TILE_SIZE, 80 * TILE_SIZE);
         batch = (SpriteBatch) renderer.getBatch();
+        stage = new Stage(new ExtendViewport(960, 640), batch);
         poolEngine = new PoolEngine();
         player = new Player(poolEngine);
         SpiderEnemy.create(poolEngine);
@@ -44,6 +52,14 @@ public class GameScreen extends ScreenAdapter {
         ((OrthographicCamera) viewport.getCamera()).zoom = 1 / 5f;
         shaper = new ShapeDrawer(batch, Assets.instance.playerAtlas.findRegion("whitePixel"));
         viewport.getCamera().position.set(new Vector3(player.getPos(), 0));
+
+        //Draw UI
+        Assets.instance.sceneBuilder.build(stage, Assets.instance.mainSkin, Gdx.files.internal(GAME_UI_JSON));
+        playerHPUI = stage.getRoot().findActor("PlayerHP");
+        playerHPUI.setRange(0, player.getMaxHp());
+        playerHPUI.setValue(player.getHp());
+        playerMPUI = stage.getRoot().findActor("PlayerMP");
+        playerMPUI.setValue(player.getMp());
     }
 
     @Override
@@ -52,14 +68,17 @@ public class GameScreen extends ScreenAdapter {
         viewport.apply();
         viewport.getCamera().position.lerp(new Vector3(player.getPos(), 0), CAM_SPEED * delta);
 
+
         renderer.setView((OrthographicCamera) viewport.getCamera());
         renderer.render();
-
 
         batch.begin();
         poolEngine.renderSpells(batch, delta);
         player.render(batch, delta);
         poolEngine.renderEnemies(batch, shaper, delta, player, poolEngine.spells);
+        Gdx.app.log(TAG, "player hp screen:" + player.getHp());
+        playerHPUI.setValue(player.getHp());
+        playerMPUI.setValue(player.getMp());
         shaper.rectangle(player.getBounds());
         for (Spell s : poolEngine.spells) {
             shaper.rectangle(s.getBounds());
@@ -69,6 +88,9 @@ public class GameScreen extends ScreenAdapter {
 
         }
         batch.end();
+        stage.act();
+        stage.draw();
+
         if (Gdx.input.isKeyJustPressed(Keys.UP)) {
             ((OrthographicCamera) viewport.getCamera()).zoom -= 0.15;
         } else if (Gdx.input.isKeyJustPressed(Keys.DOWN)) {
@@ -95,5 +117,6 @@ public class GameScreen extends ScreenAdapter {
         poolEngine.clear();
         batch.dispose();
         renderer.dispose();
+        stage.dispose();
     }
 }
