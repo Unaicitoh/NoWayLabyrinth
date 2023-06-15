@@ -54,7 +54,7 @@ public class SpiderEnemy extends Enemy {
     }
 
     private void checkSpiderStatus(float delta) {
-        if (isDamagedFromFire && burnDuration >= 0) {
+        if (isBurned && burnDuration >= 0) {
             burnDuration -= delta;
             hp -= delta * 5;
 
@@ -63,37 +63,30 @@ public class SpiderEnemy extends Enemy {
                 isSlowed = false;
             }
             if (burnDuration < 0) {
-                isDamagedFromFire = false;
+                isBurned = false;
                 burnDuration = BURN_ENEMY_TIME;
             }
 
-        } else if (isDamagedFromIce) {
-            if (isFrozen) {
-                slowedFrozenDuration -= delta;
-                maxVel = 0;
-                if (slowedFrozenDuration < 0) {
-                    slowedFrozenDuration = SLOWED_FROZEN_ENEMY_TIME;
-                    isFrozen = false;
-                    isDamagedFromIce = false;
-                    maxVel = TILE_SIZE * 2.5f;
-                }
-            } else if (isSlowed && slowedFrozenDuration >= 0) {
-                slowedFrozenDuration -= delta;
-                if (slowedFrozenDuration < 0) {
-                    slowedFrozenDuration = SLOWED_FROZEN_ENEMY_TIME;
-                    isSlowed = false;
-                    isDamagedFromIce = false;
-                    maxVel = TILE_SIZE * 2.5f;
-                }
-            } else {
-                maxVel /= 1.5f;
-                isSlowed = true;
+        } else if (isFrozen && frozenDuration >= 0) {
+            frozenDuration -= delta;
+            maxVel = 0;
+            if (frozenDuration < 0) {
+                frozenDuration = FROZEN_ENEMY_TIME;
+                isFrozen = false;
+                maxVel = TILE_SIZE * 2.5f;
+            }
+        } else if (isSlowed && slowedDuration >= 0) {
+            slowedDuration -= delta;
+            if (slowedDuration < 0) {
+                slowedDuration = SLOWED_ENEMY_TIME;
+                isSlowed = false;
+                maxVel = TILE_SIZE * 2.5f;
             }
         }
     }
 
     private void renderSpiderAnimations(SpriteBatch batch) {
-        if (!attacking && !isDead) {
+        if ((!attacking && !isDead) || (isFrozen && !isDead)) {
             if (vel.x < 0) {
                 if (isSlowed) {
                     animations.get(SPIDER_ANIM_LEFT).setFrameDuration(FRAME_DURATION * 2);

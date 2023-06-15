@@ -16,6 +16,7 @@ import com.unaig.noway.util.GameHelper;
 import com.unaig.noway.util.HPBar;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
+import static com.unaig.noway.util.AttackType.BASIC;
 import static com.unaig.noway.util.AttackType.STRONG;
 import static com.unaig.noway.util.Constants.*;
 import static com.unaig.noway.util.Direction.*;
@@ -42,12 +43,12 @@ public abstract class Enemy extends Entity implements Poolable {
     protected boolean drawHp;
     private float timeFromDamage;
     private float timeToDie;
-    protected boolean isDamagedFromFire;
-    protected boolean isDamagedFromIce;
+    protected boolean isBurned;
     protected boolean isSlowed;
-    protected float burnDuration;
-    protected float slowedFrozenDuration;
     protected boolean isFrozen;
+    protected float burnDuration;
+    protected float slowedDuration;
+    protected float frozenDuration;
 
 
     protected void init() {
@@ -89,12 +90,12 @@ public abstract class Enemy extends Entity implements Poolable {
         isDead = false;
         timeToDie = 5f;
         hpbar = new HPBar(maxHp, size);
-        isDamagedFromFire = false;
-        isDamagedFromIce = false;
+        isBurned = false;
         isSlowed = false;
-        burnDuration = BURN_ENEMY_TIME;
-        slowedFrozenDuration = SLOWED_FROZEN_ENEMY_TIME;
         isFrozen = false;
+        burnDuration = BURN_ENEMY_TIME;
+        slowedDuration = SLOWED_ENEMY_TIME;
+        frozenDuration = FROZEN_ENEMY_TIME;
     }
 
     public abstract void render(SpriteBatch batch, ShapeDrawer shaper, float delta, Player player, Array<Spell> spells);
@@ -147,20 +148,44 @@ public abstract class Enemy extends Entity implements Poolable {
     private void checkHitFromSpell(Array<Spell> spells) {
         for (Spell s : spells) {
             if (bounds.overlaps(s.getBounds()) && !isDead) {
+                boolean extraDamage = false;
                 s.isAlive = false;
                 if (s instanceof FireSpell) {
-                    isDamagedFromFire = true;
-                    isDamagedFromIce = false;
+                    if (s.getAttackType() == BASIC) {
+                        if (!isFrozen) {
+                            isBurned = true;
+                            isSlowed = false;
+                        }
+                        burnDuration = BURN_ENEMY_TIME;
+                    } else if (s.getAttackType() == STRONG) {
+                        if (isFrozen) {
+                            isFrozen = false;
+                            extraDamage = true;
+                        } else {
+                            isBurned = true;
+                            burnDuration = BURN_ENEMY_TIME * 1.5f;
+                        }
+                    }
                 } else if (s instanceof IceSpell) {
-                    isDamagedFromIce = true;
-                    isDamagedFromFire = false;
-                    if (s.getAttackType() == STRONG) {
+                    isBurned = false;
+                    if (s.getAttackType() == BASIC) {
+                        if (isSlowed) {
+                            slowedDuration = SLOWED_ENEMY_TIME;
+                        } else {
+                            maxVel /= 1.5f;
+                            isSlowed = true;
+                        }
+                    } else if (s.getAttackType() == STRONG) {
                         isFrozen = true;
                     }
                 }
                 setIsDamaged(true);
                 timeFromDamage = 0;
-                hp -= s.getDamage();
+                if (extraDamage) {
+                    hp -= s.getDamage() * 1.5;
+                } else {
+                    hp -= s.getDamage();
+                }
                 if (hp < 0f) {
                     hp = 0f;
                 }
@@ -292,13 +317,13 @@ public abstract class Enemy extends Entity implements Poolable {
         timeToDie = 0f;
         maxHp = 0;
         isDamaged = false;
-        isDamagedFromFire = false;
-        isDamagedFromIce = false;
+        isBurned = false;
         isSlowed = false;
+        isFrozen = false;
         timeDamageTaken = 0f;
         burnDuration = 0f;
-        slowedFrozenDuration = 0f;
-        isFrozen = false;
+        slowedDuration = 0f;
+        frozenDuration = 0f;
     }
 
     public abstract void release();
