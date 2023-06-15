@@ -76,6 +76,8 @@ public abstract class Enemy extends Entity implements Poolable {
         drawHp = false;
         hp = maxHp;
         timeFromDamage = 0f;
+        timeDamageTaken = .2f;
+        isDamaged=false;
         isDead = false;
         timeToDie = 5f;
         hpbar = new HPBar(maxHp, size);
@@ -126,6 +128,7 @@ public abstract class Enemy extends Entity implements Poolable {
         for (Spell s : spells) {
             if (bounds.overlaps(s.getBounds()) && !isDead) {
                 s.isAlive = false;
+                setIsDamaged(true);
                 timeFromDamage = 0;
                 hp -= s.getDamage();
                 if (hp <= 0f) {
@@ -173,6 +176,7 @@ public abstract class Enemy extends Entity implements Poolable {
         if (attackCooldown <= 0f) {
             attackCooldown = 2f;
             player.setHp(Math.max(0, player.getHp() - attackDamage));
+            player.setIsDamaged(true);
         }
     }
 

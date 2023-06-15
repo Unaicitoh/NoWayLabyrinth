@@ -66,6 +66,8 @@ public class Constants {
     //GameUI
     public static final String GAME_UI_JSON = "skins/gameUI.json";
 
+    public static final float DAMAGE_ANIMATION_TIME=.2f;
+
     private Constants() {
     }
 }

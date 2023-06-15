@@ -11,8 +11,10 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.unaig.noway.data.Assets;
+import com.unaig.noway.entities.Entity;
 
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP;
+import static com.unaig.noway.util.Constants.DAMAGE_ANIMATION_TIME;
 
 public class GameHelper {
 
@@ -42,6 +44,17 @@ public class GameHelper {
 
     public static void drawEntity(SpriteBatch batch, AtlasRegion atlasRegion, Vector2 pos, Vector2 size) {
         batch.draw(atlasRegion, pos.x, pos.y, size.x, size.y);
+    }
+
+    public static void damagedEntityAnimation(Entity e, SpriteBatch batch, float delta) {
+        if (e.getIsDamaged() && e.timeDamageTaken>=0) {
+            e.timeDamageTaken-= delta;
+            batch.setColor(1,0,0,e.timeDamageTaken*5);
+        } else {
+            e.setIsDamaged(false);
+            e.timeDamageTaken= DAMAGE_ANIMATION_TIME;
+            batch.setColor(1,1,1,1);
+        }
     }
 
     private GameHelper() {

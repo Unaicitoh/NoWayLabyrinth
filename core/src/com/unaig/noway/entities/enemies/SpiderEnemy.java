@@ -46,6 +46,7 @@ public class SpiderEnemy extends Enemy {
         if (drawHp && !isDead) {
             hpbar.render(shaper, delta, pos, hp);
         }
+        GameHelper.damagedEntityAnimation(this,batch,delta);
         renderSpiderAnimations(batch);
 
     }

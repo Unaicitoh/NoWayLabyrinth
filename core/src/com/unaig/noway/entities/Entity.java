@@ -21,7 +21,8 @@ public class Entity {
     public float maxVel;
     protected float stateTime;
     public int attackDamage;
-
+    protected boolean isDamaged;
+    public float timeDamageTaken;
     public Vector2 getPos() {
         return pos;
     }
@@ -64,5 +65,13 @@ public class Entity {
 
     public void setHp(float hp) {
         this.hp = hp;
+    }
+
+    public boolean getIsDamaged() {
+        return isDamaged;
+    }
+
+    public void setIsDamaged(boolean isDamaged) {
+        this.isDamaged = isDamaged;
     }
 }

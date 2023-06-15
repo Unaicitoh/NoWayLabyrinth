@@ -75,6 +75,8 @@ public class Player extends Entity implements InputProcessor {
         }
         maxHp = 100;
         hp = maxHp;
+        isDamaged = false;
+        timeDamageTaken=DAMAGE_ANIMATION_TIME;
         maxMp = 100;
         mp = maxMp;
         vel = new Vector2(0, 0);
@@ -100,6 +102,7 @@ public class Player extends Entity implements InputProcessor {
 
     public void render(SpriteBatch batch, float delta) {
         update(delta);
+        GameHelper.damagedEntityAnimation(this,batch, delta);
         renderPlayerAnimations(batch);
 
     }
