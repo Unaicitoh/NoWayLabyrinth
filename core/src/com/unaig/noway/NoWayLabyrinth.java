@@ -10,7 +10,7 @@ public class NoWayLabyrinth extends Game {
     @Override
     public void create() {
         Assets.instance.load();
-        setScreen(new GameScreen());
+        setScreen(new GameScreen(this));
 
     }
 

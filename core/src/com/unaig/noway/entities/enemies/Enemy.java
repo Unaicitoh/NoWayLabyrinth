@@ -98,7 +98,7 @@ public abstract class Enemy extends Entity implements Poolable {
         playerPos.set(player.getPos());
         vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
         vel.y = MathUtils.clamp(vel.y, -maxVel, maxVel);
-        checkHitFromSpell(spells, delta);
+        checkHitFromSpell(spells);
         if (hpbar.getVisualHp() <= 0 && !isDead) {
             isDead = true;
             stateTime = 0f;
@@ -122,9 +122,9 @@ public abstract class Enemy extends Entity implements Poolable {
 
     }
 
-    private void checkHitFromSpell(Array<Spell> spells, float delta) {
+    private void checkHitFromSpell(Array<Spell> spells) {
         for (Spell s : spells) {
-            if (bounds.overlaps(s.getBounds())) {
+            if (bounds.overlaps(s.getBounds()) && !isDead) {
                 s.isAlive = false;
                 timeFromDamage = 0;
                 hp -= s.getDamage();

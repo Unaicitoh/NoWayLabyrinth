@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.unaig.noway.NoWayLabyrinth;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.entities.Player;
@@ -26,8 +27,8 @@ import static com.unaig.noway.util.Constants.TILE_SIZE;
 public class GameScreen extends ScreenAdapter {
     public static final String TAG = GameScreen.class.getName();
 
+    private NoWayLabyrinth game;
     private OrthogonalTiledMapRenderer renderer;
-
     private Stage stage;
     private SpriteBatch batch;
     private Viewport viewport;
@@ -38,6 +39,10 @@ public class GameScreen extends ScreenAdapter {
     private ProgressBar playerMPUI;
 
     private PoolEngine poolEngine;
+
+    public GameScreen(NoWayLabyrinth game) {
+        this.game = game;
+    }
 
     @Override
     public void show() {
@@ -56,7 +61,6 @@ public class GameScreen extends ScreenAdapter {
         //Draw UI
         Assets.instance.sceneBuilder.build(stage, Assets.instance.mainSkin, Gdx.files.internal(GAME_UI_JSON));
         playerHPUI = stage.getRoot().findActor("PlayerHP");
-        playerHPUI.setRange(0, player.getMaxHp());
         playerHPUI.setValue(player.getHp());
         playerMPUI = stage.getRoot().findActor("PlayerMP");
         playerMPUI.setValue(player.getMp());
@@ -67,8 +71,7 @@ public class GameScreen extends ScreenAdapter {
         ScreenUtils.clear(.15f, .15f, .15f, 1f);
         viewport.apply();
         viewport.getCamera().position.lerp(new Vector3(player.getPos(), 0), CAM_SPEED * delta);
-
-
+        stage.act();
         renderer.setView((OrthographicCamera) viewport.getCamera());
         renderer.render();
 
@@ -76,9 +79,9 @@ public class GameScreen extends ScreenAdapter {
         poolEngine.renderSpells(batch, delta);
         player.render(batch, delta);
         poolEngine.renderEnemies(batch, shaper, delta, player, poolEngine.spells);
-        Gdx.app.log(TAG, "player hp screen:" + player.getHp());
         playerHPUI.setValue(player.getHp());
         playerMPUI.setValue(player.getMp());
+
         shaper.rectangle(player.getBounds());
         for (Spell s : poolEngine.spells) {
             shaper.rectangle(s.getBounds());
@@ -88,7 +91,7 @@ public class GameScreen extends ScreenAdapter {
 
         }
         batch.end();
-        stage.act();
+
         stage.draw();
 
         if (Gdx.input.isKeyJustPressed(Keys.UP)) {
@@ -100,6 +103,9 @@ public class GameScreen extends ScreenAdapter {
             player.maxVel += TILE_SIZE;
         } else if (Gdx.input.isKeyJustPressed(Keys.LEFT)) {
             player.maxVel -= TILE_SIZE;
+        }
+        if (Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT)) {
+            game.setScreen(new GameScreen(game));
         }
 
 //		Gdx.app.log(TAG, ""+Gdx.graphics.getFramesPerSecond());

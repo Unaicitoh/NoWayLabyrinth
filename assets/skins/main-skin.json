@@ -33,6 +33,13 @@ com.badlogic.gdx.graphics.Color: {
 		a: 1
 	}
 }
+com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable: {
+	life-progress-bar: {
+		region: life-progress-bar
+		minWidth: 0
+		minHeight: 34
+	}
+}
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 	dark-blue: {
 		name: white
@@ -127,9 +134,6 @@ com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 	default-horizontal: {
 		background: life-progress-bar-back
 		knobBefore: life-progress-bar
-	}
-	default-vertical: {
-		background: life-progress-bar-back
 	}
 	mana-horizontal: {
 		background: mana-progress-bar-back

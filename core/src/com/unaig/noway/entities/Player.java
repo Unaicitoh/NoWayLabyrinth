@@ -33,6 +33,8 @@ import static com.unaig.noway.util.ElementType.ICE;
 public class Player extends Entity implements InputProcessor {
 
     public static final String TAG = Player.class.getName();
+    public static final int STRONG_MANA_COST = 25;
+    public static final int BASIC_ATTACK_COST = 5;
 
     public PoolEngine poolEngine;
     private ElementType elementType;
@@ -98,8 +100,6 @@ public class Player extends Entity implements InputProcessor {
 
     public void render(SpriteBatch batch, float delta) {
         update(delta);
-        Gdx.app.log(TAG, "player hp: " + hp);
-        Gdx.app.log(TAG, "player mp: " + mp);
         renderPlayerAnimations(batch);
 
     }
@@ -134,7 +134,7 @@ public class Player extends Entity implements InputProcessor {
 
     private void update(float delta) {
         stateTime += delta;
-        mp = Math.min(maxMp, mp + delta);
+        mp = Math.min(maxMp, mp + delta * 5);
         updateCooldowns(delta);
         vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
         vel.y = MathUtils.clamp(vel.y, -maxVel, maxVel);
@@ -257,26 +257,26 @@ public class Player extends Entity implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         switch (button) {
             case Buttons.LEFT:
-                if (elementType == FIRE && fireCooldown <= 0f && mp - 5 >= 0) {
-                    mp -= 5;
+                if (elementType == FIRE && fireCooldown <= 0f && mp - BASIC_ATTACK_COST >= 0) {
+                    mp -= BASIC_ATTACK_COST;
                     stateTime = 0;
                     fireCooldown = BASIC_ATTACK_COOLDOWN;
                     FireSpell.create(poolEngine, this, BASIC);
-                } else if (elementType == ICE && iceCooldown <= 0f && mp - 5 >= 0) {
-                    mp -= 5;
+                } else if (elementType == ICE && iceCooldown <= 0f && mp - BASIC_ATTACK_COST >= 0) {
+                    mp -= BASIC_ATTACK_COST;
                     stateTime = 0;
                     iceCooldown = BASIC_ATTACK_COOLDOWN;
                     IceSpell.create(poolEngine, this, BASIC);
                 }
                 break;
             case Buttons.RIGHT:
-                if (elementType == FIRE && fire2Cooldown <= 0f && mp - 30 >= 0) {
-                    mp -= 30;
+                if (elementType == FIRE && fire2Cooldown <= 0f && mp - STRONG_MANA_COST >= 0) {
+                    mp -= STRONG_MANA_COST;
                     stateTime = 0;
                     fire2Cooldown = STRONG_ATTACK_COOLDOWN;
                     FireSpell.create(poolEngine, this, STRONG);
-                } else if (elementType == ICE && ice2Cooldown <= 0f && mp - 30 >= 0) {
-                    mp -= 30;
+                } else if (elementType == ICE && ice2Cooldown <= 0f && mp - STRONG_MANA_COST >= 0) {
+                    mp -= STRONG_MANA_COST;
                     mp = MathUtils.clamp(mp, 0, maxMp);
                     stateTime = 0;
                     ice2Cooldown = STRONG_ATTACK_COOLDOWN;
