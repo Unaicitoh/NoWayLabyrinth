@@ -105,4 +105,12 @@ public abstract class Spell extends Entity implements Poolable {
     public int getDamage() {
         return attackDamage;
     }
+
+    public AttackType getAttackType() {
+        return attackType;
+    }
+
+    public void setAttackType(AttackType attackType) {
+        this.attackType = attackType;
+    }
 }

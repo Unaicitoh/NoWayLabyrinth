@@ -35,6 +35,7 @@ public class SpiderEnemy extends Enemy {
 
     protected void init() {
         maxHp = 100;
+        maxVel = TILE_SIZE * 2.5f;
         attackDamage = 15;
         super.init();
         loadSpiderAnimations(animations);
@@ -43,28 +44,88 @@ public class SpiderEnemy extends Enemy {
     @Override
     public void render(SpriteBatch batch, ShapeDrawer shaper, float delta, Player player, Array<Spell> spells) {
         update(delta, player, spells);
+        checkSpiderStatus(delta);
         if (drawHp && !isDead) {
             hpbar.render(shaper, delta, pos, hp);
         }
-        GameHelper.damagedEntityAnimation(this,batch,delta);
+        GameHelper.damagedEntityAnimation(this, batch, delta);
         renderSpiderAnimations(batch);
 
+    }
+
+    private void checkSpiderStatus(float delta) {
+        if (isDamagedFromFire && burnDuration >= 0) {
+            burnDuration -= delta;
+            hp -= delta * 5;
+
+            if (isSlowed) {
+                maxVel = TILE_SIZE * 2.5f;
+                isSlowed = false;
+            }
+            if (burnDuration < 0) {
+                isDamagedFromFire = false;
+                burnDuration = BURN_ENEMY_TIME;
+            }
+
+        } else if (isDamagedFromIce) {
+            if (isFrozen) {
+                slowedFrozenDuration -= delta;
+                maxVel = 0;
+                if (slowedFrozenDuration < 0) {
+                    slowedFrozenDuration = SLOWED_FROZEN_ENEMY_TIME;
+                    isFrozen = false;
+                    isDamagedFromIce = false;
+                    maxVel = TILE_SIZE * 2.5f;
+                }
+            } else if (isSlowed && slowedFrozenDuration >= 0) {
+                slowedFrozenDuration -= delta;
+                if (slowedFrozenDuration < 0) {
+                    slowedFrozenDuration = SLOWED_FROZEN_ENEMY_TIME;
+                    isSlowed = false;
+                    isDamagedFromIce = false;
+                    maxVel = TILE_SIZE * 2.5f;
+                }
+            } else {
+                maxVel /= 1.5f;
+                isSlowed = true;
+            }
+        }
     }
 
     private void renderSpiderAnimations(SpriteBatch batch) {
         if (!attacking && !isDead) {
             if (vel.x < 0) {
+                if (isSlowed) {
+                    animations.get(SPIDER_ANIM_LEFT).setFrameDuration(FRAME_DURATION * 2);
+                } else {
+                    animations.get(SPIDER_ANIM_LEFT).setFrameDuration(FRAME_DURATION);
+                }
                 GameHelper.drawEntity(batch, animations.get(SPIDER_ANIM_LEFT).getKeyFrame(stateTime), pos, size);
                 lastDir = Direction.LEFT;
             } else if (vel.x > 0) {
+                if (isSlowed) {
+                    animations.get(SPIDER_ANIM_RIGHT).setFrameDuration(FRAME_DURATION * 2);
+                } else {
+                    animations.get(SPIDER_ANIM_RIGHT).setFrameDuration(FRAME_DURATION);
+                }
                 GameHelper.drawEntity(batch, animations.get(SPIDER_ANIM_RIGHT).getKeyFrame(stateTime), pos, size);
                 lastDir = Direction.RIGHT;
 
             } else if (vel.y > 0) {
+                if (isSlowed) {
+                    animations.get(SPIDER_ANIM_UP).setFrameDuration(FRAME_DURATION * 2);
+                } else {
+                    animations.get(SPIDER_ANIM_UP).setFrameDuration(FRAME_DURATION);
+                }
                 GameHelper.drawEntity(batch, animations.get(SPIDER_ANIM_UP).getKeyFrame(stateTime), pos, size);
                 lastDir = Direction.UP;
 
             } else if (vel.y < 0) {
+                if (isSlowed) {
+                    animations.get(SPIDER_ANIM_DOWN).setFrameDuration(FRAME_DURATION * 2);
+                } else {
+                    animations.get(SPIDER_ANIM_DOWN).setFrameDuration(FRAME_DURATION);
+                }
                 GameHelper.drawEntity(batch, animations.get(SPIDER_ANIM_DOWN).getKeyFrame(stateTime), pos, size);
                 lastDir = Direction.DOWN;
 

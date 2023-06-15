@@ -9,12 +9,15 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.unaig.noway.entities.Entity;
 import com.unaig.noway.entities.Player;
+import com.unaig.noway.entities.spells.FireSpell;
+import com.unaig.noway.entities.spells.IceSpell;
 import com.unaig.noway.entities.spells.Spell;
 import com.unaig.noway.util.GameHelper;
 import com.unaig.noway.util.HPBar;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-import static com.unaig.noway.util.Constants.TILE_SIZE;
+import static com.unaig.noway.util.AttackType.STRONG;
+import static com.unaig.noway.util.Constants.*;
 import static com.unaig.noway.util.Direction.*;
 
 public abstract class Enemy extends Entity implements Poolable {
@@ -39,13 +42,18 @@ public abstract class Enemy extends Entity implements Poolable {
     protected boolean drawHp;
     private float timeFromDamage;
     private float timeToDie;
+    protected boolean isDamagedFromFire;
+    protected boolean isDamagedFromIce;
+    protected boolean isSlowed;
+    protected float burnDuration;
+    protected float slowedFrozenDuration;
+    protected boolean isFrozen;
 
 
     protected void init() {
         pos = new Vector2(TILE_SIZE * 2, TILE_SIZE * 2);
         vel = new Vector2(0, 0);
         size = new Vector2(TILE_SIZE, TILE_SIZE);
-        maxVel = TILE_SIZE * 2.5f;
         bounds = new Rectangle(pos.x + OFFSET_X, pos.y + OFFSET_Y, size.x - OFFSET_X * 2, size.y - OFFSET_Y * 2);
         int rndDir = MathUtils.random(3);
         switch (rndDir) {
@@ -77,10 +85,16 @@ public abstract class Enemy extends Entity implements Poolable {
         hp = maxHp;
         timeFromDamage = 0f;
         timeDamageTaken = .2f;
-        isDamaged=false;
+        isDamaged = false;
         isDead = false;
         timeToDie = 5f;
         hpbar = new HPBar(maxHp, size);
+        isDamagedFromFire = false;
+        isDamagedFromIce = false;
+        isSlowed = false;
+        burnDuration = BURN_ENEMY_TIME;
+        slowedFrozenDuration = SLOWED_FROZEN_ENEMY_TIME;
+        isFrozen = false;
     }
 
     public abstract void render(SpriteBatch batch, ShapeDrawer shaper, float delta, Player player, Array<Spell> spells);
@@ -90,21 +104,13 @@ public abstract class Enemy extends Entity implements Poolable {
         attackCooldown -= delta;
         patrolCooldown -= delta;
         timeFromDamage += delta;
-        if (isDead) {
-            timeToDie -= delta;
-            if (timeToDie <= 0f) {
-                isAlive = false;
-            }
-        }
+
         playerBounds.set(player.getBounds());
         playerPos.set(player.getPos());
         vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
         vel.y = MathUtils.clamp(vel.y, -maxVel, maxVel);
         checkHitFromSpell(spells);
-        if (hpbar.getVisualHp() <= 0 && !isDead) {
-            isDead = true;
-            stateTime = 0f;
-        }
+        checkStatus(delta);
         if (timeFromDamage > 10f) {
             hp = Math.min(maxHp, hp + delta * 10);
         }
@@ -124,14 +130,38 @@ public abstract class Enemy extends Entity implements Poolable {
 
     }
 
+    private void checkStatus(float delta) {
+        if (isDead) {
+            timeToDie -= delta;
+            if (timeToDie <= 0f) {
+                isAlive = false;
+            }
+        }
+
+        if (hpbar.getVisualHp() <= 0 && !isDead) {
+            isDead = true;
+            stateTime = 0f;
+        }
+    }
+
     private void checkHitFromSpell(Array<Spell> spells) {
         for (Spell s : spells) {
             if (bounds.overlaps(s.getBounds()) && !isDead) {
                 s.isAlive = false;
+                if (s instanceof FireSpell) {
+                    isDamagedFromFire = true;
+                    isDamagedFromIce = false;
+                } else if (s instanceof IceSpell) {
+                    isDamagedFromIce = true;
+                    isDamagedFromFire = false;
+                    if (s.getAttackType() == STRONG) {
+                        isFrozen = true;
+                    }
+                }
                 setIsDamaged(true);
                 timeFromDamage = 0;
                 hp -= s.getDamage();
-                if (hp <= 0f) {
+                if (hp < 0f) {
                     hp = 0f;
                 }
             }
@@ -261,6 +291,14 @@ public abstract class Enemy extends Entity implements Poolable {
         isDead = false;
         timeToDie = 0f;
         maxHp = 0;
+        isDamaged = false;
+        isDamagedFromFire = false;
+        isDamagedFromIce = false;
+        isSlowed = false;
+        timeDamageTaken = 0f;
+        burnDuration = 0f;
+        slowedFrozenDuration = 0f;
+        isFrozen = false;
     }
 
     public abstract void release();
