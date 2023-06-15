@@ -49,7 +49,7 @@ public class GameScreen extends ScreenAdapter {
         renderer = new OrthogonalTiledMapRenderer(Assets.instance.labMap);
         viewport = new ExtendViewport(80 * TILE_SIZE, 80 * TILE_SIZE);
         batch = (SpriteBatch) renderer.getBatch();
-        stage = new Stage(new ExtendViewport(960, 640), batch);
+        stage = new Stage(new ExtendViewport(1280,720), batch);
         poolEngine = new PoolEngine();
         player = new Player(poolEngine);
         SpiderEnemy.create(poolEngine);
@@ -120,6 +120,7 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void dispose() {
+        Gdx.input.setInputProcessor(null);
         poolEngine.clear();
         batch.dispose();
         renderer.dispose();

@@ -9,7 +9,7 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
 		config.setResizable(true);
-		config.setWindowedMode(960,640);
+		config.setWindowedMode(1280,720);
 		config.setTitle("No Way Labyrinth");
 		new Lwjgl3Application(new NoWayLabyrinth(), config);
 	}
