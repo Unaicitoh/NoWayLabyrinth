@@ -57,7 +57,6 @@ public class SpiderEnemy extends Enemy {
         if (isBurned && burnDuration >= 0) {
             burnDuration -= delta;
             hp -= delta * 5;
-
             if (isSlowed) {
                 maxVel = TILE_SIZE * 2.5f;
                 isSlowed = false;
@@ -82,6 +81,8 @@ public class SpiderEnemy extends Enemy {
                 isSlowed = false;
                 maxVel = TILE_SIZE * 2.5f;
             }
+        } else {
+            maxVel = TILE_SIZE * 2.5f;
         }
     }
 

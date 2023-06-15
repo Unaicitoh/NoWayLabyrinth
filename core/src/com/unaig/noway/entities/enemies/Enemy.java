@@ -115,7 +115,7 @@ public abstract class Enemy extends Entity implements Poolable {
         if (timeFromDamage > 10f) {
             hp = Math.min(maxHp, hp + delta * 10);
         }
-        if (!isDead) {
+        if (!isDead && !isFrozen) {
             if ((isPlayerInRange() || hp < maxHp)) {
                 drawHp = true;
                 if (bounds.overlaps(playerBounds)) {
@@ -156,10 +156,13 @@ public abstract class Enemy extends Entity implements Poolable {
                             isBurned = true;
                             isSlowed = false;
                         }
-                        burnDuration = BURN_ENEMY_TIME;
+                        if (isBurned) {
+                            burnDuration = BURN_ENEMY_TIME;
+                        }
                     } else if (s.getAttackType() == STRONG) {
                         if (isFrozen) {
                             isFrozen = false;
+                            frozenDuration = 0;
                             extraDamage = true;
                         } else {
                             isBurned = true;
