@@ -20,6 +20,12 @@ com.badlogic.gdx.graphics.Color: {
 		b: 0
 		a: 1
 	}
+	disabledButton: {
+		r: 0.47058824
+		g: 0.47058824
+		b: 0.47058824
+		a: 1
+	}
 	sky-blue: {
 		r: 0.2733333
 		g: 0.68720984
@@ -54,6 +60,22 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 		name: button
 		color: sky-blue
 	}
+	fireIconDisabled: {
+		name: fireIcon
+		color: disabledButton
+	}
+	fire2IconDisabled: {
+		name: fire2Icon
+		color: disabledButton
+	}
+	iceIconDisabled: {
+		name: iceIcon
+		color: disabledButton
+	}
+	ice2IconDisabled: {
+		name: ice2Icon
+		color: disabledButton
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: {
@@ -65,6 +87,32 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 		up: button
 		down: button-selected
 		checked: button-selected
+	}
+	fireIcon: {
+		up: fireIcon
+		disabled: fireIconDisabled
+	}
+	fire2Icon: {
+		up: fire2Icon
+		disabled: fire2IconDisabled
+	}
+	iceIcon: {
+		up: iceIcon
+		disabled: iceIconDisabled
+	}
+	ice2Icon: {
+		up: ice2Icon
+		disabled: ice2IconDisabled
+	}
+	changeElementButton: {
+		up: changeElementIcon
+		down: changeElementIconPressed
+	}
+	fireTypeIcon: {
+		up: fireTypeIcon
+	}
+	iceTypeIcon: {
+		up: iceTypeIcon
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
@@ -117,6 +165,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
 		font: font
+		fontColor: white
 	}
 	title: {
 		font: title
@@ -132,6 +181,10 @@ com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 	default-horizontal: {
+		background: life-progress-bar-back
+		knobBefore: life-progress-bar
+	}
+	default-vertical: {
 		background: life-progress-bar-back
 		knobBefore: life-progress-bar
 	}
