@@ -17,6 +17,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP;
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.NORMAL;
 import static com.unaig.noway.util.Constants.*;
+import static com.unaig.noway.util.Direction.*;
 
 public class SpiderEnemy extends Enemy {
 
@@ -55,98 +56,101 @@ public class SpiderEnemy extends Enemy {
 
     private void checkSpiderStatus(float delta) {
         if (isBurned && burnDuration >= 0) {
-            burnDuration -= delta;
-            hp -= delta * 5;
-            if (isSlowed) {
-                maxVel = TILE_SIZE * 2.5f;
-                isSlowed = false;
-            }
-            if (burnDuration < 0) {
-                isBurned = false;
-                burnDuration = BURN_ENEMY_TIME;
-            }
+            updateBurnStatus(delta);
 
         } else if (isFrozen && frozenDuration >= 0) {
-            frozenDuration -= delta;
-            maxVel = 0;
-            if (frozenDuration < 0) {
-                frozenDuration = FROZEN_ENEMY_TIME;
-                isFrozen = false;
-                maxVel = TILE_SIZE * 2.5f;
-            }
+            updateFrozenStatus(delta);
         } else if (isSlowed && slowedDuration >= 0) {
-            slowedDuration -= delta;
-            if (slowedDuration < 0) {
-                slowedDuration = SLOWED_ENEMY_TIME;
-                isSlowed = false;
-                maxVel = TILE_SIZE * 2.5f;
-            }
+            updateSlowedStatus(delta);
         } else {
             maxVel = TILE_SIZE * 2.5f;
+        }
+    }
+
+    private void updateSlowedStatus(float delta) {
+        slowedDuration -= delta;
+        if (slowedDuration < 0) {
+            slowedDuration = SLOWED_ENEMY_TIME;
+            isSlowed = false;
+            maxVel = TILE_SIZE * 2.5f;
+        }
+    }
+
+    private void updateFrozenStatus(float delta) {
+        frozenDuration -= delta;
+        maxVel = 0;
+        if (frozenDuration < 0) {
+            frozenDuration = FROZEN_ENEMY_TIME;
+            isFrozen = false;
+            maxVel = TILE_SIZE * 2.5f;
+        }
+    }
+
+    private void updateBurnStatus(float delta) {
+        burnDuration -= delta;
+        hp -= delta * 5;
+        if (isSlowed) {
+            maxVel = TILE_SIZE * 2.5f;
+            isSlowed = false;
+        }
+        if (burnDuration < 0) {
+            isBurned = false;
+            burnDuration = BURN_ENEMY_TIME;
         }
     }
 
     private void renderSpiderAnimations(SpriteBatch batch) {
         if ((!attacking && !isDead) || (isFrozen && !isDead)) {
             if (vel.x < 0) {
-                if (isSlowed) {
-                    animations.get(SPIDER_ANIM_LEFT).setFrameDuration(FRAME_DURATION * 2);
-                } else {
-                    animations.get(SPIDER_ANIM_LEFT).setFrameDuration(FRAME_DURATION);
-                }
-                GameHelper.drawEntity(batch, animations.get(SPIDER_ANIM_LEFT).getKeyFrame(stateTime), pos, size);
-                lastDir = Direction.LEFT;
+                enemyAnimation(SPIDER_ANIM_LEFT, batch, LEFT);
             } else if (vel.x > 0) {
-                if (isSlowed) {
-                    animations.get(SPIDER_ANIM_RIGHT).setFrameDuration(FRAME_DURATION * 2);
-                } else {
-                    animations.get(SPIDER_ANIM_RIGHT).setFrameDuration(FRAME_DURATION);
-                }
-                GameHelper.drawEntity(batch, animations.get(SPIDER_ANIM_RIGHT).getKeyFrame(stateTime), pos, size);
-                lastDir = Direction.RIGHT;
-
+                enemyAnimation(SPIDER_ANIM_RIGHT, batch, RIGHT);
             } else if (vel.y > 0) {
-                if (isSlowed) {
-                    animations.get(SPIDER_ANIM_UP).setFrameDuration(FRAME_DURATION * 2);
-                } else {
-                    animations.get(SPIDER_ANIM_UP).setFrameDuration(FRAME_DURATION);
-                }
-                GameHelper.drawEntity(batch, animations.get(SPIDER_ANIM_UP).getKeyFrame(stateTime), pos, size);
-                lastDir = Direction.UP;
-
+                enemyAnimation(SPIDER_ANIM_UP, batch, UP);
             } else if (vel.y < 0) {
-                if (isSlowed) {
-                    animations.get(SPIDER_ANIM_DOWN).setFrameDuration(FRAME_DURATION * 2);
-                } else {
-                    animations.get(SPIDER_ANIM_DOWN).setFrameDuration(FRAME_DURATION);
-                }
-                GameHelper.drawEntity(batch, animations.get(SPIDER_ANIM_DOWN).getKeyFrame(stateTime), pos, size);
-                lastDir = Direction.DOWN;
-
+                enemyAnimation(SPIDER_ANIM_DOWN, batch, DOWN);
             } else {
-                if (lastDir == Direction.RIGHT)
-                    GameHelper.drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_RIGHT, 0), pos, size);
-                else if (lastDir == Direction.LEFT)
-                    GameHelper.drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_LEFT, 0), pos, size);
-                else if (lastDir == Direction.UP)
-                    GameHelper.drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_UP, 0), pos, size);
-                else if (lastDir == Direction.DOWN)
-                    GameHelper.drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_DOWN, 0), pos, size);
+                enemyStand(batch);
             }
         } else if (attacking && !isDead) {
-            if (lastDir == Direction.RIGHT)
-                GameHelper.drawEntity(batch, animations.get(SPIDER_ATTACK_RIGHT).getKeyFrame(stateTime), pos, size);
-            else if (lastDir == Direction.LEFT)
-                GameHelper.drawEntity(batch, animations.get(SPIDER_ATTACK_LEFT).getKeyFrame(stateTime), pos, size);
-            else if (lastDir == Direction.UP)
-                GameHelper.drawEntity(batch, animations.get(SPIDER_ATTACK_UP).getKeyFrame(stateTime), pos, size);
-            else if (lastDir == Direction.DOWN)
-                GameHelper.drawEntity(batch, animations.get(SPIDER_ATTACK_DOWN).getKeyFrame(stateTime), pos, size);
+            enemyAttackingAnimation(batch);
 
         } else {
             GameHelper.drawEntity(batch, animations.get(SPIDER_DEAD_ANIM).getKeyFrame(stateTime), pos, size);
 
         }
+    }
+
+    private void enemyAttackingAnimation(SpriteBatch batch) {
+        if (lastDir == RIGHT)
+            GameHelper.drawEntity(batch, animations.get(SPIDER_ATTACK_RIGHT).getKeyFrame(stateTime), pos, size);
+        else if (lastDir == LEFT)
+            GameHelper.drawEntity(batch, animations.get(SPIDER_ATTACK_LEFT).getKeyFrame(stateTime), pos, size);
+        else if (lastDir == UP)
+            GameHelper.drawEntity(batch, animations.get(SPIDER_ATTACK_UP).getKeyFrame(stateTime), pos, size);
+        else if (lastDir == DOWN)
+            GameHelper.drawEntity(batch, animations.get(SPIDER_ATTACK_DOWN).getKeyFrame(stateTime), pos, size);
+    }
+
+    private void enemyStand(SpriteBatch batch) {
+        if (lastDir == RIGHT)
+            GameHelper.drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_RIGHT, 0), pos, size);
+        else if (lastDir == LEFT)
+            GameHelper.drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_LEFT, 0), pos, size);
+        else if (lastDir == UP)
+            GameHelper.drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_UP, 0), pos, size);
+        else if (lastDir == DOWN)
+            GameHelper.drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_DOWN, 0), pos, size);
+    }
+
+    private void enemyAnimation(String spiderAnim, SpriteBatch batch, Direction dir) {
+        if (isSlowed) {
+            animations.get(spiderAnim).setFrameDuration(FRAME_DURATION * 2);
+        } else {
+            animations.get(spiderAnim).setFrameDuration(FRAME_DURATION);
+        }
+        GameHelper.drawEntity(batch, animations.get(spiderAnim).getKeyFrame(stateTime), pos, size);
+        lastDir=dir;
     }
 
     private void loadSpiderAnimations(ObjectMap<String, Animation<TextureAtlas.AtlasRegion>> animations) {

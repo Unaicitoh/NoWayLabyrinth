@@ -54,21 +54,7 @@ public abstract class Spell extends Entity implements Poolable {
         vel.x = MathUtils.clamp(vel.x, -playerMaxVel * velMultiplier, playerMaxVel * velMultiplier);
         vel.y = MathUtils.clamp(vel.y, -playerMaxVel * velMultiplier, playerMaxVel * velMultiplier);
         if (vel.x == 0 && vel.y == 0) {
-            switch (lastDir) {
-                case LEFT:
-                    vel.x = -playerMaxVel * velMultiplier;
-                    break;
-                case DOWN:
-                    vel.y = -playerMaxVel * velMultiplier;
-                    break;
-                case RIGHT:
-                    vel.x = playerMaxVel * velMultiplier;
-                    break;
-                case UP:
-                    vel.y = playerMaxVel * velMultiplier;
-                    break;
-
-            }
+            spellLastDirection();
         } else {
             pos.x += vel.x * delta;
             pos.y += vel.y * delta;
@@ -79,6 +65,24 @@ public abstract class Spell extends Entity implements Poolable {
             isAlive = false;
         }
 
+    }
+
+    private void spellLastDirection() {
+        switch (lastDir) {
+            case LEFT:
+                vel.x = -playerMaxVel * velMultiplier;
+                break;
+            case DOWN:
+                vel.y = -playerMaxVel * velMultiplier;
+                break;
+            case RIGHT:
+                vel.x = playerMaxVel * velMultiplier;
+                break;
+            case UP:
+                vel.y = playerMaxVel * velMultiplier;
+                break;
+
+        }
     }
 
     public void render(SpriteBatch batch, float delta) {

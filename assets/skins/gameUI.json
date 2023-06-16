@@ -361,7 +361,7 @@
 													"visible": true
 												}
 											],
-											"touchable": "disabled",
+											"touchable": "enabled",
 											"visible": true
 										},
 										"row": 0,

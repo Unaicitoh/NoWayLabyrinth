@@ -74,4 +74,12 @@ public class Entity {
     public void setIsDamaged(boolean isDamaged) {
         this.isDamaged = isDamaged;
     }
+
+    public float getStateTime() {
+        return stateTime;
+    }
+
+    public void setStateTime(float stateTime) {
+        this.stateTime = stateTime;
+    }
 }

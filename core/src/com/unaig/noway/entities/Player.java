@@ -27,6 +27,7 @@ import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP;
 import static com.unaig.noway.util.AttackType.BASIC;
 import static com.unaig.noway.util.AttackType.STRONG;
 import static com.unaig.noway.util.Constants.*;
+import static com.unaig.noway.util.Direction.*;
 import static com.unaig.noway.util.ElementType.FIRE;
 import static com.unaig.noway.util.ElementType.ICE;
 
@@ -34,7 +35,7 @@ public class Player extends Entity implements InputProcessor {
 
     public static final String TAG = Player.class.getName();
     public static final int STRONG_MANA_COST = 25;
-    public static final int BASIC_ATTACK_COST = 5;
+    public static final int BASIC_MANA_COST = 5;
 
     public PoolEngine poolEngine;
     private ElementType elementType;
@@ -76,13 +77,13 @@ public class Player extends Entity implements InputProcessor {
         maxHp = 100;
         hp = maxHp;
         isDamaged = false;
-        timeDamageTaken=DAMAGE_ANIMATION_TIME;
+        timeDamageTaken = DAMAGE_ANIMATION_TIME;
         maxMp = 100;
         mp = maxMp;
         vel = new Vector2(0, 0);
         maxVel = TILE_SIZE * 3;
         bounds = new Rectangle(pos.x + OFFSET_X, pos.y, size.x - OFFSET_X * 2, size.y);
-        lastDir = Direction.DOWN;
+        lastDir = DOWN;
         animations = new ObjectMap<>();
         stateTime = 0f;
         attackDamage = 1;
@@ -102,37 +103,42 @@ public class Player extends Entity implements InputProcessor {
 
     public void render(SpriteBatch batch, float delta) {
         update(delta);
-        GameHelper.damagedEntityAnimation(this,batch, delta);
+        GameHelper.damagedEntityAnimation(this, batch, delta);
         renderPlayerAnimations(batch);
 
     }
 
     private void renderPlayerAnimations(SpriteBatch batch) {
         if (vel.x < 0) {
-            GameHelper.drawEntity(batch, animations.get(PLAYER_ANIM_LEFT).getKeyFrame(stateTime), pos, size);
-            lastDir = Direction.LEFT;
+            playerAnimation(batch, PLAYER_ANIM_LEFT, LEFT);
         } else if (vel.x > 0) {
-            GameHelper.drawEntity(batch, animations.get(PLAYER_ANIM_RIGHT).getKeyFrame(stateTime), pos, size);
-            lastDir = Direction.RIGHT;
+            playerAnimation(batch, PLAYER_ANIM_RIGHT, RIGHT);
 
         } else if (vel.y > 0) {
-            GameHelper.drawEntity(batch, animations.get(PLAYER_ANIM_UP).getKeyFrame(stateTime), pos, size);
-            lastDir = Direction.UP;
+            playerAnimation(batch, PLAYER_ANIM_UP, UP);
 
         } else if (vel.y < 0) {
-            GameHelper.drawEntity(batch, animations.get(PLAYER_ANIM_DOWN).getKeyFrame(stateTime), pos, size);
-            lastDir = Direction.DOWN;
+            playerAnimation(batch, PLAYER_ANIM_DOWN, DOWN);
 
         } else {
-            if (lastDir == Direction.RIGHT)
-                GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_RIGHT, 0), pos, size);
-            else if (lastDir == Direction.LEFT)
-                GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_LEFT, 0), pos, size);
-            else if (lastDir == Direction.UP)
-                GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_UP, 0), pos, size);
-            else if (lastDir == Direction.DOWN)
-                GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_DOWN, 0), pos, size);
+            playerStand(batch);
         }
+    }
+
+    private void playerStand(SpriteBatch batch) {
+        if (lastDir == RIGHT)
+            GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_RIGHT, 0), pos, size);
+        else if (lastDir == LEFT)
+            GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_LEFT, 0), pos, size);
+        else if (lastDir == UP)
+            GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_UP, 0), pos, size);
+        else if (lastDir == DOWN)
+            GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_DOWN, 0), pos, size);
+    }
+
+    private void playerAnimation(SpriteBatch batch, String playerAnimLeft, Direction dir) {
+        GameHelper.drawEntity(batch, animations.get(playerAnimLeft).getKeyFrame(stateTime), pos, size);
+        lastDir = dir;
     }
 
     private void update(float delta) {
@@ -243,12 +249,56 @@ public class Player extends Entity implements InputProcessor {
         return true;
     }
 
-    private void changeElement() {
+    public void changeElement() {
         if (elementType == FIRE) {
             elementType = ICE;
         } else if (elementType == ICE) {
             elementType = FIRE;
         }
+    }
+
+    public void setMp(float mp) {
+        this.mp = mp;
+    }
+
+    public ElementType getElementType() {
+        return elementType;
+    }
+
+    public void setElementType(ElementType elementType) {
+        this.elementType = elementType;
+    }
+
+    public float getFireCooldown() {
+        return fireCooldown;
+    }
+
+    public void setFireCooldown(float fireCooldown) {
+        this.fireCooldown = fireCooldown;
+    }
+
+    public float getFire2Cooldown() {
+        return fire2Cooldown;
+    }
+
+    public void setFire2Cooldown(float fire2Cooldown) {
+        this.fire2Cooldown = fire2Cooldown;
+    }
+
+    public float getIceCooldown() {
+        return iceCooldown;
+    }
+
+    public void setIceCooldown(float iceCooldown) {
+        this.iceCooldown = iceCooldown;
+    }
+
+    public float getIce2Cooldown() {
+        return ice2Cooldown;
+    }
+
+    public void setIce2Cooldown(float ice2Cooldown) {
+        this.ice2Cooldown = ice2Cooldown;
     }
 
     @Override
@@ -260,13 +310,13 @@ public class Player extends Entity implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         switch (button) {
             case Buttons.LEFT:
-                if (elementType == FIRE && fireCooldown <= 0f && mp - BASIC_ATTACK_COST >= 0) {
-                    mp -= BASIC_ATTACK_COST;
+                if (elementType == FIRE && fireCooldown <= 0f && mp - BASIC_MANA_COST >= 0) {
+                    mp -= BASIC_MANA_COST;
                     stateTime = 0;
                     fireCooldown = BASIC_ATTACK_COOLDOWN;
                     FireSpell.create(poolEngine, this, BASIC);
-                } else if (elementType == ICE && iceCooldown <= 0f && mp - BASIC_ATTACK_COST >= 0) {
-                    mp -= BASIC_ATTACK_COST;
+                } else if (elementType == ICE && iceCooldown <= 0f && mp - BASIC_MANA_COST >= 0) {
+                    mp -= BASIC_MANA_COST;
                     stateTime = 0;
                     iceCooldown = BASIC_ATTACK_COOLDOWN;
                     IceSpell.create(poolEngine, this, BASIC);
@@ -315,5 +365,4 @@ public class Player extends Entity implements InputProcessor {
         // TODO Auto-generated method stub
         return false;
     }
-
 }

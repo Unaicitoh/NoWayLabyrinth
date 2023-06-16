@@ -102,10 +102,7 @@ public abstract class Enemy extends Entity implements Poolable {
 
     public void update(float delta, Player player, Array<Spell> spells) {
         stateTime += delta;
-        attackCooldown -= delta;
-        patrolCooldown -= delta;
-        timeFromDamage += delta;
-
+        updateCooldowns(delta);
         playerBounds.set(player.getBounds());
         playerPos.set(player.getPos());
         vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
@@ -129,6 +126,12 @@ public abstract class Enemy extends Entity implements Poolable {
             }
         }
 
+    }
+
+    private void updateCooldowns(float delta) {
+        attackCooldown -= delta;
+        patrolCooldown -= delta;
+        timeFromDamage += delta;
     }
 
     private void checkStatus(float delta) {

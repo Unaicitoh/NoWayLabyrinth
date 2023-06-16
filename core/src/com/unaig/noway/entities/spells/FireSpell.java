@@ -56,7 +56,6 @@ public class FireSpell extends Spell {
             animation = GameHelper.setAnimation(FRAME_DURATION, FIRE_SPELL_RIGHT_UP);
         } else if (vel.x > 0 && vel.y < 0) {
             animation = GameHelper.setAnimation(FRAME_DURATION, FIRE_SPELL_RIGHT_DOWN);
-
         }
     }
 

@@ -107,6 +107,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	changeElementButton: {
 		up: changeElementIcon
 		down: changeElementIconPressed
+		disabled: changeElementIconPressed
 	}
 	fireTypeIcon: {
 		up: fireTypeIcon

@@ -30,10 +30,12 @@ public class Assets {
         assets = new AssetManager();
         labMap = new TmxMapLoader().load(MAP_LVL_1);
         sceneBuilder = new SceneComposerStageBuilder();
+        //Loading
         assets.load(PLAYER_ANIMATIONS_ATLAS, TextureAtlas.class);
         assets.load(ENEMIES_ANIMATIONS_ATLAS, TextureAtlas.class);
         assets.load(MAIN_SKIN_JSON, Skin.class);
         assets.finishLoading();
+        //Getting
         playerAtlas = assets.get(PLAYER_ANIMATIONS_ATLAS);
         enemiesAtlas = assets.get(ENEMIES_ANIMATIONS_ATLAS);
         mainSkin = assets.get(MAIN_SKIN_JSON);
