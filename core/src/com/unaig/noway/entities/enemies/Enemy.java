@@ -35,8 +35,6 @@ public abstract class Enemy extends Entity implements Poolable {
     private float attackRange;
     protected Vector2 playerPos;
     protected Rectangle playerBounds;
-    protected boolean attacking;
-    private float attackCooldown;
     private float patrolCooldown;
     private Vector2 lastPatrolVel;
     protected HPBar hpbar;
@@ -77,7 +75,7 @@ public abstract class Enemy extends Entity implements Poolable {
         attackRange = TILE_SIZE * 4;
         playerBounds = new Rectangle();
         playerPos = new Vector2();
-        attacking = false;
+        isAttacking = false;
         attackCooldown = 0f;
         patrolCooldown = 1.6f;
         lastPatrolVel = new Vector2();
@@ -233,7 +231,7 @@ public abstract class Enemy extends Entity implements Poolable {
     }
 
     private void attackPlayer(Player player) {
-        attacking = true;
+        isAttacking = true;
         if (attackCooldown <= 0f) {
             attackCooldown = 2f;
             player.setHp(Math.max(0, player.getHp() - attackDamage));
@@ -246,7 +244,7 @@ public abstract class Enemy extends Entity implements Poolable {
     }
 
     private void chaseMode(float delta) {
-        attacking = false;
+        isAttacking = false;
         Vector2 direction = playerPos.sub(pos);
         if (Math.round(direction.x) > 0) {
             vel.x = maxVel;
@@ -312,7 +310,7 @@ public abstract class Enemy extends Entity implements Poolable {
         stateTime = 0;
         playerBounds = new Rectangle();
         playerPos = new Vector2();
-        attacking = false;
+        isAttacking = false;
         attackCooldown = 0;
         patrolCooldown = 0;
         hpbar = null;

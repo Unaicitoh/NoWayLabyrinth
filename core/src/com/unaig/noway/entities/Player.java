@@ -34,8 +34,6 @@ import static com.unaig.noway.util.ElementType.ICE;
 public class Player extends Entity implements InputProcessor {
 
     public static final String TAG = Player.class.getName();
-    public static final int STRONG_MANA_COST = 25;
-    public static final int BASIC_MANA_COST = 5;
 
     public PoolEngine poolEngine;
     private ElementType elementType;
@@ -49,6 +47,9 @@ public class Player extends Entity implements InputProcessor {
     public static final float STRONG_ATTACK_COOLDOWN = 2f;
     private static final float OFFSET_X = 2f;
     private static final float FRAME_DURATION = 0.1f;
+    public static final int STRONG_MANA_COST = 25;
+    public static final int BASIC_MANA_COST = 5;
+    public static final float ATTACK_ANIMATION_FRAME_RESET = .1f;
 
     public Player(PoolEngine poolEngine) {
         this.poolEngine = poolEngine;
@@ -91,6 +92,8 @@ public class Player extends Entity implements InputProcessor {
         iceCooldown = 0;
         fire2Cooldown = 0;
         ice2Cooldown = 0;
+        attackCooldown = 0;
+        isAttacking = false;
         loadPlayerAnimations(animations);
     }
 
@@ -126,14 +129,29 @@ public class Player extends Entity implements InputProcessor {
     }
 
     private void playerStand(SpriteBatch batch) {
-        if (lastDir == RIGHT)
-            GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_RIGHT, 0), pos, size);
-        else if (lastDir == LEFT)
-            GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_LEFT, 0), pos, size);
-        else if (lastDir == UP)
-            GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_UP, 0), pos, size);
-        else if (lastDir == DOWN)
-            GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_DOWN, 0), pos, size);
+        if (!isAttacking) {
+            if (lastDir == RIGHT)
+                GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_RIGHT, 0), pos, size);
+            else if (lastDir == LEFT)
+                GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_LEFT, 0), pos, size);
+            else if (lastDir == UP)
+                GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_UP, 0), pos, size);
+            else if (lastDir == DOWN)
+                GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_DOWN, 0), pos, size);
+        } else {
+            if (lastDir == RIGHT)
+                GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_RIGHT, 2), pos, size);
+            else if (lastDir == LEFT)
+                GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_LEFT, 2), pos, size);
+            else if (lastDir == UP)
+                GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_UP, 2), pos, size);
+            else if (lastDir == DOWN)
+                GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_DOWN, 2), pos, size);
+            if (attackCooldown > .25f) {
+                isAttacking = false;
+                attackCooldown = 0;
+            }
+        }
     }
 
     private void playerAnimation(SpriteBatch batch, String playerAnimLeft, Direction dir) {
@@ -143,6 +161,7 @@ public class Player extends Entity implements InputProcessor {
 
     private void update(float delta) {
         stateTime += delta;
+        if (isAttacking) attackCooldown += delta;
         mp = Math.min(maxMp, mp + delta * 5);
         updateCooldowns(delta);
         vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
@@ -198,9 +217,6 @@ public class Player extends Entity implements InputProcessor {
                 break;
             case Keys.S:
                 vel.y = -maxVel;
-                break;
-            case Keys.SPACE:
-                changeElement();
                 break;
         }
         return true;
@@ -312,33 +328,36 @@ public class Player extends Entity implements InputProcessor {
             case Buttons.LEFT:
                 if (elementType == FIRE && fireCooldown <= 0f && mp - BASIC_MANA_COST >= 0) {
                     mp -= BASIC_MANA_COST;
-                    stateTime = 0;
+                    stateTime = ATTACK_ANIMATION_FRAME_RESET;
                     fireCooldown = BASIC_ATTACK_COOLDOWN;
+                    isAttacking = true;
                     FireSpell.create(poolEngine, this, BASIC);
                 } else if (elementType == ICE && iceCooldown <= 0f && mp - BASIC_MANA_COST >= 0) {
                     mp -= BASIC_MANA_COST;
-                    stateTime = 0;
+                    stateTime = ATTACK_ANIMATION_FRAME_RESET;
                     iceCooldown = BASIC_ATTACK_COOLDOWN;
+                    isAttacking = true;
                     IceSpell.create(poolEngine, this, BASIC);
                 }
                 break;
             case Buttons.RIGHT:
                 if (elementType == FIRE && fire2Cooldown <= 0f && mp - STRONG_MANA_COST >= 0) {
                     mp -= STRONG_MANA_COST;
-                    stateTime = 0;
+                    stateTime = ATTACK_ANIMATION_FRAME_RESET;
                     fire2Cooldown = STRONG_ATTACK_COOLDOWN;
+                    isAttacking = true;
                     FireSpell.create(poolEngine, this, STRONG);
                 } else if (elementType == ICE && ice2Cooldown <= 0f && mp - STRONG_MANA_COST >= 0) {
                     mp -= STRONG_MANA_COST;
                     mp = MathUtils.clamp(mp, 0, maxMp);
-                    stateTime = 0;
+                    stateTime = ATTACK_ANIMATION_FRAME_RESET;
                     ice2Cooldown = STRONG_ATTACK_COOLDOWN;
+                    isAttacking = true;
                     IceSpell.create(poolEngine, this, STRONG);
                 }
                 break;
         }
         mp = Math.max(0, mp);
-
         return true;
     }
 

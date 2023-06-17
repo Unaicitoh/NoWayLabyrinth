@@ -5,13 +5,16 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -27,8 +30,10 @@ import com.unaig.noway.entities.enemies.SpiderEnemy;
 import com.unaig.noway.entities.spells.FireSpell;
 import com.unaig.noway.entities.spells.IceSpell;
 import com.unaig.noway.entities.spells.Spell;
+import com.unaig.noway.util.ImageAnimation;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
+import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP_PINGPONG;
 import static com.unaig.noway.entities.Player.STRONG_ATTACK_COOLDOWN;
 import static com.unaig.noway.entities.Player.STRONG_MANA_COST;
 import static com.unaig.noway.util.AttackType.STRONG;
@@ -48,12 +53,15 @@ public class GameScreen extends ScreenAdapter {
     private ShapeDrawer shaper;
     private static final float CAM_SPEED = 5f;
     public static final float CHANGE_TIME_DISABLED = .05f;
+    public static final float FADE_DURATION = .25f;
     private Player player;
     private ProgressBar playerHPUI;
     private ProgressBar playerMPUI;
 
     private PoolEngine poolEngine;
 
+    private ImageAnimation fireTypeAnim;
+    private ImageAnimation iceTypeAnim;
     private Button fireTypeIcon;
     private Button fireSpellIcon;
     private Button fire2SpellIcon;
@@ -70,8 +78,8 @@ public class GameScreen extends ScreenAdapter {
     public void show() {
         renderer = new OrthogonalTiledMapRenderer(Assets.instance.labMap);
         viewport = new ExtendViewport(80 * TILE_SIZE, 80 * TILE_SIZE);
-        batch = (SpriteBatch) renderer.getBatch();
-        stage = new Stage(new ExtendViewport(1280, 720), batch);
+        batch = new SpriteBatch();
+        stage = new Stage(new ExtendViewport(1280, 720));
         poolEngine = new PoolEngine();
         player = new Player(poolEngine);
         SpiderEnemy.create(poolEngine);
@@ -88,11 +96,11 @@ public class GameScreen extends ScreenAdapter {
         ScreenUtils.clear(.15f, .15f, .15f, 1f);
         viewport.apply();
         viewport.getCamera().position.lerp(new Vector3(player.getPos(), 0), CAM_SPEED * delta);
+        batch.setProjectionMatrix(viewport.getCamera().combined);
         renderer.setView((OrthographicCamera) viewport.getCamera());
         renderer.render();
         batch.begin();
         renderEntities(delta);
-        renderUI(delta);
         //Debugging
         shaper.rectangle(player.getBounds());
         for (Spell s : poolEngine.spells) {
@@ -103,7 +111,9 @@ public class GameScreen extends ScreenAdapter {
 
         }
         batch.end();
+        renderUI(delta);
         stage.act();
+        setElementIconPositions(delta);
         stage.draw();
         if (Gdx.input.isKeyJustPressed(Keys.UP)) {
             ((OrthographicCamera) viewport.getCamera()).zoom -= 0.15;
@@ -123,10 +133,19 @@ public class GameScreen extends ScreenAdapter {
 
     }
 
+    private void setElementIconPositions(float delta) {
+        fireTypeAnim.act(delta);
+        fireTypeAnim.setPose(fireTypeAnim.getAnimation().getKeyFrame(fireTypeAnim.getTime()));
+        Vector2 pos = new Vector2(fireTypeIcon.localToStageCoordinates(new Vector2(fireTypeIcon.getX(), fireTypeIcon.getY())));
+        fireTypeAnim.setPosition(pos.x, pos.y);
+        iceTypeAnim.act(delta);
+        iceTypeAnim.setPose(iceTypeAnim.getAnimation().getKeyFrame(iceTypeAnim.getTime()));
+        pos = new Vector2(fireTypeIcon.localToStageCoordinates(new Vector2(fireTypeIcon.getX(), fireTypeIcon.getY())));
+        iceTypeAnim.setPosition(pos.x, pos.y);
+    }
+
     private void initializeUI() {
-        //Draw UI
         Assets.instance.sceneBuilder.build(stage, Assets.instance.mainSkin, Gdx.files.internal(GAME_UI_JSON));
-        //Actors
         findActors();
         playerHPUI.setValue(player.getHp());
         playerMPUI.setValue(player.getMp());
@@ -137,15 +156,14 @@ public class GameScreen extends ScreenAdapter {
         changeElementIcon.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                changeElementIcon.setDisabled(true);
-                player.changeElement();
+                updateElementActions();
             }
         });
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if (keycode == Keys.SPACE) {
-                    changeElementIcon.setDisabled(true);
+                    updateElementActions();
                 }
                 return false;
             }
@@ -175,6 +193,28 @@ public class GameScreen extends ScreenAdapter {
         });
     }
 
+    private void updateElementActions() {
+        changeElementIcon.setDisabled(true);
+        player.changeElement();
+        if (player.getElementType() == FIRE) {
+            iceTypeAnim.addAction(Actions.fadeOut(FADE_DURATION));
+            fireTypeAnim.addAction(Actions.fadeIn(FADE_DURATION));
+            iceSpellIcon.addAction(Actions.fadeOut(FADE_DURATION));
+            fireSpellIcon.addAction(Actions.fadeIn(FADE_DURATION));
+            ice2SpellIcon.addAction(Actions.fadeOut(FADE_DURATION));
+            fire2SpellIcon.addAction(Actions.fadeIn(FADE_DURATION));
+        } else {
+            fireTypeAnim.addAction(Actions.fadeOut(FADE_DURATION));
+            iceTypeAnim.addAction(Actions.fadeIn(FADE_DURATION));
+            fireSpellIcon.addAction(Actions.fadeOut(FADE_DURATION));
+            iceSpellIcon.addAction(Actions.fadeIn(FADE_DURATION));
+            fire2SpellIcon.addAction(Actions.fadeOut(FADE_DURATION));
+            ice2SpellIcon.addAction(Actions.fadeIn(FADE_DURATION));
+        }
+        fireTypeAnim.setTime(0);
+        iceTypeAnim.setTime(0);
+    }
+
     private void findActors() {
         playerHPUI = stage.getRoot().findActor("PlayerHP");
         playerMPUI = stage.getRoot().findActor("PlayerMP");
@@ -185,6 +225,12 @@ public class GameScreen extends ScreenAdapter {
         ice2SpellIcon = stage.getRoot().findActor("ice2SpellIcon");
         changeElementIcon = stage.getRoot().findActor("changeElementButton");
         changeTimeDisabled = CHANGE_TIME_DISABLED;
+        fireTypeAnim = new ImageAnimation();
+        iceTypeAnim = new ImageAnimation();
+        fireTypeAnim.setAnimation(new Animation<>(.15f, Assets.instance.playerAtlas.findRegions("fireTypeIcon"), LOOP_PINGPONG));
+        iceTypeAnim.setAnimation(new Animation<>(.15f, Assets.instance.playerAtlas.findRegions("iceTypeIcon"), LOOP_PINGPONG));
+        stage.addActor(iceTypeAnim);
+        stage.addActor(fireTypeAnim);
     }
 
     private void renderEntities(float delta) {
@@ -196,9 +242,7 @@ public class GameScreen extends ScreenAdapter {
     private void renderUI(float delta) {
         playerHPUI.setValue(player.getHp());
         playerMPUI.setValue(player.getMp());
-        fireSpellIcon.setVisible(player.getElementType() == FIRE);
-        fire2SpellIcon.setVisible(player.getElementType() == FIRE);
-        fireTypeIcon.setVisible(player.getElementType() == FIRE);
+
         if (changeElementIcon.isDisabled() && changeTimeDisabled >= 0) {
             changeTimeDisabled -= delta;
             if (changeTimeDisabled < 0) {
@@ -216,6 +260,8 @@ public class GameScreen extends ScreenAdapter {
     public void resize(int width, int height) {
         viewport.update(width, height);
         stage.getViewport().update(width, height);
+        setElementIconPositions(Gdx.graphics.getDeltaTime());
+
     }
 
 

@@ -100,7 +100,7 @@ public class SpiderEnemy extends Enemy {
     }
 
     private void renderSpiderAnimations(SpriteBatch batch) {
-        if ((!attacking && !isDead) || (isFrozen && !isDead)) {
+        if ((!isAttacking && !isDead) || (isFrozen && !isDead)) {
             if (vel.x < 0) {
                 enemyAnimation(SPIDER_ANIM_LEFT, batch, LEFT);
             } else if (vel.x > 0) {
@@ -112,7 +112,7 @@ public class SpiderEnemy extends Enemy {
             } else {
                 enemyStand(batch);
             }
-        } else if (attacking && !isDead) {
+        } else if (isAttacking && !isDead) {
             enemyAttackingAnimation(batch);
 
         } else {
@@ -150,7 +150,7 @@ public class SpiderEnemy extends Enemy {
             animations.get(spiderAnim).setFrameDuration(FRAME_DURATION);
         }
         GameHelper.drawEntity(batch, animations.get(spiderAnim).getKeyFrame(stateTime), pos, size);
-        lastDir=dir;
+        lastDir = dir;
     }
 
     private void loadSpiderAnimations(ObjectMap<String, Animation<TextureAtlas.AtlasRegion>> animations) {

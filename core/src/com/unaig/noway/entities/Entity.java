@@ -15,6 +15,8 @@ public class Entity {
     protected Vector2 pos;
     protected Vector2 vel;
     protected Vector2 size;
+    protected boolean isAttacking;
+    protected float attackCooldown;
     protected ObjectMap<String, Animation<AtlasRegion>> animations;
     protected Rectangle bounds;
     public Direction lastDir;
@@ -23,6 +25,7 @@ public class Entity {
     public int attackDamage;
     protected boolean isDamaged;
     public float timeDamageTaken;
+
     public Vector2 getPos() {
         return pos;
     }
@@ -82,4 +85,5 @@ public class Entity {
     public void setStateTime(float stateTime) {
         this.stateTime = stateTime;
     }
+
 }
