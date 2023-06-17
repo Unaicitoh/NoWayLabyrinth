@@ -34,6 +34,7 @@ import com.unaig.noway.util.ImageAnimation;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP_PINGPONG;
+import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.NORMAL;
 import static com.unaig.noway.entities.Player.STRONG_ATTACK_COOLDOWN;
 import static com.unaig.noway.entities.Player.STRONG_MANA_COST;
 import static com.unaig.noway.util.AttackType.STRONG;
@@ -54,6 +55,7 @@ public class GameScreen extends ScreenAdapter {
     private static final float CAM_SPEED = 5f;
     public static final float CHANGE_TIME_DISABLED = .05f;
     public static final float FADE_DURATION = .25f;
+    public static final float FRAME_DURATION = .15f;
     private Player player;
     private ProgressBar playerHPUI;
     private ProgressBar playerMPUI;
@@ -135,13 +137,23 @@ public class GameScreen extends ScreenAdapter {
 
     private void setElementIconPositions(float delta) {
         fireTypeAnim.act(delta);
+        if (fireTypeAnim.getAnimation().isAnimationFinished(fireTypeAnim.getTime())) {
+            fireTypeAnim.setAnimation(new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions("fire2TypeIcon"), LOOP_PINGPONG));
+            fireTypeAnim.setTime(0);
+        }
         fireTypeAnim.setPose(fireTypeAnim.getAnimation().getKeyFrame(fireTypeAnim.getTime()));
         Vector2 pos = new Vector2(fireTypeIcon.localToStageCoordinates(new Vector2(fireTypeIcon.getX(), fireTypeIcon.getY())));
         fireTypeAnim.setPosition(pos.x, pos.y);
+
         iceTypeAnim.act(delta);
+        if (iceTypeAnim.getAnimation().isAnimationFinished(fireTypeAnim.getTime())) {
+            iceTypeAnim.setAnimation(new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions("ice2TypeIcon"), LOOP_PINGPONG));
+            iceTypeAnim.setTime(0);
+        }
         iceTypeAnim.setPose(iceTypeAnim.getAnimation().getKeyFrame(iceTypeAnim.getTime()));
         pos = new Vector2(fireTypeIcon.localToStageCoordinates(new Vector2(fireTypeIcon.getX(), fireTypeIcon.getY())));
         iceTypeAnim.setPosition(pos.x, pos.y);
+
     }
 
     private void initializeUI() {
@@ -203,6 +215,7 @@ public class GameScreen extends ScreenAdapter {
             fireSpellIcon.addAction(Actions.fadeIn(FADE_DURATION));
             ice2SpellIcon.addAction(Actions.fadeOut(FADE_DURATION));
             fire2SpellIcon.addAction(Actions.fadeIn(FADE_DURATION));
+            fireTypeAnim.setAnimation(new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions("fireTypeIcon"), NORMAL));
         } else {
             fireTypeAnim.addAction(Actions.fadeOut(FADE_DURATION));
             iceTypeAnim.addAction(Actions.fadeIn(FADE_DURATION));
@@ -210,6 +223,8 @@ public class GameScreen extends ScreenAdapter {
             iceSpellIcon.addAction(Actions.fadeIn(FADE_DURATION));
             fire2SpellIcon.addAction(Actions.fadeOut(FADE_DURATION));
             ice2SpellIcon.addAction(Actions.fadeIn(FADE_DURATION));
+            iceTypeAnim.setAnimation(new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions("iceTypeIcon"), NORMAL));
+
         }
         fireTypeAnim.setTime(0);
         iceTypeAnim.setTime(0);
@@ -227,8 +242,8 @@ public class GameScreen extends ScreenAdapter {
         changeTimeDisabled = CHANGE_TIME_DISABLED;
         fireTypeAnim = new ImageAnimation();
         iceTypeAnim = new ImageAnimation();
-        fireTypeAnim.setAnimation(new Animation<>(.15f, Assets.instance.playerAtlas.findRegions("fireTypeIcon"), LOOP_PINGPONG));
-        iceTypeAnim.setAnimation(new Animation<>(.15f, Assets.instance.playerAtlas.findRegions("iceTypeIcon"), LOOP_PINGPONG));
+        fireTypeAnim.setAnimation(new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions("fireTypeIcon"), NORMAL));
+        iceTypeAnim.setAnimation(new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions("iceTypeIcon"), NORMAL));
         stage.addActor(iceTypeAnim);
         stage.addActor(fireTypeAnim);
     }
