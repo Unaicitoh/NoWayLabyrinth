@@ -37,9 +37,10 @@ public class ImageAnimation extends Image {
             TextureRegion frame = animation.getKeyFrame(time, true);
             drawable.setRegion(frame);
             setDrawable(drawable);
-        } else {
-//             setDrawable(null);
         }
+//        else {
+//             setDrawable(null);
+//        }
         super.act(delta);
     }
 

@@ -21,7 +21,7 @@ import static com.unaig.noway.util.Direction.*;
 
 public class SpiderEnemy extends Enemy {
 
-    private static final Pool<SpiderEnemy> spiderPool = new Pool<SpiderEnemy>() {
+    private static final Pool<SpiderEnemy> spiderPool = new Pool<>() {
         @Override
         protected SpiderEnemy newObject() {
             return new SpiderEnemy();
