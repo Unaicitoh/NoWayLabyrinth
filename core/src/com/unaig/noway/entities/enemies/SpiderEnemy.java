@@ -3,6 +3,7 @@ package com.unaig.noway.entities.enemies;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Pool;
@@ -28,17 +29,17 @@ public class SpiderEnemy extends Enemy {
         }
     };
 
-    public static void create(PoolEngine poolEngine) {
+    public static void create(PoolEngine poolEngine, Vector2 pos) {
         SpiderEnemy enemy = spiderPool.obtain();
-        enemy.init();
+        enemy.init(pos);
         poolEngine.add(enemy);
     }
 
-    protected void init() {
+    protected void init(Vector2 pos) {
         maxHp = 100;
         maxVel = TILE_SIZE * 2.5f;
         attackDamage = 15;
-        super.init();
+        super.init(pos);
         loadSpiderAnimations(animations);
     }
 

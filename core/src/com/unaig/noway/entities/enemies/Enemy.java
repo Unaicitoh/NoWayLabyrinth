@@ -49,8 +49,9 @@ public abstract class Enemy extends Entity implements Poolable {
     protected float frozenDuration;
 
 
-    protected void init() {
-        pos = new Vector2(TILE_SIZE * 2, TILE_SIZE * 3);
+    protected void init(Vector2 _pos) {
+        pos = new Vector2();
+        pos.set(_pos);
         vel = new Vector2(0, 0);
         size = new Vector2(TILE_SIZE, TILE_SIZE);
         bounds = new Rectangle(pos.x + OFFSET_X, pos.y + OFFSET_Y, size.x - OFFSET_X * 2, size.y - OFFSET_Y * 2);

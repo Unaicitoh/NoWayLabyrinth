@@ -7,7 +7,11 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -84,7 +88,7 @@ public class GameScreen extends ScreenAdapter {
         stage = new Stage(new ExtendViewport(1280, 720));
         poolEngine = new PoolEngine();
         player = new Player(poolEngine);
-        SpiderEnemy.create(poolEngine);
+        spawnEnemies();
         InputMultiplexer im = new InputMultiplexer(stage, player);
         Gdx.input.setInputProcessor(im);
         ((OrthographicCamera) viewport.getCamera()).zoom = 1 / 5f;
@@ -135,25 +139,15 @@ public class GameScreen extends ScreenAdapter {
 
     }
 
-    private void setElementIconPositions(float delta) {
-        fireTypeAnim.act(delta);
-        if (fireTypeAnim.getAnimation().isAnimationFinished(fireTypeAnim.getTime())) {
-            fireTypeAnim.setAnimation(new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions("fire2TypeIcon"), LOOP_PINGPONG));
-            fireTypeAnim.setTime(0);
+    private void spawnEnemies() {
+        MapObjects collisions = Assets.instance.labMap.getLayers().get("Spawns").getObjects();
+        for (int i = 0; i < collisions.getCount(); i++) {
+            MapObject mapObject = collisions.get(i);
+            if (mapObject.getName().equals("EnemySpawn")) {
+                Rectangle pos = ((RectangleMapObject) mapObject).getRectangle();
+                SpiderEnemy.create(poolEngine, new Vector2(pos.x, pos.y));
+            }
         }
-        fireTypeAnim.setPose(fireTypeAnim.getAnimation().getKeyFrame(fireTypeAnim.getTime()));
-        Vector2 pos = new Vector2(fireTypeIcon.localToStageCoordinates(new Vector2(fireTypeIcon.getX(), fireTypeIcon.getY())));
-        fireTypeAnim.setPosition(pos.x, pos.y);
-
-        iceTypeAnim.act(delta);
-        if (iceTypeAnim.getAnimation().isAnimationFinished(fireTypeAnim.getTime())) {
-            iceTypeAnim.setAnimation(new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions("ice2TypeIcon"), LOOP_PINGPONG));
-            iceTypeAnim.setTime(0);
-        }
-        iceTypeAnim.setPose(iceTypeAnim.getAnimation().getKeyFrame(iceTypeAnim.getTime()));
-        pos = new Vector2(fireTypeIcon.localToStageCoordinates(new Vector2(fireTypeIcon.getX(), fireTypeIcon.getY())));
-        iceTypeAnim.setPosition(pos.x, pos.y);
-
     }
 
     private void initializeUI() {
@@ -162,6 +156,24 @@ public class GameScreen extends ScreenAdapter {
         playerHPUI.setValue(player.getHp());
         playerMPUI.setValue(player.getMp());
         setActorListeners();
+    }
+
+    private void findActors() {
+        playerHPUI = stage.getRoot().findActor("PlayerHP");
+        playerMPUI = stage.getRoot().findActor("PlayerMP");
+        fireSpellIcon = stage.getRoot().findActor("fireSpellIcon");
+        fire2SpellIcon = stage.getRoot().findActor("fire2SpellIcon");
+        fireTypeIcon = stage.getRoot().findActor("fireTypeIcon");
+        iceSpellIcon = stage.getRoot().findActor("iceSpellIcon");
+        ice2SpellIcon = stage.getRoot().findActor("ice2SpellIcon");
+        changeElementIcon = stage.getRoot().findActor("changeElementButton");
+        changeTimeDisabled = CHANGE_TIME_DISABLED;
+        fireTypeAnim = new ImageAnimation();
+        iceTypeAnim = new ImageAnimation();
+        fireTypeAnim.setAnimation(new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions("fireTypeIcon"), NORMAL));
+        iceTypeAnim.setAnimation(new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions("iceTypeIcon"), NORMAL));
+        stage.addActor(iceTypeAnim);
+        stage.addActor(fireTypeAnim);
     }
 
     private void setActorListeners() {
@@ -230,22 +242,26 @@ public class GameScreen extends ScreenAdapter {
         iceTypeAnim.setTime(0);
     }
 
-    private void findActors() {
-        playerHPUI = stage.getRoot().findActor("PlayerHP");
-        playerMPUI = stage.getRoot().findActor("PlayerMP");
-        fireSpellIcon = stage.getRoot().findActor("fireSpellIcon");
-        fire2SpellIcon = stage.getRoot().findActor("fire2SpellIcon");
-        fireTypeIcon = stage.getRoot().findActor("fireTypeIcon");
-        iceSpellIcon = stage.getRoot().findActor("iceSpellIcon");
-        ice2SpellIcon = stage.getRoot().findActor("ice2SpellIcon");
-        changeElementIcon = stage.getRoot().findActor("changeElementButton");
-        changeTimeDisabled = CHANGE_TIME_DISABLED;
-        fireTypeAnim = new ImageAnimation();
-        iceTypeAnim = new ImageAnimation();
-        fireTypeAnim.setAnimation(new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions("fireTypeIcon"), NORMAL));
-        iceTypeAnim.setAnimation(new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions("iceTypeIcon"), NORMAL));
-        stage.addActor(iceTypeAnim);
-        stage.addActor(fireTypeAnim);
+
+    private void setElementIconPositions(float delta) {
+        fireTypeAnim.act(delta);
+        if (fireTypeAnim.getAnimation().isAnimationFinished(fireTypeAnim.getTime())) {
+            fireTypeAnim.setAnimation(new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions("fire2TypeIcon"), LOOP_PINGPONG));
+            fireTypeAnim.setTime(0);
+        }
+        fireTypeAnim.setPose(fireTypeAnim.getAnimation().getKeyFrame(fireTypeAnim.getTime()));
+        Vector2 pos = new Vector2(fireTypeIcon.localToStageCoordinates(new Vector2(fireTypeIcon.getX(), fireTypeIcon.getY())));
+        fireTypeAnim.setPosition(pos.x, pos.y);
+
+        iceTypeAnim.act(delta);
+        if (iceTypeAnim.getAnimation().isAnimationFinished(fireTypeAnim.getTime())) {
+            iceTypeAnim.setAnimation(new Animation<>(FRAME_DURATION, Assets.instance.playerAtlas.findRegions("ice2TypeIcon"), LOOP_PINGPONG));
+            iceTypeAnim.setTime(0);
+        }
+        iceTypeAnim.setPose(iceTypeAnim.getAnimation().getKeyFrame(iceTypeAnim.getTime()));
+        pos = new Vector2(fireTypeIcon.localToStageCoordinates(new Vector2(fireTypeIcon.getX(), fireTypeIcon.getY())));
+        iceTypeAnim.setPosition(pos.x, pos.y);
+
     }
 
     private void renderEntities(float delta) {

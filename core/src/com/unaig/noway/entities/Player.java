@@ -57,19 +57,17 @@ public class Player extends Entity implements InputProcessor {
     }
 
     protected void init() {
-//		int rnd = MathUtils.random(1);
-        int rnd = 0;
+        int rnd = MathUtils.random(1);
+//        int rnd = 0;
         elementType = FIRE;
         size = new Vector2(TILE_SIZE, TILE_SIZE);
         MapObjects collisions = Assets.instance.labMap.getLayers().get("Spawns").getObjects();
         for (int i = 0; i < collisions.getCount(); i++) {
             MapObject mapObject = collisions.get(i);
-            if (rnd == 0) {
-                if (mapObject.getName().equals("PlayerSpawn")) {
-                    Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-                    pos = new Vector2(rectangle.x - size.x / 2, rectangle.y);
-                }
-            } else {
+            if (rnd == 0 && mapObject.getName().equals("PlayerSpawn")) {
+                Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+                pos = new Vector2(rectangle.x - size.x / 2, rectangle.y);
+            } else if (rnd == 1 && mapObject.getName().equals("PlayerSpawn2")) {
                 Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
                 pos = new Vector2(rectangle.x - size.x / 2, rectangle.y);
             }
