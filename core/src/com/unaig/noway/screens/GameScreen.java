@@ -257,7 +257,6 @@ public class GameScreen extends ScreenAdapter {
     private void renderUI(float delta) {
         playerHPUI.setValue(player.getHp());
         playerMPUI.setValue(player.getMp());
-
         if (changeElementIcon.isDisabled() && changeTimeDisabled >= 0) {
             changeTimeDisabled -= delta;
             if (changeTimeDisabled < 0) {

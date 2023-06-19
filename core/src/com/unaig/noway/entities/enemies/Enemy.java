@@ -50,7 +50,7 @@ public abstract class Enemy extends Entity implements Poolable {
 
 
     protected void init() {
-        pos = new Vector2(TILE_SIZE * 2, TILE_SIZE * 2);
+        pos = new Vector2(TILE_SIZE * 2, TILE_SIZE * 3);
         vel = new Vector2(0, 0);
         size = new Vector2(TILE_SIZE, TILE_SIZE);
         bounds = new Rectangle(pos.x + OFFSET_X, pos.y + OFFSET_Y, size.x - OFFSET_X * 2, size.y - OFFSET_Y * 2);

@@ -64,7 +64,6 @@ public class Player extends Entity implements InputProcessor {
         MapObjects collisions = Assets.instance.labMap.getLayers().get("Spawns").getObjects();
         for (int i = 0; i < collisions.getCount(); i++) {
             MapObject mapObject = collisions.get(i);
-
             if (rnd == 0) {
                 if (mapObject.getName().equals("PlayerSpawn")) {
                     Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
