@@ -12,9 +12,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.entities.Entity;
+import com.unaig.noway.entities.enemies.Enemy;
+import com.unaig.noway.entities.enemies.SpiderEnemy;
+import com.unaig.noway.entities.enemies.ZombieEnemy;
 
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP;
-import static com.unaig.noway.util.Constants.DAMAGE_ANIMATION_TIME;
+import static com.unaig.noway.util.Constants.*;
 
 public class GameHelper {
 
@@ -47,13 +50,62 @@ public class GameHelper {
     }
 
     public static void damagedEntityAnimation(Entity e, SpriteBatch batch, float delta) {
-        if (e.getIsDamaged() && e.timeDamageTaken>=0) {
-            e.timeDamageTaken-= delta;
-            batch.setColor(1,0,0,e.timeDamageTaken*5);
+        if (e.getIsDamaged() && e.timeDamageTaken >= 0) {
+            e.timeDamageTaken -= delta;
+            batch.setColor(1, 0, 0, e.timeDamageTaken * 5);
         } else {
             e.setIsDamaged(false);
-            e.timeDamageTaken= DAMAGE_ANIMATION_TIME;
-            batch.setColor(1,1,1,1);
+            e.timeDamageTaken = DAMAGE_ANIMATION_TIME;
+            batch.setColor(1, 1, 1, 1);
+        }
+    }
+
+    public static void checkEnemyStatus(Enemy enemy, float delta) {
+        if (enemy.isBurned() && enemy.getBurnDuration() >= 0) {
+            updateBurnStatus(enemy, delta);
+
+        } else if (enemy.isFrozen() && enemy.getFrozenDuration() >= 0) {
+            updateFrozenStatus(enemy, delta);
+        } else if (enemy.isSlowed() && enemy.getSlowedDuration() >= 0) {
+            updateSlowedStatus(enemy, delta);
+        } else {
+            if (enemy instanceof SpiderEnemy) enemy.maxVel = TILE_SIZE * 2.75f;
+            else if (enemy instanceof ZombieEnemy) enemy.maxVel = TILE_SIZE * 2.25f;
+        }
+    }
+
+    private static void updateSlowedStatus(Enemy enemy, float delta) {
+        enemy.setSlowedDuration(enemy.getSlowedDuration() - delta);
+        if (enemy.getSlowedDuration() < 0) {
+            enemy.setSlowedDuration(SLOWED_ENEMY_TIME);
+            enemy.setSlowed(false);
+            if (enemy instanceof SpiderEnemy) enemy.maxVel = TILE_SIZE * 2.75f;
+            else if (enemy instanceof ZombieEnemy) enemy.maxVel = TILE_SIZE * 2.25f;
+        }
+    }
+
+    private static void updateFrozenStatus(Enemy enemy, float delta) {
+        enemy.setFrozenDuration(enemy.getFrozenDuration() - delta);
+        enemy.maxVel = 0;
+        if (enemy.getFrozenDuration() < 0) {
+            enemy.setFrozenDuration(FROZEN_ENEMY_TIME);
+            enemy.setFrozen(false);
+            if (enemy instanceof SpiderEnemy) enemy.maxVel = TILE_SIZE * 2.75f;
+            else if (enemy instanceof ZombieEnemy) enemy.maxVel = TILE_SIZE * 2.25f;
+        }
+    }
+
+    private static void updateBurnStatus(Enemy enemy, float delta) {
+        enemy.setBurnDuration(enemy.getBurnDuration() - delta);
+        enemy.setHp(enemy.getHp() - delta * 5);
+        if (enemy.isSlowed()) {
+            if (enemy instanceof SpiderEnemy) enemy.maxVel = TILE_SIZE * 2.75f;
+            else if (enemy instanceof ZombieEnemy) enemy.maxVel = TILE_SIZE * 2.25f;
+            enemy.setSlowed(false);
+        }
+        if (enemy.getBurnDuration() < 0) {
+            enemy.setBurned(false);
+            enemy.setBurnDuration(BURN_ENEMY_TIME);
         }
     }
 

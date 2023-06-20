@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-up" width="80" height="81" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#323232" nextlayerid="18" nextobjectid="578">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-up" width="80" height="81" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#323232" nextlayerid="18" nextobjectid="632">
  <editorsettings>
   <export format="tmx"/>
  </editorsettings>
@@ -179,7 +179,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,155,156,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,239,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,239,0,0,0,239,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,239,0,0,
 0,0,0,0,0,51,52,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,239,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,155,156,156,157,0,
-0,0,0,0,0,65,66,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,239,0,0,0,0,0,0,0,0,0,0,
+0,0,0,147,0,65,66,0,147,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,239,0,0,0,0,0,0,0,0,0,0,
 0,0,158,0,159,0,0,159,0,158,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,239,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,155,156,156,156,156,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,239,0,0,0,0,
@@ -575,14 +575,14 @@
   <object id="539" x="500" y="140" width="64" height="24"/>
   <object id="540" x="540" y="204" width="48" height="24"/>
  </objectgroup>
- <objectgroup id="17" name="Spawns">
+ <objectgroup id="17" name="Spawns" locked="1">
   <object id="545" name="PlayerSpawn" x="96" y="1200">
    <point/>
   </object>
   <object id="552" name="PlayerSpawn2" x="1184" y="80">
    <point/>
   </object>
-  <object id="553" name="EnemySpawn" x="579" y="1235">
+  <object id="553" name="EnemySpawn" x="577" y="1233">
    <point/>
   </object>
   <object id="554" name="EnemySpawn" x="353" y="1232">
@@ -591,13 +591,13 @@
   <object id="555" name="EnemySpawn" x="432" y="1077">
    <point/>
   </object>
-  <object id="556" name="EnemySpawn" x="401" y="1119">
+  <object id="556" name="EnemySpawn" x="402" y="1116">
    <point/>
   </object>
-  <object id="557" name="EnemySpawn" x="396" y="967">
+  <object id="557" name="EnemySpawn" x="392" y="968">
    <point/>
   </object>
-  <object id="558" name="EnemySpawn" x="253" y="894">
+  <object id="558" name="EnemySpawn" x="252" y="894">
    <point/>
   </object>
   <object id="559" name="EnemySpawn" x="139" y="725">
@@ -606,19 +606,19 @@
   <object id="560" name="EnemySpawn" x="55" y="627">
    <point/>
   </object>
-  <object id="561" name="EnemySpawn" x="227" y="775">
+  <object id="561" name="EnemySpawn" x="225" y="772">
    <point/>
   </object>
   <object id="562" name="EnemySpawn" x="223" y="591">
    <point/>
   </object>
-  <object id="563" name="EnemySpawn" x="361" y="827">
+  <object id="563" name="EnemySpawn" x="352" y="832">
    <point/>
   </object>
-  <object id="564" name="EnemySpawn" x="193" y="905">
+  <object id="564" name="EnemySpawn" x="192" y="905">
    <point/>
   </object>
-  <object id="565" name="EnemySpawn" x="278" y="629">
+  <object id="565" name="EnemySpawn" x="286" y="652">
    <point/>
   </object>
   <object id="567" name="EnemySpawn" x="168" y="507">
@@ -627,25 +627,181 @@
   <object id="568" name="EnemySpawn" x="63" y="425">
    <point/>
   </object>
-  <object id="569" name="EnemySpawn" x="47" y="224">
+  <object id="569" name="EnemySpawn" x="48" y="224">
    <point/>
   </object>
-  <object id="571" name="EnemySpawn" x="47" y="55">
+  <object id="571" name="EnemySpawn" x="48" y="56">
    <point/>
   </object>
   <object id="572" name="EnemySpawn" x="48" y="115">
    <point/>
   </object>
-  <object id="574" name="EnemySpawn" x="330" y="87">
+  <object id="574" name="EnemySpawn" x="329" y="87">
    <point/>
   </object>
-  <object id="575" name="EnemySpawn" x="483" y="61">
+  <object id="575" name="EnemySpawn" x="480" y="64">
    <point/>
   </object>
-  <object id="576" name="EnemySpawn" x="448" y="111">
+  <object id="576" name="EnemySpawn" x="448" y="112">
    <point/>
   </object>
   <object id="577" name="EnemySpawn" x="393" y="208">
+   <point/>
+  </object>
+  <object id="578" name="EnemySpawn" x="535" y="827">
+   <point/>
+  </object>
+  <object id="579" name="EnemySpawn" x="478" y="748">
+   <point/>
+  </object>
+  <object id="580" name="EnemySpawn" x="396" y="681">
+   <point/>
+  </object>
+  <object id="581" name="EnemySpawn" x="377" y="622">
+   <point/>
+  </object>
+  <object id="582" name="EnemySpawn" x="390" y="471">
+   <point/>
+  </object>
+  <object id="583" name="EnemySpawn" x="414" y="317">
+   <point/>
+  </object>
+  <object id="584" name="EnemySpawn" x="666" y="938">
+   <point/>
+  </object>
+  <object id="585" name="EnemySpawn" x="588" y="979">
+   <point/>
+  </object>
+  <object id="586" name="EnemySpawn" x="480" y="1120">
+   <point/>
+  </object>
+  <object id="587" name="EnemySpawn" x="801" y="1223">
+   <point/>
+  </object>
+  <object id="588" name="EnemySpawn" x="951" y="1156">
+   <point/>
+  </object>
+  <object id="589" name="EnemySpawn" x="1151" y="1206">
+   <point/>
+  </object>
+  <object id="591" name="EnemySpawn" x="1233" y="1166">
+   <point/>
+  </object>
+  <object id="592" name="EnemySpawn" x="1110" y="1050">
+   <point/>
+  </object>
+  <object id="593" name="EnemySpawn" x="1232" y="945">
+   <point/>
+  </object>
+  <object id="594" name="EnemySpawn" x="1232" y="1043">
+   <point/>
+  </object>
+  <object id="595" name="EnemySpawn" x="1208" y="855">
+   <point/>
+  </object>
+  <object id="596" name="EnemySpawn" x="1123" y="775">
+   <point/>
+  </object>
+  <object id="597" name="EnemySpawn" x="927" y="807">
+   <point/>
+  </object>
+  <object id="598" name="EnemySpawn" x="784" y="757">
+   <point/>
+  </object>
+  <object id="599" name="EnemySpawn" x="897" y="676">
+   <point/>
+  </object>
+  <object id="600" name="EnemySpawn" x="801" y="517">
+   <point/>
+  </object>
+  <object id="601" name="EnemySpawn" x="560" y="757">
+   <point/>
+  </object>
+  <object id="602" name="EnemySpawn" x="554" y="520">
+   <point/>
+  </object>
+  <object id="603" name="EnemySpawn" x="850" y="969">
+   <point/>
+  </object>
+  <object id="604" name="EnemySpawn" x="1057" y="514">
+   <point/>
+  </object>
+  <object id="605" name="EnemySpawn" x="1075" y="662">
+   <point/>
+  </object>
+  <object id="606" name="EnemySpawn" x="1034" y="384">
+   <point/>
+  </object>
+  <object id="607" name="EnemySpawn" x="871" y="364">
+   <point/>
+  </object>
+  <object id="608" name="EnemySpawn" x="736" y="219">
+   <point/>
+  </object>
+  <object id="609" name="EnemySpawn" x="865" y="161">
+   <point/>
+  </object>
+  <object id="610" name="EnemySpawn" x="967" y="253">
+   <point/>
+  </object>
+  <object id="611" name="EnemySpawn" x="576" y="268">
+   <point/>
+  </object>
+  <object id="612" name="EnemySpawn" x="500" y="199">
+   <point/>
+  </object>
+  <object id="613" name="EnemySpawn" x="498" y="898">
+   <point/>
+  </object>
+  <object id="614" name="EnemySpawn" x="738" y="892">
+   <point/>
+  </object>
+  <object id="615" name="EnemySpawn" x="723" y="1099">
+   <point/>
+  </object>
+  <object id="616" name="EnemySpawn" x="663" y="394">
+   <point/>
+  </object>
+  <object id="617" name="EnemySpawn" x="282" y="249">
+   <point/>
+  </object>
+  <object id="618" name="EnemySpawn" x="897" y="50">
+   <point/>
+  </object>
+  <object id="619" name="EnemySpawn" x="983" y="643">
+   <point/>
+  </object>
+  <object id="620" name="EnemySpawn" x="923" y="469">
+   <point/>
+  </object>
+  <object id="621" name="EnemySpawn" x="1213" y="544">
+   <point/>
+  </object>
+  <object id="622" name="EnemySpawn" x="919" y="1025">
+   <point/>
+  </object>
+  <object id="623" name="EnemySpawn" x="588" y="1073">
+   <point/>
+  </object>
+  <object id="624" name="EnemySpawn" x="799" y="81">
+   <point/>
+  </object>
+  <object id="625" name="EnemySpawn" x="991" y="1032">
+   <point/>
+  </object>
+  <object id="626" name="EnemySpawn" x="1017" y="920">
+   <point/>
+  </object>
+  <object id="627" name="EnemySpawn" x="889" y="541">
+   <point/>
+  </object>
+  <object id="628" name="EnemySpawn" x="747" y="407">
+   <point/>
+  </object>
+  <object id="629" name="EnemySpawn" x="464" y="488">
+   <point/>
+  </object>
+  <object id="631" name="EnemySpawn" x="824" y="283">
    <point/>
   </object>
  </objectgroup>

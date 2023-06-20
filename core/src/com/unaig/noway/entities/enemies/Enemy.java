@@ -332,4 +332,52 @@ public abstract class Enemy extends Entity implements Poolable {
     }
 
     public abstract void release();
+
+    public boolean isBurned() {
+        return isBurned;
+    }
+
+    public void setBurned(boolean burned) {
+        isBurned = burned;
+    }
+
+    public boolean isSlowed() {
+        return isSlowed;
+    }
+
+    public void setSlowed(boolean slowed) {
+        isSlowed = slowed;
+    }
+
+    public boolean isFrozen() {
+        return isFrozen;
+    }
+
+    public void setFrozen(boolean frozen) {
+        isFrozen = frozen;
+    }
+
+    public float getBurnDuration() {
+        return burnDuration;
+    }
+
+    public void setBurnDuration(float burnDuration) {
+        this.burnDuration = burnDuration;
+    }
+
+    public float getSlowedDuration() {
+        return slowedDuration;
+    }
+
+    public void setSlowedDuration(float slowedDuration) {
+        this.slowedDuration = slowedDuration;
+    }
+
+    public float getFrozenDuration() {
+        return frozenDuration;
+    }
+
+    public void setFrozenDuration(float frozenDuration) {
+        this.frozenDuration = frozenDuration;
+    }
 }

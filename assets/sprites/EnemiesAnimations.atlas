@@ -1,314 +1,594 @@
 
 EnemiesAnimations.png
-size: 1024, 256
+size: 1024, 128
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
 spiderAttackDown
   rotate: false
-  xy: 68, 68
-  size: 64, 64
+  xy: 88, 88
+  size: 42, 38
   orig: 64, 64
-  offset: 0, 0
+  offset: 10, 9
   index: 1
 spiderAttackDown
   rotate: false
-  xy: 266, 2
-  size: 64, 64
+  xy: 132, 92
+  size: 46, 34
   orig: 64, 64
-  offset: 0, 0
+  offset: 8, 9
+  index: 2
+spiderAttackDown
+  rotate: false
+  xy: 312, 91
+  size: 42, 35
+  orig: 64, 64
+  offset: 10, 14
+  index: 0
+spiderAttackDown
+  rotate: false
+  xy: 655, 94
+  size: 42, 32
+  orig: 64, 64
+  offset: 10, 13
   index: 3
-spiderAttackDown
-  rotate: false
-  xy: 464, 134
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 0
-spiderAttackDown
-  rotate: false
-  xy: 662, 134
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 2
 spiderAttackLeft
   rotate: false
-  xy: 68, 134
-  size: 64, 64
+  xy: 484, 90
+  size: 39, 36
   orig: 64, 64
-  offset: 0, 0
-  index: 0
-spiderAttackLeft
-  rotate: false
-  xy: 266, 134
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 2
-spiderAttackLeft
-  rotate: false
-  xy: 596, 134
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
+  offset: 8, 12
   index: 1
 spiderAttackLeft
   rotate: false
-  xy: 794, 134
-  size: 64, 64
+  xy: 568, 93
+  size: 41, 33
   orig: 64, 64
-  offset: 0, 0
+  offset: 4, 12
+  index: 2
+spiderAttackLeft
+  rotate: false
+  xy: 932, 90
+  size: 34, 36
+  orig: 64, 64
+  offset: 12, 12
+  index: 3
+spiderAttackLeft
+  rotate: false
+  xy: 324, 53
+  size: 31, 36
+  orig: 64, 64
+  offset: 17, 12
+  index: 0
+spiderAttackRight
+  rotate: false
+  xy: 443, 90
+  size: 39, 36
+  orig: 64, 64
+  offset: 17, 12
+  index: 1
+spiderAttackRight
+  rotate: false
+  xy: 525, 93
+  size: 41, 33
+  orig: 64, 64
+  offset: 19, 12
+  index: 2
+spiderAttackRight
+  rotate: false
+  xy: 860, 90
+  size: 34, 36
+  orig: 64, 64
+  offset: 18, 12
   index: 3
 spiderAttackRight
+  rotate: false
+  xy: 357, 53
+  size: 31, 36
+  orig: 64, 64
+  offset: 16, 12
+  index: 0
+spiderAttackUp
   rotate: false
   xy: 2, 2
-  size: 64, 64
+  size: 42, 36
   orig: 64, 64
-  offset: 0, 0
-  index: 2
-spiderAttackRight
-  rotate: false
-  xy: 332, 2
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 1
-spiderAttackRight
-  rotate: false
-  xy: 530, 2
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 3
-spiderAttackRight
-  rotate: false
-  xy: 662, 2
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 0
-spiderAttackUp
-  rotate: false
-  xy: 68, 2
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 3
-spiderAttackUp
-  rotate: false
-  xy: 200, 2
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 0
-spiderAttackUp
-  rotate: false
-  xy: 464, 68
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
+  offset: 10, 17
   index: 2
 spiderAttackUp
   rotate: false
-  xy: 728, 2
-  size: 64, 64
+  xy: 356, 91
+  size: 42, 35
   orig: 64, 64
-  offset: 0, 0
+  offset: 10, 16
   index: 1
-spiderDead
+spiderAttackUp
   rotate: false
-  xy: 2, 134
-  size: 64, 64
+  xy: 611, 94
+  size: 42, 32
   orig: 64, 64
-  offset: 0, 0
-  index: 1
-spiderDead
+  offset: 10, 13
+  index: 0
+spiderAttackUp
   rotate: false
-  xy: 200, 68
-  size: 64, 64
+  xy: 699, 97
+  size: 42, 29
   orig: 64, 64
-  offset: 0, 0
+  offset: 10, 15
   index: 3
 spiderDead
   rotate: false
-  xy: 398, 134
-  size: 64, 64
+  xy: 268, 91
+  size: 42, 35
   orig: 64, 64
-  offset: 0, 0
+  offset: 10, 14
   index: 0
 spiderDead
   rotate: false
-  xy: 530, 68
-  size: 64, 64
+  xy: 88, 20
+  size: 38, 26
   orig: 64, 64
-  offset: 0, 0
-  index: 2
-spiderRunDown
+  offset: 12, 18
+  index: 1
+spiderDead
   rotate: false
-  xy: 200, 134
-  size: 64, 64
+  xy: 734, 69
+  size: 34, 21
   orig: 64, 64
-  offset: 0, 0
+  offset: 14, 20
   index: 3
-spiderRunDown
+spiderDead
   rotate: false
-  xy: 200, 134
-  size: 64, 64
+  xy: 734, 47
+  size: 34, 20
   orig: 64, 64
-  offset: 0, 0
-  index: 5
-spiderRunDown
-  rotate: false
-  xy: 332, 134
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 0
-spiderRunDown
-  rotate: false
-  xy: 332, 134
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
+  offset: 14, 23
   index: 2
 spiderRunDown
   rotate: false
-  xy: 728, 134
-  size: 64, 64
+  xy: 2, 84
+  size: 41, 42
   orig: 64, 64
-  offset: 0, 0
+  offset: 11, 8
   index: 4
 spiderRunDown
   rotate: false
-  xy: 860, 134
-  size: 64, 64
+  xy: 2, 40
+  size: 41, 42
   orig: 64, 64
-  offset: 0, 0
+  offset: 10, 8
+  index: 1
+spiderRunDown
+  rotate: false
+  xy: 88, 48
+  size: 41, 38
+  orig: 64, 64
+  offset: 11, 11
+  index: 3
+spiderRunDown
+  rotate: false
+  xy: 88, 48
+  size: 41, 38
+  orig: 64, 64
+  offset: 11, 11
+  index: 5
+spiderRunDown
+  rotate: false
+  xy: 400, 88
+  size: 41, 38
+  orig: 64, 64
+  offset: 10, 11
+  index: 0
+spiderRunDown
+  rotate: false
+  xy: 400, 88
+  size: 41, 38
+  orig: 64, 64
+  offset: 10, 11
+  index: 2
+spiderRunLeft
+  rotate: false
+  xy: 784, 91
+  size: 38, 35
+  orig: 64, 64
+  offset: 11, 13
   index: 1
 spiderRunLeft
   rotate: false
-  xy: 134, 134
-  size: 64, 64
+  xy: 824, 90
+  size: 34, 36
   orig: 64, 64
-  offset: 0, 0
-  index: 2
-spiderRunLeft
-  rotate: false
-  xy: 332, 68
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
+  offset: 14, 13
   index: 4
 spiderRunLeft
   rotate: false
-  xy: 332, 68
-  size: 64, 64
+  xy: 824, 90
+  size: 34, 36
   orig: 64, 64
-  offset: 0, 0
+  offset: 14, 13
   index: 5
 spiderRunLeft
   rotate: false
-  xy: 398, 2
-  size: 64, 64
+  xy: 968, 90
+  size: 33, 36
   orig: 64, 64
-  offset: 0, 0
-  index: 1
+  offset: 15, 13
+  index: 2
 spiderRunLeft
   rotate: false
-  xy: 596, 2
-  size: 64, 64
+  xy: 184, 54
+  size: 33, 36
   orig: 64, 64
-  offset: 0, 0
+  offset: 15, 13
   index: 3
 spiderRunLeft
   rotate: false
-  xy: 728, 68
-  size: 64, 64
+  xy: 254, 53
+  size: 33, 36
   orig: 64, 64
-  offset: 0, 0
+  offset: 14, 13
   index: 0
 spiderRunRight
   rotate: false
-  xy: 134, 68
-  size: 64, 64
+  xy: 46, 7
+  size: 38, 35
   orig: 64, 64
-  offset: 0, 0
+  offset: 15, 13
   index: 4
 spiderRunRight
   rotate: false
-  xy: 266, 68
-  size: 64, 64
+  xy: 743, 92
+  size: 39, 34
   orig: 64, 64
-  offset: 0, 0
+  offset: 14, 14
   index: 1
 spiderRunRight
   rotate: false
-  xy: 530, 134
-  size: 64, 64
+  xy: 896, 90
+  size: 34, 36
   orig: 64, 64
-  offset: 0, 0
-  index: 3
-spiderRunRight
-  rotate: false
-  xy: 596, 68
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
+  offset: 16, 13
   index: 0
 spiderRunRight
   rotate: false
-  xy: 662, 68
-  size: 64, 64
+  xy: 149, 54
+  size: 33, 36
   orig: 64, 64
-  offset: 0, 0
+  offset: 16, 13
+  index: 3
+spiderRunRight
+  rotate: false
+  xy: 219, 54
+  size: 33, 36
+  orig: 64, 64
+  offset: 17, 13
   index: 5
 spiderRunRight
   rotate: false
-  xy: 794, 68
-  size: 64, 64
+  xy: 289, 53
+  size: 33, 36
   orig: 64, 64
-  offset: 0, 0
+  offset: 16, 13
   index: 2
 spiderRunUp
   rotate: false
-  xy: 2, 68
-  size: 64, 64
+  xy: 45, 86
+  size: 41, 40
   orig: 64, 64
-  offset: 0, 0
-  index: 5
-spiderRunUp
-  rotate: false
-  xy: 2, 68
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 3
-spiderRunUp
-  rotate: false
-  xy: 134, 2
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 2
-spiderRunUp
-  rotate: false
-  xy: 134, 2
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 0
-spiderRunUp
-  rotate: false
-  xy: 398, 68
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
+  offset: 11, 12
   index: 4
 spiderRunUp
   rotate: false
-  xy: 464, 2
-  size: 64, 64
+  xy: 45, 44
+  size: 41, 40
   orig: 64, 64
-  offset: 0, 0
+  offset: 10, 12
+  index: 1
+spiderRunUp
+  rotate: false
+  xy: 180, 92
+  size: 42, 34
+  orig: 64, 64
+  offset: 10, 13
+  index: 5
+spiderRunUp
+  rotate: false
+  xy: 180, 92
+  size: 42, 34
+  orig: 64, 64
+  offset: 10, 13
+  index: 3
+spiderRunUp
+  rotate: false
+  xy: 224, 92
+  size: 42, 34
+  orig: 64, 64
+  offset: 12, 13
+  index: 2
+spiderRunUp
+  rotate: false
+  xy: 224, 92
+  size: 42, 34
+  orig: 64, 64
+  offset: 12, 13
+  index: 0
+zombieAttackDown
+  rotate: false
+  xy: 460, 52
+  size: 20, 36
+  orig: 24, 40
+  offset: 1, 2
+  index: 4
+zombieAttackDown
+  rotate: false
+  xy: 838, 55
+  size: 19, 33
+  orig: 24, 40
+  offset: 4, 1
+  index: 3
+zombieAttackDown
+  rotate: false
+  xy: 921, 52
+  size: 18, 36
+  orig: 24, 40
+  offset: 2, 2
+  index: 0
+zombieAttackDown
+  rotate: false
+  xy: 980, 53
+  size: 18, 35
+  orig: 24, 40
+  offset: 3, 3
+  index: 1
+zombieAttackDown
+  rotate: false
+  xy: 242, 14
+  size: 17, 37
+  orig: 24, 40
+  offset: 2, 1
+  index: 2
+zombieAttackLeft
+  rotate: false
+  xy: 414, 50
+  size: 22, 36
+  orig: 24, 40
+  offset: 0, 2
+  index: 0
+zombieAttackLeft
+  rotate: false
+  xy: 588, 54
+  size: 19, 37
+  orig: 24, 40
+  offset: 2, 2
+  index: 2
+zombieAttackLeft
+  rotate: false
+  xy: 671, 55
+  size: 19, 37
+  orig: 24, 40
+  offset: 0, 1
+  index: 4
+zombieAttackLeft
+  rotate: false
+  xy: 792, 56
+  size: 21, 33
+  orig: 24, 40
+  offset: 0, 1
+  index: 3
+zombieAttackLeft
+  rotate: false
+  xy: 880, 52
+  size: 19, 36
+  orig: 24, 40
+  offset: 0, 2
+  index: 1
+zombieAttackRight
+  rotate: false
+  xy: 390, 50
+  size: 22, 36
+  orig: 24, 40
+  offset: 2, 2
+  index: 0
+zombieAttackRight
+  rotate: false
+  xy: 504, 51
+  size: 19, 37
+  orig: 24, 40
+  offset: 3, 2
+  index: 2
+zombieAttackRight
+  rotate: false
+  xy: 629, 55
+  size: 19, 37
+  orig: 24, 40
+  offset: 5, 1
+  index: 4
+zombieAttackRight
+  rotate: false
+  xy: 815, 55
+  size: 21, 33
+  orig: 24, 40
+  offset: 3, 1
+  index: 3
+zombieAttackRight
+  rotate: false
+  xy: 859, 52
+  size: 19, 36
+  orig: 24, 40
+  offset: 5, 2
+  index: 1
+zombieAttackUp
+  rotate: false
+  xy: 525, 54
+  size: 19, 37
+  orig: 24, 40
+  offset: 1, 2
+  index: 4
+zombieAttackUp
+  rotate: false
+  xy: 692, 55
+  size: 18, 37
+  orig: 24, 40
+  offset: 3, 1
+  index: 1
+zombieAttackUp
+  rotate: false
+  xy: 692, 55
+  size: 18, 37
+  orig: 24, 40
+  offset: 3, 1
+  index: 0
+zombieAttackUp
+  rotate: false
+  xy: 961, 52
+  size: 17, 36
+  orig: 24, 40
+  offset: 2, 2
+  index: 2
+zombieAttackUp
+  rotate: false
+  xy: 223, 17
+  size: 17, 35
+  orig: 24, 40
+  offset: 2, 1
+  index: 3
+zombieDead
+  rotate: false
+  xy: 1000, 53
+  size: 18, 34
+  orig: 24, 40
+  offset: 2, 3
+  index: 0
+zombieDead
+  rotate: false
+  xy: 149, 29
+  size: 26, 23
+  orig: 32, 30
+  offset: 2, 4
+  index: 2
+zombieDead
+  rotate: false
+  xy: 177, 30
+  size: 24, 22
+  orig: 38, 35
+  offset: 7, 1
+  index: 3
+zombieDead
+  rotate: false
+  xy: 203, 19
+  size: 18, 33
+  orig: 24, 40
+  offset: 2, 3
+  index: 1
+zombieRunDown
+  rotate: false
+  xy: 482, 52
+  size: 20, 36
+  orig: 24, 40
+  offset: 1, 3
+  index: 1
+zombieRunDown
+  rotate: false
+  xy: 901, 52
+  size: 18, 36
+  orig: 24, 40
+  offset: 2, 2
+  index: 2
+zombieRunDown
+  rotate: false
+  xy: 941, 52
+  size: 18, 36
+  orig: 24, 40
+  offset: 2, 2
+  index: 0
+zombieRunLeft
+  rotate: false
+  xy: 131, 49
+  size: 16, 37
+  orig: 24, 40
+  offset: 3, 2
+  index: 1
+zombieRunLeft
+  rotate: false
+  xy: 546, 54
+  size: 19, 37
+  orig: 24, 40
+  offset: 1, 2
+  index: 0
+zombieRunLeft
+  rotate: false
+  xy: 770, 54
+  size: 20, 35
+  orig: 24, 40
+  offset: 1, 3
+  index: 2
+zombieRunRight
+  rotate: false
+  xy: 1003, 89
+  size: 19, 37
+  orig: 24, 40
+  offset: 4, 1
+  index: 0
+zombieRunRight
+  rotate: false
+  xy: 712, 60
+  size: 20, 35
+  orig: 24, 40
+  offset: 3, 2
+  index: 2
+zombieRunRight
+  rotate: false
+  xy: 297, 14
+  size: 16, 37
+  orig: 24, 40
+  offset: 5, 1
+  index: 1
+zombieRunUp
+  rotate: false
+  xy: 567, 54
+  size: 19, 37
+  orig: 24, 38
+  offset: 1, 0
+  index: 2
+zombieRunUp
+  rotate: false
+  xy: 609, 54
+  size: 18, 37
+  orig: 24, 38
+  offset: 2, 0
+  index: 0
+zombieStandDown
+  rotate: false
+  xy: 438, 50
+  size: 20, 36
+  orig: 24, 40
+  offset: 1, 3
+  index: -1
+zombieStandLeft
+  rotate: false
+  xy: 279, 14
+  size: 16, 37
+  orig: 24, 40
+  offset: 3, 2
+  index: -1
+zombieStandRight
+  rotate: false
+  xy: 261, 14
+  size: 16, 37
+  orig: 24, 40
+  offset: 4, 2
+  index: -1
+zombieStandUp
+  rotate: false
+  xy: 650, 55
+  size: 19, 37
+  orig: 24, 40
+  offset: 1, 3
+  index: -1
+zombieRunUp
+  rotate: false
+  xy: 650, 55
+  size: 19, 37
+  orig: 24, 38
+  offset: 1, 1
   index: 1

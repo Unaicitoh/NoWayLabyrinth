@@ -37,7 +37,7 @@ public class SpiderEnemy extends Enemy {
 
     protected void init(Vector2 pos) {
         maxHp = 100;
-        maxVel = TILE_SIZE * 2.5f;
+        maxVel = TILE_SIZE * 2.75f;
         attackDamage = 15;
         super.init(pos);
         loadSpiderAnimations(animations);
@@ -46,58 +46,13 @@ public class SpiderEnemy extends Enemy {
     @Override
     public void render(SpriteBatch batch, ShapeDrawer shaper, float delta, Player player, Array<Spell> spells) {
         update(delta, player, spells);
-        checkSpiderStatus(delta);
+        GameHelper.checkEnemyStatus(this, delta);
         if (drawHp && !isDead) {
             hpbar.render(shaper, delta, pos, hp);
         }
         GameHelper.damagedEntityAnimation(this, batch, delta);
         renderSpiderAnimations(batch);
 
-    }
-
-    private void checkSpiderStatus(float delta) {
-        if (isBurned && burnDuration >= 0) {
-            updateBurnStatus(delta);
-
-        } else if (isFrozen && frozenDuration >= 0) {
-            updateFrozenStatus(delta);
-        } else if (isSlowed && slowedDuration >= 0) {
-            updateSlowedStatus(delta);
-        } else {
-            maxVel = TILE_SIZE * 2.5f;
-        }
-    }
-
-    private void updateSlowedStatus(float delta) {
-        slowedDuration -= delta;
-        if (slowedDuration < 0) {
-            slowedDuration = SLOWED_ENEMY_TIME;
-            isSlowed = false;
-            maxVel = TILE_SIZE * 2.5f;
-        }
-    }
-
-    private void updateFrozenStatus(float delta) {
-        frozenDuration -= delta;
-        maxVel = 0;
-        if (frozenDuration < 0) {
-            frozenDuration = FROZEN_ENEMY_TIME;
-            isFrozen = false;
-            maxVel = TILE_SIZE * 2.5f;
-        }
-    }
-
-    private void updateBurnStatus(float delta) {
-        burnDuration -= delta;
-        hp -= delta * 5;
-        if (isSlowed) {
-            maxVel = TILE_SIZE * 2.5f;
-            isSlowed = false;
-        }
-        if (burnDuration < 0) {
-            isBurned = false;
-            burnDuration = BURN_ENEMY_TIME;
-        }
     }
 
     private void renderSpiderAnimations(SpriteBatch batch) {

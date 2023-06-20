@@ -23,6 +23,21 @@ public class Constants {
     public static final String SPIDER_ATTACK_RIGHT = "spiderAttackRight";
     public static final String SPIDER_DEAD_ANIM = "spiderDead";
 
+    ////Zombie
+    public static final String ZOMBIE_STAND_LEFT = "zombieStandLeft";
+    public static final String ZOMBIE_STAND_RIGHT = "zombieStandRight";
+    public static final String ZOMBIE_STAND_UP = "zombieStandUp";
+    public static final String ZOMBIE_STAND_DOWN = "zombieStandDown";
+    public static final String ZOMBIE_ANIM_LEFT = "zombieRunLeft";
+    public static final String ZOMBIE_ANIM_RIGHT = "zombieRunRight";
+    public static final String ZOMBIE_ANIM_UP = "zombieRunUp";
+    public static final String ZOMBIE_ANIM_DOWN = "zombieRunDown";
+    public static final String ZOMBIE_ATTACK_DOWN = "zombieAttackDown";
+    public static final String ZOMBIE_ATTACK_LEFT = "zombieAttackLeft";
+    public static final String ZOMBIE_ATTACK_UP = "zombieAttackUp";
+    public static final String ZOMBIE_ATTACK_RIGHT = "zombieAttackRight";
+    public static final String ZOMBIE_DEAD_ANIM = "zombieDead";
+
     //Fire spells animations
     ////Basic
     public static final String FIRE_SPELL_LEFT = "fireLeft";

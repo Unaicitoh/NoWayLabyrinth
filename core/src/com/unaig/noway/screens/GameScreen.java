@@ -11,6 +11,7 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -31,6 +32,7 @@ import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.entities.enemies.Enemy;
 import com.unaig.noway.entities.enemies.SpiderEnemy;
+import com.unaig.noway.entities.enemies.ZombieEnemy;
 import com.unaig.noway.entities.spells.FireSpell;
 import com.unaig.noway.entities.spells.IceSpell;
 import com.unaig.noway.entities.spells.Spell;
@@ -142,10 +144,13 @@ public class GameScreen extends ScreenAdapter {
     private void spawnEnemies() {
         MapObjects collisions = Assets.instance.labMap.getLayers().get("Spawns").getObjects();
         for (int i = 0; i < collisions.getCount(); i++) {
+            int rnd = MathUtils.random(1);
             MapObject mapObject = collisions.get(i);
-            if (mapObject.getName().equals("EnemySpawn")) {
-                Rectangle pos = ((RectangleMapObject) mapObject).getRectangle();
-                SpiderEnemy.create(poolEngine, new Vector2(pos.x, pos.y));
+            Rectangle pos = ((RectangleMapObject) mapObject).getRectangle();
+            if (mapObject.getName().equals("EnemySpawn") && rnd == 0) {
+                SpiderEnemy.create(poolEngine, new Vector2(pos.x - TILE_SIZE / 2f, pos.y - TILE_SIZE / 2f));
+            } else if (mapObject.getName().equals("EnemySpawn") && rnd == 1) {
+                ZombieEnemy.create(poolEngine, new Vector2(pos.x - TILE_SIZE / 2f, pos.y - TILE_SIZE / 2f));
             }
         }
     }
