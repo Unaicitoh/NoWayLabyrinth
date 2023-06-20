@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.ObjectMap;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.entities.Entity;
 import com.unaig.noway.entities.enemies.Enemy;
@@ -17,7 +18,10 @@ import com.unaig.noway.entities.enemies.SpiderEnemy;
 import com.unaig.noway.entities.enemies.ZombieEnemy;
 
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP;
+import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.NORMAL;
+import static com.unaig.noway.entities.enemies.Enemy.*;
 import static com.unaig.noway.util.Constants.*;
+import static com.unaig.noway.util.Direction.*;
 
 public class GameHelper {
 
@@ -107,6 +111,138 @@ public class GameHelper {
             enemy.setBurned(false);
             enemy.setBurnDuration(BURN_ENEMY_TIME);
         }
+    }
+
+    public static void loadEnemyAnimations(Enemy enemy, ObjectMap<String, Animation<AtlasRegion>> animations) {
+        if (enemy instanceof SpiderEnemy) {
+            animations.put(SPIDER_ANIM_RIGHT, new Animation<>(FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ANIM_RIGHT), LOOP));
+            animations.put(SPIDER_ANIM_LEFT, new Animation<>(FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ANIM_LEFT), LOOP));
+            animations.put(SPIDER_ANIM_UP, new Animation<>(FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ANIM_UP), LOOP));
+            animations.put(SPIDER_ANIM_DOWN, new Animation<>(FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ANIM_DOWN), LOOP));
+            animations.put(SPIDER_ATTACK_RIGHT, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ATTACK_RIGHT), LOOP));
+            animations.put(SPIDER_ATTACK_LEFT, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ATTACK_LEFT), LOOP));
+            animations.put(SPIDER_ATTACK_UP, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ATTACK_UP), LOOP));
+            animations.put(SPIDER_ATTACK_DOWN, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_ATTACK_DOWN), LOOP));
+            animations.put(SPIDER_DEAD_ANIM, new Animation<>(DEAD_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(SPIDER_DEAD_ANIM), NORMAL));
+        } else if (enemy instanceof ZombieEnemy) {
+            animations.put(ZOMBIE_ANIM_RIGHT, new Animation<>(FRAME_DURATION * 2f, Assets.instance.enemiesAtlas.findRegions(ZOMBIE_ANIM_RIGHT), LOOP));
+            animations.put(ZOMBIE_ANIM_LEFT, new Animation<>(FRAME_DURATION * 2f, Assets.instance.enemiesAtlas.findRegions(ZOMBIE_ANIM_LEFT), LOOP));
+            animations.put(ZOMBIE_ANIM_UP, new Animation<>(FRAME_DURATION * 2f, Assets.instance.enemiesAtlas.findRegions(ZOMBIE_ANIM_UP), LOOP));
+            animations.put(ZOMBIE_ANIM_DOWN, new Animation<>(FRAME_DURATION * 2f, Assets.instance.enemiesAtlas.findRegions(ZOMBIE_ANIM_DOWN), LOOP));
+            animations.put(ZOMBIE_ATTACK_RIGHT, new Animation<>(ATTACK_FRAME_DURATION * 1.5f, Assets.instance.enemiesAtlas.findRegions(ZOMBIE_ATTACK_RIGHT), LOOP));
+            animations.put(ZOMBIE_ATTACK_LEFT, new Animation<>(ATTACK_FRAME_DURATION * 1.5f, Assets.instance.enemiesAtlas.findRegions(ZOMBIE_ATTACK_LEFT), LOOP));
+            animations.put(ZOMBIE_ATTACK_UP, new Animation<>(ATTACK_FRAME_DURATION * 1.5f, Assets.instance.enemiesAtlas.findRegions(ZOMBIE_ATTACK_UP), LOOP));
+            animations.put(ZOMBIE_ATTACK_DOWN, new Animation<>(ATTACK_FRAME_DURATION * 1.5f, Assets.instance.enemiesAtlas.findRegions(ZOMBIE_ATTACK_DOWN), LOOP));
+            animations.put(ZOMBIE_DEAD_ANIM, new Animation<>(DEAD_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(ZOMBIE_DEAD_ANIM), NORMAL));
+        }
+
+    }
+
+    private static void enemyAnimation(Enemy enemy, String enemyAnim, SpriteBatch batch, Direction dir) {
+        if (enemy instanceof SpiderEnemy) {
+            if (enemy.isSlowed()) {
+                enemy.animations.get(enemyAnim).setFrameDuration(FRAME_DURATION * 2);
+            } else {
+                enemy.animations.get(enemyAnim).setFrameDuration(FRAME_DURATION);
+            }
+        } else if (enemy instanceof ZombieEnemy) {
+            if (enemy.isSlowed()) {
+                enemy.animations.get(enemyAnim).setFrameDuration(FRAME_DURATION * 2.75f);
+            } else {
+                enemy.animations.get(enemyAnim).setFrameDuration(FRAME_DURATION * 1.75f);
+            }
+
+        }
+        drawEntity(batch, enemy.animations.get(enemyAnim).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+        enemy.lastDir = dir;
+    }
+
+    private static void enemyStand(Enemy enemy, SpriteBatch batch) {
+        if (enemy instanceof SpiderEnemy) {
+            if (enemy.lastDir == RIGHT)
+                drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_RIGHT, 0), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == LEFT)
+                drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_LEFT, 0), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == UP)
+                drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_UP, 0), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == DOWN)
+                drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(SPIDER_ATTACK_DOWN, 0), enemy.getPos(), enemy.getSize());
+        } else if (enemy instanceof ZombieEnemy) {
+            if (enemy.lastDir == RIGHT)
+                drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(ZOMBIE_STAND_RIGHT), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == LEFT)
+                drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(ZOMBIE_STAND_LEFT), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == UP)
+                drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(ZOMBIE_STAND_UP), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == DOWN)
+                drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(ZOMBIE_STAND_DOWN), enemy.getPos(), enemy.getSize());
+        }
+    }
+
+    private static void enemyAttackingAnimation(Enemy enemy, SpriteBatch batch) {
+        if (enemy instanceof SpiderEnemy) {
+            if (enemy.lastDir == RIGHT)
+                drawEntity(batch, enemy.animations.get(SPIDER_ATTACK_RIGHT).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == LEFT)
+                drawEntity(batch, enemy.animations.get(SPIDER_ATTACK_LEFT).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == UP)
+                drawEntity(batch, enemy.animations.get(SPIDER_ATTACK_UP).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == DOWN)
+                drawEntity(batch, enemy.animations.get(SPIDER_ATTACK_DOWN).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+        } else if (enemy instanceof ZombieEnemy) {
+            if (enemy.lastDir == RIGHT)
+                drawEntity(batch, enemy.animations.get(ZOMBIE_ATTACK_RIGHT).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == LEFT)
+                drawEntity(batch, enemy.animations.get(ZOMBIE_ATTACK_LEFT).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == UP)
+                drawEntity(batch, enemy.animations.get(ZOMBIE_ATTACK_UP).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == DOWN)
+                drawEntity(batch, enemy.animations.get(ZOMBIE_ATTACK_DOWN).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+        }
+
+    }
+
+    public static void renderEnemyAnimations(Enemy enemy, SpriteBatch batch) {
+        if (enemy instanceof SpiderEnemy) {
+            if ((!enemy.isAttacking() && !enemy.isDead()) || (enemy.isFrozen() && !enemy.isDead())) {
+                if (enemy.getVel().x < 0) {
+                    enemyAnimation(enemy, SPIDER_ANIM_LEFT, batch, LEFT);
+                } else if (enemy.getVel().x > 0) {
+                    enemyAnimation(enemy, SPIDER_ANIM_RIGHT, batch, RIGHT);
+                } else if (enemy.getVel().y > 0) {
+                    enemyAnimation(enemy, SPIDER_ANIM_UP, batch, UP);
+                } else if (enemy.getVel().y < 0) {
+                    enemyAnimation(enemy, SPIDER_ANIM_DOWN, batch, DOWN);
+                } else {
+                    enemyStand(enemy, batch);
+                }
+            } else if (enemy.isAttacking() && !enemy.isDead()) {
+                enemyAttackingAnimation(enemy, batch);
+
+            } else {
+                GameHelper.drawEntity(batch, enemy.animations.get(SPIDER_DEAD_ANIM).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+            }
+        } else if (enemy instanceof ZombieEnemy) {
+            if ((!enemy.isAttacking() && !enemy.isDead()) || (enemy.isFrozen() && !enemy.isDead())) {
+                if (enemy.getVel().x < 0) {
+                    enemyAnimation(enemy, ZOMBIE_ANIM_LEFT, batch, LEFT);
+                } else if (enemy.getVel().x > 0) {
+                    enemyAnimation(enemy, ZOMBIE_ANIM_RIGHT, batch, RIGHT);
+                } else if (enemy.getVel().y > 0) {
+                    enemyAnimation(enemy, ZOMBIE_ANIM_UP, batch, UP);
+                } else if (enemy.getVel().y < 0) {
+                    enemyAnimation(enemy, ZOMBIE_ANIM_DOWN, batch, DOWN);
+                } else {
+                    enemyStand(enemy, batch);
+                }
+            } else if (enemy.isAttacking() && !enemy.isDead()) {
+                enemyAttackingAnimation(enemy, batch);
+
+            } else {
+                GameHelper.drawEntity(batch, enemy.animations.get(ZOMBIE_DEAD_ANIM).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+            }
+        }
+
     }
 
     private GameHelper() {

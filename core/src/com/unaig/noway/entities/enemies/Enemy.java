@@ -25,9 +25,9 @@ public abstract class Enemy extends Entity implements Poolable {
 
     public static final String TAG = Enemy.class.getName();
 
-    protected static final float FRAME_DURATION = .09f;
-    protected static final float ATTACK_FRAME_DURATION = .15f;
-    protected static final float DEAD_FRAME_DURATION = .30f;
+    public static final float FRAME_DURATION = .09f;
+    public static final float ATTACK_FRAME_DURATION = .15f;
+    public static final float DEAD_FRAME_DURATION = .30f;
 
     private final float OFFSET_X = 2f;
     private final float OFFSET_Y = 2f;

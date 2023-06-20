@@ -17,7 +17,7 @@ public class Entity {
     protected Vector2 size;
     protected boolean isAttacking;
     protected float attackCooldown;
-    protected ObjectMap<String, Animation<AtlasRegion>> animations;
+    public ObjectMap<String, Animation<AtlasRegion>> animations;
     protected Rectangle bounds;
     public Direction lastDir;
     public float maxVel;
@@ -86,4 +86,19 @@ public class Entity {
         this.stateTime = stateTime;
     }
 
+    public boolean isDead() {
+        return isDead;
+    }
+
+    public void setDead(boolean dead) {
+        isDead = dead;
+    }
+
+    public boolean isAttacking() {
+        return isAttacking;
+    }
+
+    public void setAttacking(boolean attacking) {
+        isAttacking = attacking;
+    }
 }
