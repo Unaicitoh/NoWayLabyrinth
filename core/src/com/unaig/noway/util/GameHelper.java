@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.entities.Entity;
 import com.unaig.noway.entities.enemies.Enemy;
+import com.unaig.noway.entities.enemies.GhostEnemy;
 import com.unaig.noway.entities.enemies.SpiderEnemy;
 import com.unaig.noway.entities.enemies.ZombieEnemy;
 
@@ -75,6 +76,7 @@ public class GameHelper {
         } else {
             if (enemy instanceof SpiderEnemy) enemy.maxVel = TILE_SIZE * 2.75f;
             else if (enemy instanceof ZombieEnemy) enemy.maxVel = TILE_SIZE * 2.25f;
+            else if (enemy instanceof GhostEnemy) enemy.maxVel = TILE_SIZE * 2f;
         }
     }
 
@@ -85,6 +87,7 @@ public class GameHelper {
             enemy.setSlowed(false);
             if (enemy instanceof SpiderEnemy) enemy.maxVel = TILE_SIZE * 2.75f;
             else if (enemy instanceof ZombieEnemy) enemy.maxVel = TILE_SIZE * 2.25f;
+            else if (enemy instanceof GhostEnemy) enemy.maxVel = TILE_SIZE * 2f;
         }
     }
 
@@ -96,6 +99,7 @@ public class GameHelper {
             enemy.setFrozen(false);
             if (enemy instanceof SpiderEnemy) enemy.maxVel = TILE_SIZE * 2.75f;
             else if (enemy instanceof ZombieEnemy) enemy.maxVel = TILE_SIZE * 2.25f;
+            else if (enemy instanceof GhostEnemy) enemy.maxVel = TILE_SIZE * 2f;
         }
     }
 
@@ -105,6 +109,7 @@ public class GameHelper {
         if (enemy.isSlowed()) {
             if (enemy instanceof SpiderEnemy) enemy.maxVel = TILE_SIZE * 2.75f;
             else if (enemy instanceof ZombieEnemy) enemy.maxVel = TILE_SIZE * 2.25f;
+            else if (enemy instanceof GhostEnemy) enemy.maxVel = TILE_SIZE * 2f;
             enemy.setSlowed(false);
         }
         if (enemy.getBurnDuration() < 0) {
@@ -134,6 +139,16 @@ public class GameHelper {
             animations.put(ZOMBIE_ATTACK_UP, new Animation<>(ATTACK_FRAME_DURATION * 1.5f, Assets.instance.enemiesAtlas.findRegions(ZOMBIE_ATTACK_UP), LOOP));
             animations.put(ZOMBIE_ATTACK_DOWN, new Animation<>(ATTACK_FRAME_DURATION * 1.5f, Assets.instance.enemiesAtlas.findRegions(ZOMBIE_ATTACK_DOWN), LOOP));
             animations.put(ZOMBIE_DEAD_ANIM, new Animation<>(DEAD_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(ZOMBIE_DEAD_ANIM), NORMAL));
+        } else if (enemy instanceof GhostEnemy) {
+            animations.put(GHOST_ANIM_RIGHT, new Animation<>(FRAME_DURATION * 2f, Assets.instance.enemiesAtlas.findRegions(GHOST_ANIM_RIGHT), LOOP));
+            animations.put(GHOST_ANIM_LEFT, new Animation<>(FRAME_DURATION * 2f, Assets.instance.enemiesAtlas.findRegions(GHOST_ANIM_LEFT), LOOP));
+            animations.put(GHOST_ANIM_UP, new Animation<>(FRAME_DURATION * 2f, Assets.instance.enemiesAtlas.findRegions(GHOST_ANIM_UP), LOOP));
+            animations.put(GHOST_ANIM_DOWN, new Animation<>(FRAME_DURATION * 2f, Assets.instance.enemiesAtlas.findRegions(GHOST_ANIM_DOWN), LOOP));
+            animations.put(GHOST_ATTACK_RIGHT, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(GHOST_ATTACK_RIGHT), LOOP));
+            animations.put(GHOST_ATTACK_LEFT, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(GHOST_ATTACK_LEFT), LOOP));
+            animations.put(GHOST_ATTACK_UP, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(GHOST_ATTACK_UP), LOOP));
+            animations.put(GHOST_ATTACK_DOWN, new Animation<>(ATTACK_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(GHOST_ATTACK_DOWN), LOOP));
+            animations.put(GHOST_DEAD_ANIM, new Animation<>(DEAD_FRAME_DURATION, Assets.instance.enemiesAtlas.findRegions(GHOST_DEAD_ANIM), NORMAL));
         }
 
     }
@@ -150,6 +165,13 @@ public class GameHelper {
                 enemy.animations.get(enemyAnim).setFrameDuration(FRAME_DURATION * 2.75f);
             } else {
                 enemy.animations.get(enemyAnim).setFrameDuration(FRAME_DURATION * 1.75f);
+            }
+
+        } else if (enemy instanceof GhostEnemy) {
+            if (enemy.isSlowed()) {
+                enemy.animations.get(enemyAnim).setFrameDuration(FRAME_DURATION * 2.75f);
+            } else {
+                enemy.animations.get(enemyAnim).setFrameDuration(FRAME_DURATION * 2.5f);
             }
 
         }
@@ -176,6 +198,15 @@ public class GameHelper {
                 drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(ZOMBIE_STAND_UP), enemy.getPos(), enemy.getSize());
             else if (enemy.lastDir == DOWN)
                 drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(ZOMBIE_STAND_DOWN), enemy.getPos(), enemy.getSize());
+        } else if (enemy instanceof GhostEnemy) {
+            if (enemy.lastDir == RIGHT)
+                drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(GHOST_STAND_RIGHT), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == LEFT)
+                drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(GHOST_STAND_LEFT), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == UP)
+                drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(GHOST_STAND_UP), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == DOWN)
+                drawEntity(batch, Assets.instance.enemiesAtlas.findRegion(GHOST_STAND_DOWN), enemy.getPos(), enemy.getSize());
         }
     }
 
@@ -198,6 +229,15 @@ public class GameHelper {
                 drawEntity(batch, enemy.animations.get(ZOMBIE_ATTACK_UP).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
             else if (enemy.lastDir == DOWN)
                 drawEntity(batch, enemy.animations.get(ZOMBIE_ATTACK_DOWN).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+        } else if (enemy instanceof GhostEnemy) {
+            if (enemy.lastDir == RIGHT)
+                drawEntity(batch, enemy.animations.get(GHOST_ATTACK_RIGHT).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == LEFT)
+                drawEntity(batch, enemy.animations.get(GHOST_ATTACK_LEFT).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == UP)
+                drawEntity(batch, enemy.animations.get(GHOST_ATTACK_UP).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+            else if (enemy.lastDir == DOWN)
+                drawEntity(batch, enemy.animations.get(GHOST_ATTACK_DOWN).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
         }
 
     }
@@ -240,6 +280,25 @@ public class GameHelper {
 
             } else {
                 GameHelper.drawEntity(batch, enemy.animations.get(ZOMBIE_DEAD_ANIM).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
+            }
+        } else if (enemy instanceof GhostEnemy) {
+            if ((!enemy.isAttacking() && !enemy.isDead()) || (enemy.isFrozen() && !enemy.isDead())) {
+                if (enemy.getVel().x < 0) {
+                    enemyAnimation(enemy, GHOST_ANIM_LEFT, batch, LEFT);
+                } else if (enemy.getVel().x > 0) {
+                    enemyAnimation(enemy, GHOST_ANIM_RIGHT, batch, RIGHT);
+                } else if (enemy.getVel().y > 0) {
+                    enemyAnimation(enemy, GHOST_ANIM_UP, batch, UP);
+                } else if (enemy.getVel().y < 0) {
+                    enemyAnimation(enemy, GHOST_ANIM_DOWN, batch, DOWN);
+                } else {
+                    enemyStand(enemy, batch);
+                }
+            } else if (enemy.isAttacking() && !enemy.isDead()) {
+                enemyAttackingAnimation(enemy, batch);
+
+            } else {
+                GameHelper.drawEntity(batch, enemy.animations.get(GHOST_DEAD_ANIM).getKeyFrame(enemy.getStateTime()), enemy.getPos(), enemy.getSize());
             }
         }
 

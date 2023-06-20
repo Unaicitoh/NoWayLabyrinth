@@ -31,6 +31,7 @@ import com.unaig.noway.data.Assets;
 import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.entities.enemies.Enemy;
+import com.unaig.noway.entities.enemies.GhostEnemy;
 import com.unaig.noway.entities.enemies.SpiderEnemy;
 import com.unaig.noway.entities.enemies.ZombieEnemy;
 import com.unaig.noway.entities.spells.FireSpell;
@@ -144,13 +145,15 @@ public class GameScreen extends ScreenAdapter {
     private void spawnEnemies() {
         MapObjects collisions = Assets.instance.labMap.getLayers().get("Spawns").getObjects();
         for (int i = 0; i < collisions.getCount(); i++) {
-            int rnd = MathUtils.random(1);
+            int rnd = MathUtils.random(9);
             MapObject mapObject = collisions.get(i);
             Rectangle pos = ((RectangleMapObject) mapObject).getRectangle();
-            if (mapObject.getName().equals("EnemySpawn") && rnd == 0) {
+            if (mapObject.getName().equals("EnemySpawn") && rnd < 4) {
                 SpiderEnemy.create(poolEngine, new Vector2(pos.x - TILE_SIZE / 2f, pos.y - TILE_SIZE / 2f));
-            } else if (mapObject.getName().equals("EnemySpawn") && rnd == 1) {
+            } else if (mapObject.getName().equals("EnemySpawn") && rnd < 8) {
                 ZombieEnemy.create(poolEngine, new Vector2(pos.x - TILE_SIZE / 2f, pos.y - TILE_SIZE / 2f));
+            } else if (mapObject.getName().equals("EnemySpawn") && rnd >= 8) {
+                GhostEnemy.create(poolEngine, new Vector2(pos.x - TILE_SIZE / 2f, pos.y - TILE_SIZE / 2f));
             }
         }
     }

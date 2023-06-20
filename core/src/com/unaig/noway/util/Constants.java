@@ -37,6 +37,21 @@ public class Constants {
     public static final String ZOMBIE_ATTACK_UP = "zombieAttackUp";
     public static final String ZOMBIE_ATTACK_RIGHT = "zombieAttackRight";
     public static final String ZOMBIE_DEAD_ANIM = "zombieDead";
+    ////Zombie
+    public static final String GHOST_STAND_LEFT = "ghostStandLeft";
+    public static final String GHOST_STAND_RIGHT = "ghostStandRight";
+    public static final String GHOST_STAND_UP = "ghostStandUp";
+    public static final String GHOST_STAND_DOWN = "ghostStandDown";
+    public static final String GHOST_ANIM_LEFT = "ghostRunLeft";
+    public static final String GHOST_ANIM_RIGHT = "ghostRunRight";
+    public static final String GHOST_ANIM_UP = "ghostRunUp";
+    public static final String GHOST_ANIM_DOWN = "ghostRunDown";
+    public static final String GHOST_ATTACK_DOWN = "ghostAttackDown";
+    public static final String GHOST_ATTACK_LEFT = "ghostAttackLeft";
+    public static final String GHOST_ATTACK_UP = "ghostAttackUp";
+    public static final String GHOST_ATTACK_RIGHT = "ghostAttackRight";
+    public static final String GHOST_DEAD_ANIM = "ghostDead";
+
 
     //Fire spells animations
     ////Basic
