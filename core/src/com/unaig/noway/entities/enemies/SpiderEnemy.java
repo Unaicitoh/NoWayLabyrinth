@@ -31,6 +31,7 @@ public class SpiderEnemy extends Enemy {
         maxHp = 100;
         maxVel = TILE_SIZE * 2.75f;
         attackDamage = 15;
+        attackRange = TILE_SIZE * 5f;
         super.init(pos);
         GameHelper.loadEnemyAnimations(this, animations);
     }

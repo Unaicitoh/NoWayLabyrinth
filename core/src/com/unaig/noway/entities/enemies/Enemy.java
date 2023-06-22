@@ -32,7 +32,7 @@ public abstract class Enemy extends Entity implements Poolable {
     private final float OFFSET_X = 2f;
     private final float OFFSET_Y = 2f;
     public boolean isAlive;
-    private float attackRange;
+    protected float attackRange;
     protected Vector2 playerPos;
     protected Rectangle playerBounds;
     private float patrolCooldown;
@@ -47,7 +47,8 @@ public abstract class Enemy extends Entity implements Poolable {
     protected float burnDuration;
     protected float slowedDuration;
     protected float frozenDuration;
-
+    public Array<Rectangle> lineSight;
+    private boolean readyToAttack;
 
     protected void init(Vector2 _pos) {
         pos = new Vector2();
@@ -73,7 +74,6 @@ public abstract class Enemy extends Entity implements Poolable {
 
         animations = new ObjectMap<>();
         stateTime = 0f;
-        attackRange = TILE_SIZE * 4;
         playerBounds = new Rectangle();
         playerPos = new Vector2();
         isAttacking = false;
@@ -95,6 +95,8 @@ public abstract class Enemy extends Entity implements Poolable {
         burnDuration = BURN_ENEMY_TIME;
         slowedDuration = SLOWED_ENEMY_TIME;
         frozenDuration = FROZEN_ENEMY_TIME;
+        lineSight = new Array<>();
+        readyToAttack = false;
     }
 
     public abstract void render(SpriteBatch batch, ShapeDrawer shaper, float delta, Player player, Array<Spell> spells);
@@ -112,8 +114,9 @@ public abstract class Enemy extends Entity implements Poolable {
             hp = Math.min(maxHp, hp + delta * 10);
         }
         if (!isDead && !isFrozen) {
-            if ((isPlayerInRange() || hp < maxHp)) {
+            if (isPlayerInRange() || hp < maxHp) {
                 drawHp = true;
+                readyToAttack = true;
                 if (bounds.overlaps(playerBounds)) {
                     attackPlayer(player);
                 } else {
@@ -121,8 +124,11 @@ public abstract class Enemy extends Entity implements Poolable {
                 }
             } else {
                 drawHp = false;
+                readyToAttack = false;
                 patrolMode(delta);
             }
+        } else if (!isDead) {
+            drawHp = true;
         }
 
     }
@@ -241,7 +247,49 @@ public abstract class Enemy extends Entity implements Poolable {
     }
 
     private boolean isPlayerInRange() {
-        return pos.dst(playerPos) < attackRange;
+        if (pos.dst(playerPos) < attackRange) {
+            if (readyToAttack) return true;
+            else return checkLineSight();
+        } else
+            return false;
+    }
+
+    private boolean checkLineSight() {
+        float x0 = playerPos.x + TILE_SIZE / 2f - OFFSET_X;
+        float y0 = playerPos.y + TILE_SIZE / 2f;
+        float x1 = pos.x + TILE_SIZE / 2f;
+        float y1 = pos.y + TILE_SIZE / 2f;
+        x0 = Math.round(x0);
+        y0 = Math.round(y0);
+        x1 = Math.round(x1);
+        y1 = Math.round(y1);
+        float dx = Math.abs(x1 - x0);
+        float dy = Math.abs(y1 - y0);
+        float sx = (x0 < x1) ? 1 : -1;
+        float sy = (y0 < y1) ? 1 : -1;
+        float err = dx - dy;
+        boolean onSight = true;
+        while (x0 != x1 || y0 != y1) {
+
+            lineSight.add(new Rectangle(x0, y0, 1, 1));
+
+            float e2 = 2 * err;
+            if (e2 > -dy) {
+                err -= dy;
+                x0 += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                y0 += sy;
+            }
+        }
+        for (Rectangle r : lineSight) {
+            if (GameHelper.checkCollisions(r)) {
+                onSight = false;
+            }
+        }
+        lineSight.clear();
+        return onSight;
     }
 
     private void chaseMode(float delta) {
@@ -329,6 +377,8 @@ public abstract class Enemy extends Entity implements Poolable {
         burnDuration = 0f;
         slowedDuration = 0f;
         frozenDuration = 0f;
+        lineSight.clear();
+        readyToAttack = false;
     }
 
     public abstract void release();

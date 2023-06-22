@@ -31,6 +31,7 @@ public class ZombieEnemy extends Enemy {
         maxHp = 100;
         maxVel = TILE_SIZE * 2.25f;
         attackDamage = 20;
+        attackRange = TILE_SIZE * 6f;
         super.init(pos);
         GameHelper.loadEnemyAnimations(this, animations);
     }

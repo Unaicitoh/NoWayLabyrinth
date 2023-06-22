@@ -31,6 +31,7 @@ public class GhostEnemy extends Enemy {
         maxHp = 100;
         maxVel = TILE_SIZE * 2f;
         attackDamage = 25;
+        attackRange = TILE_SIZE * 7f;
         super.init(pos);
         GameHelper.loadEnemyAnimations(this, animations);
     }

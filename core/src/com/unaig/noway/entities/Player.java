@@ -43,8 +43,8 @@ public class Player extends Entity implements InputProcessor {
     private float fire2Cooldown;
     private float iceCooldown;
     private float ice2Cooldown;
-    public static final float BASIC_ATTACK_COOLDOWN = .5f;
-    public static final float STRONG_ATTACK_COOLDOWN = 2f;
+    public static final float BASIC_ATTACK_COOLDOWN = .75f;
+    public static final float STRONG_ATTACK_COOLDOWN = 2.5f;
     private static final float OFFSET_X = 2f;
     private static final float FRAME_DURATION = 0.1f;
     public static final int STRONG_MANA_COST = 25;

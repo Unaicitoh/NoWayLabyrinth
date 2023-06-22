@@ -117,6 +117,10 @@ public class GameScreen extends ScreenAdapter {
         }
         for (Enemy e : poolEngine.enemies) {
             shaper.rectangle(e.getBounds());
+//            for(Rectangle r : e.lineSight){
+//                shaper.rectangle(r);
+//                e.lineSight.removeValue(r,true);
+//            }
 
         }
         batch.end();
@@ -124,6 +128,7 @@ public class GameScreen extends ScreenAdapter {
         stage.act();
         setElementIconPositions(delta);
         stage.draw();
+        //DebugPowers
         if (Gdx.input.isKeyJustPressed(Keys.UP)) {
             ((OrthographicCamera) viewport.getCamera()).zoom -= 0.15;
         } else if (Gdx.input.isKeyJustPressed(Keys.DOWN)) {
@@ -274,8 +279,8 @@ public class GameScreen extends ScreenAdapter {
 
     private void renderEntities(float delta) {
         poolEngine.renderSpells(batch, delta);
-        player.render(batch, delta);
         poolEngine.renderEnemies(batch, shaper, delta, player, poolEngine.spells);
+        player.render(batch, delta);
     }
 
     private void renderUI(float delta) {
