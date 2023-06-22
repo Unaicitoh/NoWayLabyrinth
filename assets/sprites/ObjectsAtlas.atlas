@@ -1,0 +1,13 @@
+
+ObjectsAtlas.png
+size: 128, 128
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+rKey
+  rotate: false
+  xy: 2, 2
+  size: 113, 103
+  orig: 128, 128
+  offset: 8, 13
+  index: -1

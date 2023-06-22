@@ -37,6 +37,7 @@ import com.unaig.noway.entities.enemies.ZombieEnemy;
 import com.unaig.noway.entities.spells.FireSpell;
 import com.unaig.noway.entities.spells.IceSpell;
 import com.unaig.noway.entities.spells.Spell;
+import com.unaig.noway.util.GameHelper;
 import com.unaig.noway.util.ImageAnimation;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -78,6 +79,7 @@ public class GameScreen extends ScreenAdapter {
     private float changeTimeDisabled;
     private Button iceSpellIcon;
     private Button ice2SpellIcon;
+    private boolean canPlayerInteract;
 
     public GameScreen(NoWayLabyrinth game) {
         this.game = game;
@@ -91,6 +93,7 @@ public class GameScreen extends ScreenAdapter {
         stage = new Stage(new ExtendViewport(1280, 720));
         poolEngine = new PoolEngine();
         player = new Player(poolEngine);
+        canPlayerInteract = false;
         spawnEnemies();
         InputMultiplexer im = new InputMultiplexer(stage, player);
         Gdx.input.setInputProcessor(im);
@@ -106,6 +109,7 @@ public class GameScreen extends ScreenAdapter {
         viewport.apply();
         viewport.getCamera().position.lerp(new Vector3(player.getPos(), 0), CAM_SPEED * delta);
         batch.setProjectionMatrix(viewport.getCamera().combined);
+        update();
         renderer.setView((OrthographicCamera) viewport.getCamera());
         renderer.render();
         batch.begin();
@@ -122,6 +126,12 @@ public class GameScreen extends ScreenAdapter {
 //                e.lineSight.removeValue(r,true);
 //            }
 
+        }
+        if (canPlayerInteract) {
+            Gdx.app.log(TAG, "prompting key");
+            Vector2 pos = player.getPos();
+            Vector2 size = player.getSize();
+            GameHelper.drawEntity(batch, Assets.instance.objectsAtlas.findRegion("rKey"), new Vector2(pos.x + size.x / 5.5f, pos.y + size.y), new Vector2(size.x / 1.5f, size.y / 1.5f));
         }
         batch.end();
         renderUI(delta);
@@ -145,6 +155,10 @@ public class GameScreen extends ScreenAdapter {
         //End debugging
 //		Gdx.app.log(TAG, ""+Gdx.graphics.getFramesPerSecond());
 
+    }
+
+    private void update() {
+        canPlayerInteract = checkNearItem();
     }
 
     private void spawnEnemies() {
@@ -297,6 +311,21 @@ public class GameScreen extends ScreenAdapter {
         fire2SpellIcon.setDisabled(player.getFire2Cooldown() > 0f);
         iceSpellIcon.setDisabled(player.getIceCooldown() > 0f);
         ice2SpellIcon.setDisabled(player.getIce2Cooldown() > 0f);
+    }
+
+    private boolean checkNearItem() {
+        MapObjects collisions = Assets.instance.labMap.getLayers().get("Objects").getObjects();
+        for (int i = 0; i < collisions.getCount(); i++) {
+            MapObject mapObject = collisions.get(i);
+            if (mapObject instanceof RectangleMapObject) {
+                Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+                if (player.getBounds().overlaps(rectangle)) {
+                    return true;
+                }
+
+            }
+        }
+        return false;
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.unaig.noway.entities;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -23,11 +22,14 @@ import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.ElementType;
 import com.unaig.noway.util.GameHelper;
 
+import static com.badlogic.gdx.Input.Buttons.LEFT;
+import static com.badlogic.gdx.Input.Buttons.RIGHT;
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP;
 import static com.unaig.noway.util.AttackType.BASIC;
 import static com.unaig.noway.util.AttackType.STRONG;
 import static com.unaig.noway.util.Constants.*;
-import static com.unaig.noway.util.Direction.*;
+import static com.unaig.noway.util.Direction.DOWN;
+import static com.unaig.noway.util.Direction.UP;
 import static com.unaig.noway.util.ElementType.FIRE;
 import static com.unaig.noway.util.ElementType.ICE;
 
@@ -105,14 +107,13 @@ public class Player extends Entity implements InputProcessor {
         update(delta);
         GameHelper.damagedEntityAnimation(this, batch, delta);
         renderPlayerAnimations(batch);
-
     }
 
     private void renderPlayerAnimations(SpriteBatch batch) {
         if (vel.x < 0) {
-            playerAnimation(batch, PLAYER_ANIM_LEFT, LEFT);
+            playerAnimation(batch, PLAYER_ANIM_LEFT, Direction.LEFT);
         } else if (vel.x > 0) {
-            playerAnimation(batch, PLAYER_ANIM_RIGHT, RIGHT);
+            playerAnimation(batch, PLAYER_ANIM_RIGHT, Direction.RIGHT);
 
         } else if (vel.y > 0) {
             playerAnimation(batch, PLAYER_ANIM_UP, UP);
@@ -127,18 +128,18 @@ public class Player extends Entity implements InputProcessor {
 
     private void playerStand(SpriteBatch batch) {
         if (!isAttacking) {
-            if (lastDir == RIGHT)
+            if (lastDir == Direction.RIGHT)
                 GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_RIGHT, 0), pos, size);
-            else if (lastDir == LEFT)
+            else if (lastDir == Direction.LEFT)
                 GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_LEFT, 0), pos, size);
             else if (lastDir == UP)
                 GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_UP, 0), pos, size);
             else if (lastDir == DOWN)
                 GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_DOWN, 0), pos, size);
         } else {
-            if (lastDir == RIGHT)
+            if (lastDir == Direction.RIGHT)
                 GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_RIGHT, 2), pos, size);
-            else if (lastDir == LEFT)
+            else if (lastDir == Direction.LEFT)
                 GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_LEFT, 2), pos, size);
             else if (lastDir == UP)
                 GameHelper.drawEntity(batch, Assets.instance.playerAtlas.findRegion(PLAYER_ANIM_UP, 2), pos, size);
@@ -322,7 +323,7 @@ public class Player extends Entity implements InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         switch (button) {
-            case Buttons.LEFT:
+            case LEFT:
                 if (elementType == FIRE && fireCooldown <= 0f && mp - BASIC_MANA_COST >= 0) {
                     mp -= BASIC_MANA_COST;
                     stateTime = ATTACK_ANIMATION_FRAME_RESET;
@@ -337,7 +338,7 @@ public class Player extends Entity implements InputProcessor {
                     IceSpell.create(poolEngine, this, BASIC);
                 }
                 break;
-            case Buttons.RIGHT:
+            case RIGHT:
                 if (elementType == FIRE && fire2Cooldown <= 0f && mp - STRONG_MANA_COST >= 0) {
                     mp -= STRONG_MANA_COST;
                     stateTime = ATTACK_ANIMATION_FRAME_RESET;
