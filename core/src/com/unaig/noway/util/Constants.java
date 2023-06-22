@@ -98,7 +98,7 @@ public class Constants {
 
     public static final float DAMAGE_ANIMATION_TIME = .2f;
     public static final float BURN_ENEMY_TIME = 2f;
-    public static final float SLOWED_ENEMY_TIME = 2f;
+    public static final float SLOWED_ENEMY_TIME = 1.5f;
     public static final float FROZEN_ENEMY_TIME = 2f;
 
 
