@@ -69,6 +69,7 @@ project(":html") {
         implementation "space.earlygrey:shapedrawer:$shapedrawerVersion:sources"
         implementation 'com.github.raeleus.stripe:stripe:1.4.5:sources'
         implementation "com.github.tommyettinger:regexodus:0.1.15:sources"
+        implementation "com.github.tommyettinger:textratypist:0.8.3:sources"
     }
 }
 
@@ -80,5 +81,6 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
         implementation 'com.github.raeleus.stripe:stripe:1.4.5'
+        implementation "com.github.tommyettinger:textratypist:0.8.3"
     }
 }

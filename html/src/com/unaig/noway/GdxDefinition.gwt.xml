@@ -6,6 +6,8 @@
 	<inherits name='NoWayLabyrinth' />
 	<inherits name="space.earlygrey.shapedrawer"/>
 	<inherits name="com.ray3k.stripe" />
+	<inherits name="regexodus.regexodus" />
+	<inherits name="com.github.tommyettinger.textratypist" />
 	<entry-point class='com.unaig.noway.client.HtmlLauncher' />
 	<set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>
 	<set-configuration-property name="gdx.assetpath" value="../assets" />

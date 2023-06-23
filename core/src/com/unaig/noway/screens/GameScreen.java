@@ -22,13 +22,16 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.unaig.noway.NoWayLabyrinth;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.engines.PoolEngine;
+import com.unaig.noway.entities.Objects.Dialog;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.entities.enemies.Enemy;
 import com.unaig.noway.entities.enemies.GhostEnemy;
@@ -80,6 +83,11 @@ public class GameScreen extends ScreenAdapter {
     private Button iceSpellIcon;
     private Button ice2SpellIcon;
     private boolean canPlayerInteract;
+    private Window window;
+    private boolean isWindowActive;
+
+    private Array<Object> objects;
+    private Object object;
 
     public GameScreen(NoWayLabyrinth game) {
         this.game = game;
@@ -101,6 +109,9 @@ public class GameScreen extends ScreenAdapter {
         shaper = new ShapeDrawer(batch, Assets.instance.playerAtlas.findRegion("whitePixel"));
         viewport.getCamera().position.set(new Vector3(player.getPos(), 0));
         initializeUI();
+        objects = new Array<>();
+        object = new Object();
+        initObjects();
     }
 
     @Override
@@ -110,6 +121,8 @@ public class GameScreen extends ScreenAdapter {
         viewport.getCamera().position.lerp(new Vector3(player.getPos(), 0), CAM_SPEED * delta);
         batch.setProjectionMatrix(viewport.getCamera().combined);
         update();
+        stage.act();
+        setElementIconPositions(delta);
         renderer.setView((OrthographicCamera) viewport.getCamera());
         renderer.render();
         batch.begin();
@@ -127,16 +140,8 @@ public class GameScreen extends ScreenAdapter {
 //            }
 
         }
-        if (canPlayerInteract) {
-            Gdx.app.log(TAG, "prompting key");
-            Vector2 pos = player.getPos();
-            Vector2 size = player.getSize();
-            GameHelper.drawEntity(batch, Assets.instance.objectsAtlas.findRegion("rKey"), new Vector2(pos.x + size.x / 5.5f, pos.y + size.y), new Vector2(size.x / 1.5f, size.y / 1.5f));
-        }
-        batch.end();
         renderUI(delta);
-        stage.act();
-        setElementIconPositions(delta);
+        batch.end();
         stage.draw();
         //DebugPowers
         if (Gdx.input.isKeyJustPressed(Keys.UP)) {
@@ -157,8 +162,27 @@ public class GameScreen extends ScreenAdapter {
 
     }
 
+    private void drawHelperKey() {
+        Vector2 pos = player.getPos();
+        Vector2 size = player.getSize();
+        GameHelper.drawEntity(batch, Assets.instance.objectsAtlas.findRegion("rKey"), new Vector2(pos.x + size.x / 5.5f, pos.y + size.y), new Vector2(size.x / 1.5f, size.y / 1.5f));
+    }
+
     private void update() {
         canPlayerInteract = checkNearItem();
+        if (Gdx.input.isKeyJustPressed(Keys.R) && isWindowActive) {
+            window.setVisible(false);
+            isWindowActive = false;
+            window.clear();
+        } else if (Gdx.input.isKeyJustPressed(Keys.R) && canPlayerInteract) {
+            if (object instanceof Dialog) {
+                resizeobjectWindow();
+                window.add(((Dialog) object).getLabel());
+                ((Dialog) object).getLabel().restart();
+            }
+            window.setVisible(true);
+            isWindowActive = true;
+        }
     }
 
     private void spawnEnemies() {
@@ -199,8 +223,32 @@ public class GameScreen extends ScreenAdapter {
         iceTypeAnim = new ImageAnimation();
         fireTypeAnim.setAnimation(new Animation<>(SPELL_FRAME_DURATION, Assets.instance.playerAtlas.findRegions("fireTypeIcon"), NORMAL));
         iceTypeAnim.setAnimation(new Animation<>(SPELL_FRAME_DURATION, Assets.instance.playerAtlas.findRegions("iceTypeIcon"), NORMAL));
+        window = new Window("", Assets.instance.mainSkin, "special");
+        isWindowActive = false;
+        window.setVisible(false);
         stage.addActor(iceTypeAnim);
         stage.addActor(fireTypeAnim);
+        stage.addActor(window);
+
+    }
+
+    private void resizeobjectWindow() {
+        window.setSize(600, 300); // Set the window size
+        window.setPosition(Gdx.graphics.getWidth() / 2f - window.getWidth() / 2f, Gdx.graphics.getHeight() / 2f - window.getHeight() / 2f); // Center the window on the screen
+    }
+
+    private void initObjects() {
+        MapObjects collisions = Assets.instance.labMap.getLayers().get("Objects").getObjects();
+        for (int i = 0; i < collisions.getCount(); i++) {
+            MapObject mapObject = collisions.get(i);
+            if (mapObject instanceof RectangleMapObject) {
+                Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+                if (mapObject.getName().equals("Dialog")) {
+                    objects.add(new Dialog((String) mapObject.getProperties().get("Text"), rectangle));
+                }
+
+            }
+        }
     }
 
     private void setActorListeners() {
@@ -311,20 +359,23 @@ public class GameScreen extends ScreenAdapter {
         fire2SpellIcon.setDisabled(player.getFire2Cooldown() > 0f);
         iceSpellIcon.setDisabled(player.getIceCooldown() > 0f);
         ice2SpellIcon.setDisabled(player.getIce2Cooldown() > 0f);
+        if (canPlayerInteract) {
+            drawHelperKey();
+        }
     }
 
     private boolean checkNearItem() {
-        MapObjects collisions = Assets.instance.labMap.getLayers().get("Objects").getObjects();
-        for (int i = 0; i < collisions.getCount(); i++) {
-            MapObject mapObject = collisions.get(i);
-            if (mapObject instanceof RectangleMapObject) {
-                Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
-                if (player.getBounds().overlaps(rectangle)) {
+
+        for (Object o : objects) {
+            if (o instanceof Dialog) {
+                if (player.getBounds().overlaps(((Dialog) o).getRect())) {
+                    if (object == null)
+                        object = o;
                     return true;
                 }
-
             }
         }
+        object = null;
         return false;
     }
 
