@@ -232,7 +232,7 @@ public class GameScreen extends ScreenAdapter {
             if (object instanceof Dialog) {
                 resizeObjectWindow("Dialog");
                 window.add(object.getLabel());
-                ((Dialog) object).getLabel().restart();
+                object.getLabel().restart();
             } else if (object instanceof Chest) {
                 resizeObjectWindow("Chest");
                 Chest chest = (Chest) object;
