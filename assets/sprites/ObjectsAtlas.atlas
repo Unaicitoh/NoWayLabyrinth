@@ -1,12 +1,124 @@
 
 ObjectsAtlas.png
-size: 128, 128
+size: 256, 128
 format: RGBA8888
 filter: Linear, Linear
 repeat: none
-rKey
+chestDown
+  rotate: false
+  xy: 38, 2
+  size: 16, 19
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
+chestDown
+  rotate: false
+  xy: 74, 2
+  size: 16, 19
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+chestDown
+  rotate: false
+  xy: 135, 110
+  size: 16, 16
+  orig: 16, 24
+  offset: 0, 0
+  index: 0
+chestDown
+  rotate: false
+  xy: 153, 112
+  size: 16, 14
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+chestLeft
+  rotate: false
+  xy: 117, 108
+  size: 16, 18
+  orig: 16, 23
+  offset: 0, 0
+  index: 2
+chestLeft
+  rotate: false
+  xy: 92, 3
+  size: 16, 18
+  orig: 16, 23
+  offset: 0, 0
+  index: 3
+chestLeft
+  rotate: false
+  xy: 135, 93
+  size: 16, 15
+  orig: 16, 23
+  offset: 0, 0
+  index: 0
+chestLeft
+  rotate: false
+  xy: 153, 97
+  size: 16, 13
+  orig: 16, 23
+  offset: 0, 0
+  index: 1
+chestRight
+  rotate: false
+  xy: 20, 2
+  size: 16, 19
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
+chestRight
+  rotate: false
+  xy: 56, 2
+  size: 16, 19
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+chestRight
+  rotate: false
+  xy: 117, 90
+  size: 16, 16
+  orig: 16, 24
+  offset: 0, 0
+  index: 0
+chestRight
+  rotate: false
+  xy: 135, 77
+  size: 16, 14
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+chestUp
   rotate: false
   xy: 2, 2
+  size: 16, 19
+  orig: 16, 24
+  offset: 0, 0
+  index: 2
+chestUp
+  rotate: false
+  xy: 2, 2
+  size: 16, 19
+  orig: 16, 24
+  offset: 0, 0
+  index: 3
+chestUp
+  rotate: false
+  xy: 117, 72
+  size: 16, 16
+  orig: 16, 24
+  offset: 0, 0
+  index: 0
+chestUp
+  rotate: false
+  xy: 117, 56
+  size: 16, 14
+  orig: 16, 24
+  offset: 0, 0
+  index: 1
+rKey
+  rotate: false
+  xy: 2, 23
   size: 113, 103
   orig: 128, 128
   offset: 8, 13

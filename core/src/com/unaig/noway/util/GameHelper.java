@@ -1,5 +1,7 @@
 package com.unaig.noway.util;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -302,6 +304,13 @@ public class GameHelper {
             }
         }
 
+    }
+
+    public static void resizeGameWindow(){
+        if (Gdx.input.isKeyPressed(Input.Keys.F11))
+            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))
+            Gdx.graphics.setWindowedMode(1280, 720);
     }
 
     private GameHelper() {

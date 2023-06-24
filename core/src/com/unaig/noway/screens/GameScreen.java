@@ -31,7 +31,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.unaig.noway.NoWayLabyrinth;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.engines.PoolEngine;
-import com.unaig.noway.entities.Objects.Dialog;
+import com.unaig.noway.entities.objects.Chest;
+import com.unaig.noway.entities.objects.Dialog;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.entities.enemies.Enemy;
 import com.unaig.noway.entities.enemies.GhostEnemy;
@@ -67,6 +68,8 @@ public class GameScreen extends ScreenAdapter {
     public static final float CHANGE_TIME_DISABLED = .05f;
     public static final float FADE_DURATION = .25f;
     public static final float SPELL_FRAME_DURATION = .15f;
+
+
     private Player player;
     private ProgressBar playerHPUI;
     private ProgressBar playerMPUI;
@@ -157,6 +160,7 @@ public class GameScreen extends ScreenAdapter {
         if (Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT)) {
             game.setScreen(new GameScreen(game));
         }
+        GameHelper.resizeGameWindow();
         //End debugging
 //		Gdx.app.log(TAG, ""+Gdx.graphics.getFramesPerSecond());
 
@@ -176,7 +180,7 @@ public class GameScreen extends ScreenAdapter {
             window.clear();
         } else if (Gdx.input.isKeyJustPressed(Keys.R) && canPlayerInteract) {
             if (object instanceof Dialog) {
-                resizeobjectWindow();
+                resizeObjectWindow();
                 window.add(((Dialog) object).getLabel());
                 ((Dialog) object).getLabel().restart();
             }
@@ -232,9 +236,9 @@ public class GameScreen extends ScreenAdapter {
 
     }
 
-    private void resizeobjectWindow() {
+    private void resizeObjectWindow() {
         window.setSize(600, 300); // Set the window size
-        window.setPosition(Gdx.graphics.getWidth() / 2f - window.getWidth() / 2f, Gdx.graphics.getHeight() / 2f - window.getHeight() / 2f); // Center the window on the screen
+        window.setPosition(stage.getWidth() / 2f - window.getWidth() / 2f, stage.getHeight() / 2f - window.getHeight() / 2f); // Center the window on the screen
     }
 
     private void initObjects() {
@@ -245,6 +249,11 @@ public class GameScreen extends ScreenAdapter {
                 Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
                 if (mapObject.getName().equals("Dialog")) {
                     objects.add(new Dialog((String) mapObject.getProperties().get("Text"), rectangle));
+                }if (mapObject.getName().equals("Chest")) {
+                    switch((String) mapObject.getProperties().get("direction")){
+                        case "down":
+                            objects.add(new Chest(Assets.instance.objectsAtlas.findRegions("chestDown"),rectangle));
+                    }
                 }
 
             }
@@ -342,6 +351,11 @@ public class GameScreen extends ScreenAdapter {
     private void renderEntities(float delta) {
         poolEngine.renderSpells(batch, delta);
         poolEngine.renderEnemies(batch, shaper, delta, player, poolEngine.spells);
+        for (Object o: objects){
+            if(o instanceof Chest){
+                ((Chest) o).draw(batch);
+            }
+        }
         player.render(batch, delta);
     }
 
@@ -368,7 +382,13 @@ public class GameScreen extends ScreenAdapter {
 
         for (Object o : objects) {
             if (o instanceof Dialog) {
-                if (player.getBounds().overlaps(((Dialog) o).getRect())) {
+                if (player.getBounds().overlaps(((Dialog) o).getRectangle())) {
+                    if (object == null)
+                        object = o;
+                    return true;
+                }
+            } else if (o instanceof Chest) {
+                if(player.getBounds().overlaps(((Chest) o).getRectangle())) {
                     if (object == null)
                         object = o;
                     return true;

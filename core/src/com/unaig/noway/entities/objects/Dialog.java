@@ -1,4 +1,4 @@
-package com.unaig.noway.entities.Objects;
+package com.unaig.noway.entities.objects;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.github.tommyettinger.textra.TypingLabel;
@@ -8,19 +8,19 @@ public class Dialog {
 
 
     private TypingLabel label;
-    private Rectangle rect;
+    private Rectangle rectangle;
 
     public Dialog(String text, Rectangle rectangle) {
         label = new TypingLabel(text, Assets.instance.mainSkin);
-        rect = rectangle;
+        this.rectangle = rectangle;
     }
 
-    public Rectangle getRect() {
-        return rect;
+    public Rectangle getRectangle() {
+        return rectangle;
     }
 
-    public void setRect(Rectangle rect) {
-        this.rect = rect;
+    public void setRectangle(Rectangle rectangle) {
+        this.rectangle = rectangle;
     }
 
     public TypingLabel getLabel() {
