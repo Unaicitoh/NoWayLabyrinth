@@ -192,8 +192,22 @@ public class GameScreen extends ScreenAdapter {
         Vector2 v = hpPotionIcon.localToStageCoordinates(new Vector2(hpPotionIcon.getX(), hpPotionIcon.getY()));
         potionLabel.setPosition(v.x + hpPotionIcon.getWidth() / 2.5f, v.y + hpPotionIcon.getHeight() / 8f);
         switch (currentPotion) {
-            case 0, 1, 2:
-                if (player.getItems().get(currentPotion).size == 0) {
+            case 0:
+                if (player.getItems().get(0).size == 0) {
+                    potionLabel.setText("x0");
+                } else {
+                    potionLabel.setText("x" + player.getItems().get(currentPotion).size);
+                }
+                break;
+            case 1:
+                if (player.getItems().get(1).size == 0) {
+                    potionLabel.setText("x0");
+                } else {
+                    potionLabel.setText("x" + player.getItems().get(currentPotion).size);
+                }
+                break;
+            case 2:
+                if (player.getItems().get(2).size == 0) {
                     potionLabel.setText("x0");
                 } else {
                     potionLabel.setText("x" + player.getItems().get(currentPotion).size);
@@ -217,7 +231,7 @@ public class GameScreen extends ScreenAdapter {
         } else if (canPlayerInteract) {
             if (object instanceof Dialog) {
                 resizeObjectWindow("Dialog");
-                window.add(((Dialog) object).getLabel());
+                window.add(object.getLabel());
                 ((Dialog) object).getLabel().restart();
             } else if (object instanceof Chest) {
                 resizeObjectWindow("Chest");
@@ -544,7 +558,7 @@ public class GameScreen extends ScreenAdapter {
     private boolean checkNearItem() {
         for (Object o : objects) {
             if (o instanceof Dialog) {
-                if (player.getBounds().overlaps(((Dialog) o).getRectangle())) {
+                if (player.getBounds().overlaps(o.getRectangle())) {
                     if (object == null)
                         object = o;
                     return true;
@@ -554,7 +568,7 @@ public class GameScreen extends ScreenAdapter {
                     object = null;
                     return false;
                 }
-                if (player.getBounds().overlaps(((Chest) o).getRectangle())) {
+                if (player.getBounds().overlaps(o.getRectangle())) {
                     if (object == null)
                         object = o;
                     return true;
