@@ -4,16 +4,30 @@ size: 2048, 2048
 format: RGBA8888
 filter: Linear, Linear
 repeat: none
+healthPotionIcon
+  rotate: false
+  xy: 455, 655
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+keyIcon
+  rotate: false
+  xy: 190, 155
+  size: 28, 40
+  orig: 28, 40
+  offset: 0, 0
+  index: -1
 life-progress-bar
   rotate: false
-  xy: 1455, 1993
+  xy: 550, 1561
   size: 1, 34
   orig: 1, 34
   offset: 0, 0
   index: -1
 life-progress-bar-back
   rotate: false
-  xy: 1066, 1746
+  xy: 1, 152
   size: 187, 43
   split: 6, 88, 12, 5
   pad: 6, 6, 10, 5
@@ -22,14 +36,14 @@ life-progress-bar-back
   index: -1
 mana-progress-bar
   rotate: false
-  xy: 314, 1297
+  xy: 2026, 1993
   size: 1, 32
   orig: 1, 32
   offset: 0, 0
   index: -1
 mana-progress-bar-back
   rotate: false
-  xy: 550, 1499
+  xy: 863, 1755
   size: 189, 32
   split: 89, 7, 0, 12
   pad: 7, 7, 0, 12
@@ -38,7 +52,7 @@ mana-progress-bar-back
   index: -1
 button
   rotate: false
-  xy: 314, 1370
+  xy: 550, 1621
   size: 75, 57
   split: 33, 34, 25, 24
   pad: 33, 34, 22, 21
@@ -47,7 +61,7 @@ button
   index: -1
 button-selected
   rotate: false
-  xy: 1, 79
+  xy: 259, 388
   size: 75, 57
   split: 33, 34, 25, 24
   pad: 33, 34, 22, 21
@@ -56,7 +70,7 @@ button-selected
   index: -1
 button-slim
   rotate: false
-  xy: 259, 1146
+  xy: 515, 1453
   size: 30, 30
   split: 11, 11, 11, 11
   pad: 11, 11, 8, 8
@@ -65,56 +79,56 @@ button-slim
   index: -1
 check
   rotate: false
-  xy: 1137, 1728
+  xy: 455, 637
   size: 15, 16
   orig: 15, 16
   offset: 0, 0
   index: -1
 check-off
   rotate: false
-  xy: 259, 1128
+  xy: 515, 1435
   size: 15, 16
   orig: 15, 16
   offset: 0, 0
   index: -1
 cursor
   rotate: false
-  xy: 1255, 1762
+  xy: 513, 709
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
   index: -1
 font-export
   rotate: false
-  xy: 1324, 1917
+  xy: 1895, 1915
   size: 129, 130
   orig: 129, 130
   offset: 0, 0
   index: -1
 font-title-export
   rotate: false
-  xy: 1, 1487
+  xy: 1, 1485
   size: 547, 560
   orig: 547, 560
   offset: 0, 0
   index: -1
 left-arrow
   rotate: false
-  xy: 314, 1331
+  xy: 627, 1641
   size: 19, 37
   orig: 19, 37
   offset: 0, 0
   index: -1
 left-arrow-down
   rotate: false
-  xy: 391, 1390
+  xy: 259, 349
   size: 19, 37
   orig: 19, 37
   offset: 0, 0
   index: -1
 list
   rotate: false
-  xy: 741, 1499
+  xy: 772, 1704
   size: 69, 32
   split: 7, 7, 2, 7
   pad: 9, 9, 4, 9
@@ -123,49 +137,49 @@ list
   index: -1
 minus
   rotate: false
-  xy: 291, 1160
+  xy: 220, 179
   size: 15, 16
   orig: 15, 16
   offset: 0, 0
   index: -1
 plus
   rotate: false
-  xy: 197, 351
+  xy: 1895, 1862
   size: 15, 16
   orig: 15, 16
   offset: 0, 0
   index: -1
 radio
   rotate: false
-  xy: 812, 1514
+  xy: 843, 1719
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: -1
 radio-off
   rotate: false
-  xy: 1066, 1677
+  xy: 72, 133
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: -1
 right-arrow
   rotate: false
-  xy: 1, 40
+  xy: 336, 408
   size: 19, 37
   orig: 19, 37
   offset: 0, 0
   index: -1
 right-arrow-down
   rotate: false
-  xy: 1, 1
+  xy: 1, 63
   size: 19, 37
   orig: 19, 37
   offset: 0, 0
   index: -1
 scrollbar-h
   rotate: false
-  xy: 78, 115
+  xy: 772, 1681
   size: 19, 21
   split: 5, 4, 4, 4
   pad: 0, 0, 0, 0
@@ -174,7 +188,7 @@ scrollbar-h
   index: -1
 scrollbar-v
   rotate: false
-  xy: 1455, 2029
+  xy: 2026, 2027
   size: 21, 18
   split: 4, 4, 4, 2
   pad: 0, 1, 0, 0
@@ -183,7 +197,7 @@ scrollbar-v
   index: -1
 select-box
   rotate: false
-  xy: 1066, 1696
+  xy: 1, 102
   size: 69, 48
   split: 11, 37, 11, 34
   pad: 11, 44, 8, 3
@@ -192,14 +206,14 @@ select-box
   index: -1
 selection
   rotate: false
-  xy: 1279, 1788
+  xy: 547, 1482
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 slider
   rotate: false
-  xy: 1324, 1878
+  xy: 1078, 1774
   size: 1, 13
   split: 0, 0, 0, 0
   orig: 1, 13
@@ -207,7 +221,7 @@ slider
   index: -1
 slider-back
   rotate: false
-  xy: 1255, 1766
+  xy: 1054, 1764
   size: 22, 23
   split: 8, 8, 7, 8
   pad: 5, 2, 5, 5
@@ -216,14 +230,14 @@ slider-back
   index: -1
 slider-knob
   rotate: false
-  xy: 1324, 1893
+  xy: 550, 1597
   size: 22, 22
   orig: 22, 22
   offset: 0, 0
   index: -1
 slider-v
   rotate: false
-  xy: 550, 1496
+  xy: 863, 1752
   size: 13, 1
   split: 0, 0, 0, 0
   orig: 13, 1
@@ -231,14 +245,14 @@ slider-v
   index: -1
 soldier
   rotate: false
-  xy: 1, 138
+  xy: 259, 447
   size: 194, 264
   orig: 194, 264
   offset: 0, 0
   index: -1
 splitpane-h
   rotate: false
-  xy: 536, 1481
+  xy: 1921, 1909
   size: 4, 4
   split: 1, 1, 1, 1
   pad: 1, 1, 0, 0
@@ -247,7 +261,7 @@ splitpane-h
   index: -1
 splitpane-v
   rotate: false
-  xy: 223, 398
+  xy: 1054, 1758
   size: 4, 4
   split: 1, 1, 1, 1
   pad: 0, 0, 1, 1
@@ -256,7 +270,7 @@ splitpane-v
   index: -1
 textfield
   rotate: false
-  xy: 197, 369
+  xy: 1895, 1880
   size: 24, 33
   split: 6, 16, 7, 14
   pad: 6, 10, 9, 8
@@ -265,14 +279,14 @@ textfield
   index: -1
 white
   rotate: false
-  xy: 1348, 1914
+  xy: 190, 152
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 window
   rotate: false
-  xy: 314, 1429
+  xy: 550, 1680
   size: 220, 56
   split: 78, 76, 41, 4
   pad: 11, 9, 35, 4
@@ -281,7 +295,7 @@ window
   index: -1
 window-special
   rotate: false
-  xy: 1, 1178
+  xy: 550, 1738
   size: 311, 307
   split: 157, 153, 158, 148
   pad: 23, 21, 23, 22
@@ -290,57 +304,64 @@ window-special
   index: -1
 changeElementIcon
   rotate: false
-  xy: 1, 662
+  xy: 1, 197
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 changeElementIconPressed
   rotate: false
-  xy: 1, 404
+  xy: 259, 713
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 fire2Icon
   rotate: false
-  xy: 1, 920
+  xy: 863, 1789
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 fireIcon
   rotate: false
-  xy: 550, 1791
+  xy: 1, 713
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 fireTypeIcon
   rotate: false
-  xy: 808, 1533
+  xy: 1379, 1789
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 ice2Icon
   rotate: false
-  xy: 808, 1791
+  xy: 1121, 1789
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 iceIcon
   rotate: false
-  xy: 550, 1533
+  xy: 1, 455
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 iceTypeIcon
   rotate: false
-  xy: 1066, 1791
+  xy: 1637, 1789
   size: 256, 256
   orig: 256, 256
+  offset: 0, 0
+  index: -1
+regularFont
+  rotate: false
+  xy: 1, 971
+  size: 512, 512
+  orig: 512, 512
   offset: 0, 0
   index: -1

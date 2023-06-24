@@ -6,6 +6,12 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 		markupEnabled: false
 		flip: false
 	}
+	regular: {
+		file: regularFont.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
 	title: {
 		file: font-title-export.fnt
 		scaledSize: -1
@@ -115,6 +121,12 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	iceTypeIcon: {
 		up: iceTypeIcon
 	}
+	healthPotionIcon: {
+		up: healthPotionIcon
+	}
+	keyIcon: {
+		up: keyIcon
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
 	default: {
@@ -170,6 +182,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	}
 	title: {
 		font: title
+	}
+	regular: {
+		font: regular
+		fontColor: white
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {

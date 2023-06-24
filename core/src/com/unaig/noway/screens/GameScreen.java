@@ -28,16 +28,17 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.github.tommyettinger.textra.TypingLabel;
 import com.unaig.noway.NoWayLabyrinth;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.engines.PoolEngine;
-import com.unaig.noway.entities.objects.Chest;
-import com.unaig.noway.entities.objects.Dialog;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.entities.enemies.Enemy;
 import com.unaig.noway.entities.enemies.GhostEnemy;
 import com.unaig.noway.entities.enemies.SpiderEnemy;
 import com.unaig.noway.entities.enemies.ZombieEnemy;
+import com.unaig.noway.entities.objects.Chest;
+import com.unaig.noway.entities.objects.Dialog;
 import com.unaig.noway.entities.spells.FireSpell;
 import com.unaig.noway.entities.spells.IceSpell;
 import com.unaig.noway.entities.spells.Spell;
@@ -85,6 +86,12 @@ public class GameScreen extends ScreenAdapter {
     private float changeTimeDisabled;
     private Button iceSpellIcon;
     private Button ice2SpellIcon;
+    private Button potionIcon;
+    private TypingLabel potionLabel;
+
+    private Button keyIcon;
+    private TypingLabel keyLabel;
+
     private boolean canPlayerInteract;
     private Window window;
     private boolean isWindowActive;
@@ -113,7 +120,7 @@ public class GameScreen extends ScreenAdapter {
         viewport.getCamera().position.set(new Vector3(player.getPos(), 0));
         initializeUI();
         objects = new Array<>();
-        object = new Object();
+        object = null;
         initObjects();
     }
 
@@ -123,9 +130,8 @@ public class GameScreen extends ScreenAdapter {
         viewport.apply();
         viewport.getCamera().position.lerp(new Vector3(player.getPos(), 0), CAM_SPEED * delta);
         batch.setProjectionMatrix(viewport.getCamera().combined);
-        update();
         stage.act();
-        setElementIconPositions(delta);
+        update(delta);
         renderer.setView((OrthographicCamera) viewport.getCamera());
         renderer.render();
         batch.begin();
@@ -146,6 +152,8 @@ public class GameScreen extends ScreenAdapter {
         renderUI(delta);
         batch.end();
         stage.draw();
+
+
         //DebugPowers
         if (Gdx.input.isKeyJustPressed(Keys.UP)) {
             ((OrthographicCamera) viewport.getCamera()).zoom -= 0.15;
@@ -172,7 +180,16 @@ public class GameScreen extends ScreenAdapter {
         GameHelper.drawEntity(batch, Assets.instance.objectsAtlas.findRegion("rKey"), new Vector2(pos.x + size.x / 5.5f, pos.y + size.y), new Vector2(size.x / 1.5f, size.y / 1.5f));
     }
 
-    private void update() {
+    private void update(float delta) {
+        setElementIconPositions(delta);
+        checkObjectInteraction();
+        Vector2 v = potionIcon.localToStageCoordinates(new Vector2(potionIcon.getX(), potionIcon.getY()));
+        potionLabel.setPosition(v.x + potionIcon.getWidth() / 2.5f, v.y + potionIcon.getHeight() / 3.5f);
+        v = keyIcon.localToStageCoordinates(new Vector2(keyIcon.getX(), keyIcon.getY()));
+        keyLabel.setPosition(v.x + 15, stage.getHeight() * .84f);
+    }
+
+    private void checkObjectInteraction() {
         canPlayerInteract = checkNearItem();
         if (Gdx.input.isKeyJustPressed(Keys.R) && isWindowActive) {
             window.setVisible(false);
@@ -180,9 +197,16 @@ public class GameScreen extends ScreenAdapter {
             window.clear();
         } else if (Gdx.input.isKeyJustPressed(Keys.R) && canPlayerInteract) {
             if (object instanceof Dialog) {
-                resizeObjectWindow();
+                resizeObjectWindow("Dialog");
                 window.add(((Dialog) object).getLabel());
                 ((Dialog) object).getLabel().restart();
+            } else if (object instanceof Chest) {
+                resizeObjectWindow("Chest");
+                Chest chest = (Chest) object;
+                chest.setOpen(true);
+                window.add(chest.getItemImage()).pad(20).padRight(30).padTop(25);
+                window.add(chest.getLabel()).padRight(20).padTop(5);
+                chest.getLabel().restart();
             }
             window.setVisible(true);
             isWindowActive = true;
@@ -221,6 +245,8 @@ public class GameScreen extends ScreenAdapter {
         fireTypeIcon = stage.getRoot().findActor("fireTypeIcon");
         iceSpellIcon = stage.getRoot().findActor("iceSpellIcon");
         ice2SpellIcon = stage.getRoot().findActor("ice2SpellIcon");
+        potionIcon = stage.getRoot().findActor("potionIcon");
+        keyIcon = stage.getRoot().findActor("keyIcon");
         changeElementIcon = stage.getRoot().findActor("changeElementButton");
         changeTimeDisabled = CHANGE_TIME_DISABLED;
         fireTypeAnim = new ImageAnimation();
@@ -230,15 +256,27 @@ public class GameScreen extends ScreenAdapter {
         window = new Window("", Assets.instance.mainSkin, "special");
         isWindowActive = false;
         window.setVisible(false);
+        window.debug();
+        potionLabel = new TypingLabel("x0", Assets.instance.mainSkin);
+        keyLabel = new TypingLabel("x0", Assets.instance.mainSkin);
+        potionLabel.getFont().scale(.9f, .9f);
         stage.addActor(iceTypeAnim);
         stage.addActor(fireTypeAnim);
         stage.addActor(window);
+        stage.addActor(potionLabel);
+        stage.addActor(keyLabel);
 
     }
 
-    private void resizeObjectWindow() {
-        window.setSize(600, 300); // Set the window size
-        window.setPosition(stage.getWidth() / 2f - window.getWidth() / 2f, stage.getHeight() / 2f - window.getHeight() / 2f); // Center the window on the screen
+    private void resizeObjectWindow(String type) {
+        if (type.equals("Dialog")) {
+            window.setSize(600, 300); // Set the window size
+            window.setPosition(stage.getWidth() / 2f - window.getWidth() / 2f, stage.getHeight() / 2f - window.getHeight() / 2f); // Center the window on the screen
+        } else if (type.equals("Chest")) {
+            window.setSize(300, 170); // Set the window size
+            window.setPosition(stage.getWidth() / 2f - window.getWidth() / 2f, stage.getHeight() / 2f - window.getHeight() / 2f); // Center the window on the screen
+        }
+
     }
 
     private void initObjects() {
@@ -249,10 +287,11 @@ public class GameScreen extends ScreenAdapter {
                 Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
                 if (mapObject.getName().equals("Dialog")) {
                     objects.add(new Dialog((String) mapObject.getProperties().get("Text"), rectangle));
-                }if (mapObject.getName().equals("Chest")) {
-                    switch((String) mapObject.getProperties().get("direction")){
+                }
+                if (mapObject.getName().equals("Chest")) {
+                    switch ((String) mapObject.getProperties().get("direction")) {
                         case "down":
-                            objects.add(new Chest(Assets.instance.objectsAtlas.findRegions("chestDown"),rectangle));
+                            objects.add(new Chest(Assets.instance.objectsAtlas.findRegions("chestDown"), rectangle));
                     }
                 }
 
@@ -351,9 +390,9 @@ public class GameScreen extends ScreenAdapter {
     private void renderEntities(float delta) {
         poolEngine.renderSpells(batch, delta);
         poolEngine.renderEnemies(batch, shaper, delta, player, poolEngine.spells);
-        for (Object o: objects){
-            if(o instanceof Chest){
-                ((Chest) o).draw(batch);
+        for (Object o : objects) {
+            if (o instanceof Chest) {
+                ((Chest) o).draw(batch, delta);
             }
         }
         player.render(batch, delta);
@@ -379,7 +418,6 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private boolean checkNearItem() {
-
         for (Object o : objects) {
             if (o instanceof Dialog) {
                 if (player.getBounds().overlaps(((Dialog) o).getRectangle())) {
@@ -388,7 +426,11 @@ public class GameScreen extends ScreenAdapter {
                     return true;
                 }
             } else if (o instanceof Chest) {
-                if(player.getBounds().overlaps(((Chest) o).getRectangle())) {
+                if (((Chest) o).isOpen()) {
+                    object = null;
+                    return false;
+                }
+                if (player.getBounds().overlaps(((Chest) o).getRectangle())) {
                     if (object == null)
                         object = o;
                     return true;
