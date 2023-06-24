@@ -127,6 +127,12 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	keyIcon: {
 		up: keyIcon
 	}
+	manaPotionIcon: {
+		up: manaPotionIcon
+	}
+	armorPotionIcon: {
+		up: armorPotionIcon
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
 	default: {

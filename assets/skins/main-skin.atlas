@@ -4,6 +4,13 @@ size: 2048, 2048
 format: RGBA8888
 filter: Linear, Linear
 repeat: none
+armorPotionIcon
+  rotate: false
+  xy: 550, 1563
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
 healthPotionIcon
   rotate: false
   xy: 455, 655
@@ -18,9 +25,16 @@ keyIcon
   orig: 28, 40
   offset: 0, 0
   index: -1
+manaPotionIcon
+  rotate: false
+  xy: 1895, 1857
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
 life-progress-bar
   rotate: false
-  xy: 550, 1561
+  xy: 259, 328
   size: 1, 34
   orig: 1, 34
   offset: 0, 0
@@ -79,14 +93,14 @@ button-slim
   index: -1
 check
   rotate: false
-  xy: 455, 637
+  xy: 1953, 1897
   size: 15, 16
   orig: 15, 16
   offset: 0, 0
   index: -1
 check-off
   rotate: false
-  xy: 515, 1435
+  xy: 550, 1545
   size: 15, 16
   orig: 15, 16
   offset: 0, 0
@@ -114,14 +128,14 @@ font-title-export
   index: -1
 left-arrow
   rotate: false
-  xy: 627, 1641
+  xy: 336, 408
   size: 19, 37
   orig: 19, 37
   offset: 0, 0
   index: -1
 left-arrow-down
   rotate: false
-  xy: 259, 349
+  xy: 1, 63
   size: 19, 37
   orig: 19, 37
   offset: 0, 0
@@ -137,14 +151,14 @@ list
   index: -1
 minus
   rotate: false
-  xy: 220, 179
+  xy: 608, 1603
   size: 15, 16
   orig: 15, 16
   offset: 0, 0
   index: -1
 plus
   rotate: false
-  xy: 1895, 1862
+  xy: 515, 1435
   size: 15, 16
   orig: 15, 16
   offset: 0, 0
@@ -158,21 +172,21 @@ radio
   index: -1
 radio-off
   rotate: false
-  xy: 72, 133
+  xy: 1895, 1838
   size: 17, 17
   orig: 17, 17
   offset: 0, 0
   index: -1
 right-arrow
   rotate: false
-  xy: 336, 408
+  xy: 72, 113
   size: 19, 37
   orig: 19, 37
   offset: 0, 0
   index: -1
 right-arrow-down
   rotate: false
-  xy: 1, 63
+  xy: 455, 616
   size: 19, 37
   orig: 19, 37
   offset: 0, 0
@@ -213,7 +227,7 @@ selection
   index: -1
 slider
   rotate: false
-  xy: 1078, 1774
+  xy: 653, 1665
   size: 1, 13
   split: 0, 0, 0, 0
   orig: 1, 13
@@ -230,7 +244,7 @@ slider-back
   index: -1
 slider-knob
   rotate: false
-  xy: 550, 1597
+  xy: 259, 364
   size: 22, 22
   orig: 22, 22
   offset: 0, 0
@@ -252,7 +266,7 @@ soldier
   index: -1
 splitpane-h
   rotate: false
-  xy: 1921, 1909
+  xy: 220, 191
   size: 4, 4
   split: 1, 1, 1, 1
   pad: 1, 1, 0, 0
@@ -261,7 +275,7 @@ splitpane-h
   index: -1
 splitpane-v
   rotate: false
-  xy: 1054, 1758
+  xy: 627, 1639
   size: 4, 4
   split: 1, 1, 1, 1
   pad: 0, 0, 1, 1
@@ -270,7 +284,7 @@ splitpane-v
   index: -1
 textfield
   rotate: false
-  xy: 1895, 1880
+  xy: 627, 1645
   size: 24, 33
   split: 6, 16, 7, 14
   pad: 6, 10, 9, 8

@@ -15,12 +15,10 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -28,7 +26,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.github.tommyettinger.textra.TypingLabel;
 import com.unaig.noway.NoWayLabyrinth;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.engines.PoolEngine;
@@ -37,8 +34,8 @@ import com.unaig.noway.entities.enemies.Enemy;
 import com.unaig.noway.entities.enemies.GhostEnemy;
 import com.unaig.noway.entities.enemies.SpiderEnemy;
 import com.unaig.noway.entities.enemies.ZombieEnemy;
-import com.unaig.noway.entities.objects.Chest;
-import com.unaig.noway.entities.objects.Dialog;
+import com.unaig.noway.entities.objects.Object;
+import com.unaig.noway.entities.objects.*;
 import com.unaig.noway.entities.spells.FireSpell;
 import com.unaig.noway.entities.spells.IceSpell;
 import com.unaig.noway.entities.spells.Spell;
@@ -86,11 +83,15 @@ public class GameScreen extends ScreenAdapter {
     private float changeTimeDisabled;
     private Button iceSpellIcon;
     private Button ice2SpellIcon;
-    private Button potionIcon;
-    private TypingLabel potionLabel;
+    private Button hpPotionIcon;
+    private Button mpPotionIcon;
+    private Button arPotionIcon;
+    private Label potionLabel;
+    private Button changePotionLeft;
+    private Button changePotionRight;
 
     private Button keyIcon;
-    private TypingLabel keyLabel;
+    private Label keyLabel;
 
     private boolean canPlayerInteract;
     private Window window;
@@ -98,6 +99,7 @@ public class GameScreen extends ScreenAdapter {
 
     private Array<Object> objects;
     private Object object;
+    private int currentPotion;
 
     public GameScreen(NoWayLabyrinth game) {
         this.game = game;
@@ -112,16 +114,16 @@ public class GameScreen extends ScreenAdapter {
         poolEngine = new PoolEngine();
         player = new Player(poolEngine);
         canPlayerInteract = false;
-        spawnEnemies();
         InputMultiplexer im = new InputMultiplexer(stage, player);
         Gdx.input.setInputProcessor(im);
         ((OrthographicCamera) viewport.getCamera()).zoom = 1 / 5f;
         shaper = new ShapeDrawer(batch, Assets.instance.playerAtlas.findRegion("whitePixel"));
         viewport.getCamera().position.set(new Vector3(player.getPos(), 0));
-        initializeUI();
         objects = new Array<>();
         object = null;
+        initializeUI();
         initObjects();
+        spawnEnemies();
     }
 
     @Override
@@ -130,8 +132,8 @@ public class GameScreen extends ScreenAdapter {
         viewport.apply();
         viewport.getCamera().position.lerp(new Vector3(player.getPos(), 0), CAM_SPEED * delta);
         batch.setProjectionMatrix(viewport.getCamera().combined);
-        stage.act();
         update(delta);
+        stage.act();
         renderer.setView((OrthographicCamera) viewport.getCamera());
         renderer.render();
         batch.begin();
@@ -165,7 +167,7 @@ public class GameScreen extends ScreenAdapter {
         } else if (Gdx.input.isKeyJustPressed(Keys.LEFT)) {
             player.maxVel -= TILE_SIZE;
         }
-        if (Gdx.input.isKeyPressed(Keys.CONTROL_RIGHT)) {
+        if (Gdx.input.isKeyJustPressed(Keys.CONTROL_RIGHT)) {
             game.setScreen(new GameScreen(game));
         }
         GameHelper.resizeGameWindow();
@@ -182,20 +184,37 @@ public class GameScreen extends ScreenAdapter {
 
     private void update(float delta) {
         setElementIconPositions(delta);
-        checkObjectInteraction();
-        Vector2 v = potionIcon.localToStageCoordinates(new Vector2(potionIcon.getX(), potionIcon.getY()));
-        potionLabel.setPosition(v.x + potionIcon.getWidth() / 2.5f, v.y + potionIcon.getHeight() / 3.5f);
+        updateItemLabels();
+        canPlayerInteract = checkNearItem();
+    }
+
+    private void updateItemLabels() {
+        Vector2 v = hpPotionIcon.localToStageCoordinates(new Vector2(hpPotionIcon.getX(), hpPotionIcon.getY()));
+        potionLabel.setPosition(v.x + hpPotionIcon.getWidth() / 2.5f, v.y + hpPotionIcon.getHeight() / 8f);
+        switch (currentPotion) {
+            case 0, 1, 2:
+                if (player.getItems().get(currentPotion).size == 0) {
+                    potionLabel.setText("x0");
+                } else {
+                    potionLabel.setText("x" + player.getItems().get(currentPotion).size);
+                }
+                break;
+        }
         v = keyIcon.localToStageCoordinates(new Vector2(keyIcon.getX(), keyIcon.getY()));
-        keyLabel.setPosition(v.x + 15, stage.getHeight() * .84f);
+        keyLabel.setPosition(v.x + 30, stage.getHeight() * .825f);
+        if (player.getItems().get(3).size == 0) {
+            keyLabel.setText("x0");
+        } else {
+            keyLabel.setText("x" + player.getItems().get(3).size);
+        }
     }
 
     private void checkObjectInteraction() {
-        canPlayerInteract = checkNearItem();
-        if (Gdx.input.isKeyJustPressed(Keys.R) && isWindowActive) {
+        if (isWindowActive) {
             window.setVisible(false);
             isWindowActive = false;
             window.clear();
-        } else if (Gdx.input.isKeyJustPressed(Keys.R) && canPlayerInteract) {
+        } else if (canPlayerInteract) {
             if (object instanceof Dialog) {
                 resizeObjectWindow("Dialog");
                 window.add(((Dialog) object).getLabel());
@@ -204,7 +223,18 @@ public class GameScreen extends ScreenAdapter {
                 resizeObjectWindow("Chest");
                 Chest chest = (Chest) object;
                 chest.setOpen(true);
-                window.add(chest.getItemImage()).pad(20).padRight(30).padTop(25);
+                if (chest.getItemImage() != null) {
+                    window.add(chest.getItemImage()).pad(20).padRight(30).padTop(25);
+                    if (chest.getItem() instanceof HealthPotion) {
+                        player.getItems().get(0).add(chest.getItem());
+                    } else if (chest.getItem() instanceof ManaPotion) {
+                        player.getItems().get(1).add(chest.getItem());
+                    } else if (chest.getItem() instanceof ArmorPotion) {
+                        player.getItems().get(2).add(chest.getItem());
+                    } else if (chest.getItem() instanceof LabyKey) {
+                        player.getItems().get(3).add(chest.getItem());
+                    }
+                }
                 window.add(chest.getLabel()).padRight(20).padTop(5);
                 chest.getLabel().restart();
             }
@@ -245,7 +275,11 @@ public class GameScreen extends ScreenAdapter {
         fireTypeIcon = stage.getRoot().findActor("fireTypeIcon");
         iceSpellIcon = stage.getRoot().findActor("iceSpellIcon");
         ice2SpellIcon = stage.getRoot().findActor("ice2SpellIcon");
-        potionIcon = stage.getRoot().findActor("potionIcon");
+        hpPotionIcon = stage.getRoot().findActor("healthPotion");
+        mpPotionIcon = stage.getRoot().findActor("manaPotion");
+        arPotionIcon = stage.getRoot().findActor("armorPotion");
+        changePotionLeft = stage.getRoot().findActor("potionLeftIcon");
+        changePotionRight = stage.getRoot().findActor("potionRightIcon");
         keyIcon = stage.getRoot().findActor("keyIcon");
         changeElementIcon = stage.getRoot().findActor("changeElementButton");
         changeTimeDisabled = CHANGE_TIME_DISABLED;
@@ -256,10 +290,10 @@ public class GameScreen extends ScreenAdapter {
         window = new Window("", Assets.instance.mainSkin, "special");
         isWindowActive = false;
         window.setVisible(false);
-        window.debug();
-        potionLabel = new TypingLabel("x0", Assets.instance.mainSkin);
-        keyLabel = new TypingLabel("x0", Assets.instance.mainSkin);
-        potionLabel.getFont().scale(.9f, .9f);
+        potionLabel = new Label("x0", Assets.instance.mainSkin);
+        keyLabel = new Label("x0", Assets.instance.mainSkin);
+        potionLabel.setTouchable(Touchable.disabled);
+        currentPotion = 0;
         stage.addActor(iceTypeAnim);
         stage.addActor(fireTypeAnim);
         stage.addActor(window);
@@ -300,21 +334,70 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void setActorListeners() {
-        changeElementIcon.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                updateElementActions();
-            }
-        });
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Keys.SPACE) {
-                    updateElementActions();
+                switch (keycode) {
+                    case Keys.SPACE:
+                        updateElementIcons();
+                        break;
+                    case Keys.F:
+                        player.useItem(currentPotion);
+                        break;
+                    case Keys.E:
+                        addIndexPotion();
+                        break;
+                    case Keys.Q:
+                        restPotionIndex();
+                        break;
+                    case Keys.R:
+                        checkObjectInteraction();
+                        break;
                 }
                 return false;
             }
         });
+        changeElementIcon.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                updateElementIcons();
+            }
+        });
+        changePotionLeft.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                restPotionIndex();
+
+            }
+        });
+
+        changePotionRight.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                addIndexPotion();
+            }
+        });
+
+        hpPotionIcon.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                player.useItem(currentPotion);
+
+            }
+        });
+        mpPotionIcon.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                player.useItem(currentPotion);
+            }
+        });
+        arPotionIcon.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                player.useItem(currentPotion);
+            }
+        });
+
         fire2SpellIcon.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -340,7 +423,44 @@ public class GameScreen extends ScreenAdapter {
         });
     }
 
-    private void updateElementActions() {
+    private void addIndexPotion() {
+        currentPotion += 1;
+        if (currentPotion > 2) {
+            currentPotion = 0;
+            hpPotionIcon.setVisible(true);
+            mpPotionIcon.setVisible(false);
+            arPotionIcon.setVisible(false);
+
+        } else if (currentPotion == 1) {
+            hpPotionIcon.setVisible(false);
+            mpPotionIcon.setVisible(true);
+            arPotionIcon.setVisible(false);
+        } else if (currentPotion == 2) {
+            hpPotionIcon.setVisible(false);
+            mpPotionIcon.setVisible(false);
+            arPotionIcon.setVisible(true);
+        }
+    }
+
+    private void restPotionIndex() {
+        currentPotion -= 1;
+        if (currentPotion < 0) {
+            currentPotion = 2;
+            hpPotionIcon.setVisible(false);
+            mpPotionIcon.setVisible(false);
+            arPotionIcon.setVisible(true);
+        } else if (currentPotion == 0) {
+            hpPotionIcon.setVisible(true);
+            mpPotionIcon.setVisible(false);
+            arPotionIcon.setVisible(false);
+        } else if (currentPotion == 1) {
+            hpPotionIcon.setVisible(false);
+            mpPotionIcon.setVisible(true);
+            arPotionIcon.setVisible(false);
+        }
+    }
+
+    private void updateElementIcons() {
         changeElementIcon.setDisabled(true);
         player.changeElement();
         if (player.getElementType() == FIRE) {
@@ -350,6 +470,8 @@ public class GameScreen extends ScreenAdapter {
             fireSpellIcon.addAction(Actions.fadeIn(FADE_DURATION));
             ice2SpellIcon.addAction(Actions.fadeOut(FADE_DURATION));
             fire2SpellIcon.addAction(Actions.fadeIn(FADE_DURATION));
+            ice2SpellIcon.setTouchable(Touchable.disabled);
+            fire2SpellIcon.setTouchable(Touchable.enabled);
             fireTypeAnim.setAnimation(new Animation<>(SPELL_FRAME_DURATION, Assets.instance.playerAtlas.findRegions("fireTypeIcon"), NORMAL));
         } else {
             fireTypeAnim.addAction(Actions.fadeOut(FADE_DURATION));
@@ -358,6 +480,8 @@ public class GameScreen extends ScreenAdapter {
             iceSpellIcon.addAction(Actions.fadeIn(FADE_DURATION));
             fire2SpellIcon.addAction(Actions.fadeOut(FADE_DURATION));
             ice2SpellIcon.addAction(Actions.fadeIn(FADE_DURATION));
+            fire2SpellIcon.setTouchable(Touchable.disabled);
+            ice2SpellIcon.setTouchable(Touchable.enabled);
             iceTypeAnim.setAnimation(new Animation<>(SPELL_FRAME_DURATION, Assets.instance.playerAtlas.findRegions("iceTypeIcon"), NORMAL));
 
         }
@@ -388,13 +512,13 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void renderEntities(float delta) {
-        poolEngine.renderSpells(batch, delta);
         poolEngine.renderEnemies(batch, shaper, delta, player, poolEngine.spells);
         for (Object o : objects) {
             if (o instanceof Chest) {
                 ((Chest) o).draw(batch, delta);
             }
         }
+        poolEngine.renderSpells(batch, delta);
         player.render(batch, delta);
     }
 

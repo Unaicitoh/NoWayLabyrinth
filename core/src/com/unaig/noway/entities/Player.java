@@ -13,9 +13,11 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.engines.PoolEngine;
+import com.unaig.noway.entities.objects.Item;
 import com.unaig.noway.entities.spells.FireSpell;
 import com.unaig.noway.entities.spells.IceSpell;
 import com.unaig.noway.util.Direction;
@@ -37,6 +39,14 @@ public class Player extends Entity implements InputProcessor {
 
     public static final String TAG = Player.class.getName();
 
+    public static final float BASIC_ATTACK_COOLDOWN = .8f;
+    public static final float STRONG_ATTACK_COOLDOWN = 2.5f;
+    private static final float OFFSET_X = 2f;
+    private static final float FRAME_DURATION = 0.1f;
+    public static final int STRONG_MANA_COST = 25;
+    public static final int BASIC_MANA_COST = 5;
+    public static final float ATTACK_ANIMATION_FRAME_RESET = .1f;
+    public static final float ARMORED_STATE_DURATION = 7f;
     public PoolEngine poolEngine;
     private ElementType elementType;
     private float mp;
@@ -45,13 +55,9 @@ public class Player extends Entity implements InputProcessor {
     private float fire2Cooldown;
     private float iceCooldown;
     private float ice2Cooldown;
-    public static final float BASIC_ATTACK_COOLDOWN = .8f;
-    public static final float STRONG_ATTACK_COOLDOWN = 2.5f;
-    private static final float OFFSET_X = 2f;
-    private static final float FRAME_DURATION = 0.1f;
-    public static final int STRONG_MANA_COST = 25;
-    public static final int BASIC_MANA_COST = 5;
-    public static final float ATTACK_ANIMATION_FRAME_RESET = .1f;
+    private Array<Array<Item>> items;
+    private boolean onArmoredState;
+    private float armoredStateDuration;
 
     public Player(PoolEngine poolEngine) {
         this.poolEngine = poolEngine;
@@ -60,7 +66,7 @@ public class Player extends Entity implements InputProcessor {
 
     protected void init() {
         int rnd = MathUtils.random(1);
-//        int rnd = 0;
+        rnd = 0;
         elementType = FIRE;
         size = new Vector2(TILE_SIZE, TILE_SIZE);
         MapObjects collisions = Assets.instance.labMap.getLayers().get("Spawns").getObjects();
@@ -93,6 +99,15 @@ public class Player extends Entity implements InputProcessor {
         ice2Cooldown = 0;
         attackCooldown = 0;
         isAttacking = false;
+        Array<Item> hpP = new Array<>();
+        Array<Item> mpP = new Array<>();
+        Array<Item> arP = new Array<>();
+        Array<Item> keys = new Array<>();
+        items = new Array<>();
+        items.add(hpP, mpP, arP, keys);
+        onArmoredState = false;
+        armoredStateDuration = ARMORED_STATE_DURATION;
+
         loadPlayerAnimations(animations);
     }
 
@@ -159,7 +174,6 @@ public class Player extends Entity implements InputProcessor {
 
     private void update(float delta) {
         stateTime += delta;
-        if (isAttacking) attackCooldown += delta;
         mp = Math.min(maxMp, mp + delta * 5);
         updateCooldowns(delta);
         vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
@@ -191,10 +205,49 @@ public class Player extends Entity implements InputProcessor {
     }
 
     private void updateCooldowns(float delta) {
+        if (isAttacking) attackCooldown += delta;
+        if (onArmoredState) {
+            Gdx.app.log(TAG, "Plyaer armored");
+            armoredStateDuration -= delta;
+        }
+        if (armoredStateDuration < 0) {
+            onArmoredState = false;
+            armoredStateDuration = ARMORED_STATE_DURATION;
+        }
         fireCooldown -= delta;
         fire2Cooldown -= delta;
         iceCooldown -= delta;
         ice2Cooldown -= delta;
+
+    }
+
+    public void useItem(int currentIndex) {
+        switch (currentIndex) {
+            case 0:
+                if (getItems().get(currentIndex).size == 0) {
+                    Gdx.app.log(TAG, "No potions");
+                } else {
+                    hp += 50;
+                    getItems().get(currentIndex).removeIndex(0);
+                }
+                break;
+            case 1:
+                if (getItems().get(currentIndex).size == 0) {
+                    Gdx.app.log(TAG, "No potions");
+                } else {
+                    mp += 65;
+                    getItems().get(currentIndex).removeIndex(0);
+                }
+                break;
+            case 2:
+                if (getItems().get(currentIndex).size == 0) {
+                    Gdx.app.log(TAG, "No potions");
+                } else {
+                    onArmoredState = true;
+                    getItems().get(currentIndex).removeIndex(0);
+                }
+                break;
+        }
     }
 
     public float getMp() {
@@ -313,6 +366,22 @@ public class Player extends Entity implements InputProcessor {
 
     public void setIce2Cooldown(float ice2Cooldown) {
         this.ice2Cooldown = ice2Cooldown;
+    }
+
+    public Array<Array<Item>> getItems() {
+        return items;
+    }
+
+    public void setItems(Array<Array<Item>> items) {
+        this.items = items;
+    }
+
+    public boolean isOnArmoredState() {
+        return onArmoredState;
+    }
+
+    public void setOnArmoredState(boolean onArmoredState) {
+        this.onArmoredState = onArmoredState;
     }
 
     @Override

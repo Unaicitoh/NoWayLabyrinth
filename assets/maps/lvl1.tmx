@@ -808,35 +808,35 @@
  <objectgroup id="18" name="Objects">
   <object id="638" name="Dialog" x="55" y="1143">
    <properties>
-    <property name="Text">[%85]Welcome to the Labyrinth.[%]
+    <property name="Text">{JOLT}[%85]Welcome to the Labyrinth.[%]
 
-[%70]Survive and escape with your mage powers, or [%][%100][RED]die{CLEARCOLOR}[%][%70] while trying it.[%]</property>
+[%70]Survive and escape with your mage powers, or {ENDJOLT}[%][%100][RED]die{CLEARCOLOR}[%]{JOLT}[%70] while trying it.[%]{ENDJOLT}</property>
    </properties>
    <point/>
   </object>
   <object id="639" name="Dialog" x="136" y="1143">
    <properties>
-    <property name="Text">[%75]If you want to escape from this Labyrinth, 
+    <property name="Text">{JOLT}[%75]If you want to escape from this Labyrinth, 
 you must search the hidden chests and 
 unlock the unique exit.
-Good luck poor mage[%].</property>
+Good luck poor mage.[%]{ENDJOLT}</property>
    </properties>
    <point/>
   </object>
   <object id="642" name="Dialog" x="1224" y="137">
    <properties>
-    <property name="Text">[%85]Welcome to the Labyrinth.[%]
+    <property name="Text">{JOLT}[%85]Welcome to the Labyrinth.[%]
 
-[%70]Survive and escape with your mage powers, or [%][%100][RED]die{CLEARCOLOR}[%][%70] while trying it.[%]</property>
+[%70]Survive and escape with your mage powers, or {ENDJOLT}[%][%100][RED]die{CLEARCOLOR}[%]{JOLT}[%70] while trying it.[%]{ENDJOLT}</property>
    </properties>
    <point/>
   </object>
   <object id="644" name="Dialog" x="1143" y="137">
    <properties>
-    <property name="Text">[%75]If you want to escape from this Labyrinth, 
+    <property name="Text">{JOLT}[%75]If you want to escape from this Labyrinth, 
 you must search the hidden chests and 
 unlock the unique exit.
-Good luck poor mage[%].</property>
+Good luck poor mage.[%]{ENDJOLT}</property>
    </properties>
    <point/>
   </object>

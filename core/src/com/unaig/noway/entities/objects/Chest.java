@@ -3,6 +3,7 @@ package com.unaig.noway.entities.objects;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
@@ -11,14 +12,13 @@ import com.unaig.noway.data.Assets;
 
 import static com.unaig.noway.util.Constants.TILE_SIZE;
 
-public class Chest {
+public class Chest extends Object {
 
     private Animation<AtlasRegion> animation;
     private float stateTime;
     private boolean isOpen;
-    private Rectangle rectangle;
-    private TypingLabel label;
     private Image itemImage;
+    private Item item;
 
 
     public Chest(Array<AtlasRegion> animation, Rectangle rectangle) {
@@ -26,9 +26,23 @@ public class Chest {
         this.rectangle = rectangle;
         isOpen = false;
         stateTime = 0;
-        itemImage = new Image(Assets.instance.objectsAtlas.findRegion("healthPotion"));
-        label = new TypingLabel("{FAST}{SHRINK=1.0;1.0;true}[%50]Health Potion \n" +
-                "x1 obtained[%][@regular]{ENDSHRINK}", Assets.instance.mainSkin, "regular");
+        int rnd = MathUtils.random(3);
+        switch (rnd){
+            case 0: item = new HealthPotion();
+                break;
+            case 1: item = new ManaPotion();
+                break;
+            case 2: item = new ArmorPotion();
+                break;
+            case 3: item = new LabyKey();
+                break;
+        }
+        setLabel(item.getLabel());
+        setItemImage(item.getItemImage());
+        if (item == null) {
+            label = new TypingLabel("{FAST}{SHRINK=1.0;1.0;true}[%50]Ups... \n" +
+                    "Empty chest, good luck in \nthe next one.[%]{ENDSHRINK}", Assets.instance.mainSkin, "regular");
+        }
     }
 
     public void draw(SpriteBatch batch, float delta) {
@@ -65,27 +79,19 @@ public class Chest {
         isOpen = open;
     }
 
-    public Rectangle getRectangle() {
-        return rectangle;
-    }
-
-    public void setRectangle(Rectangle rectangle) {
-        this.rectangle = rectangle;
-    }
-
-    public TypingLabel getLabel() {
-        return label;
-    }
-
-    public void setLabel(TypingLabel label) {
-        this.label = label;
-    }
-
     public Image getItemImage() {
         return itemImage;
     }
 
     public void setItemImage(Image itemImage) {
         this.itemImage = itemImage;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
     }
 }
