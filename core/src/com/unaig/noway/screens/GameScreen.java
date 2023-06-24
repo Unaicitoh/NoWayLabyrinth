@@ -18,14 +18,15 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.github.tommyettinger.textra.TypingLabel;
 import com.unaig.noway.NoWayLabyrinth;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.engines.PoolEngine;
@@ -86,12 +87,12 @@ public class GameScreen extends ScreenAdapter {
     private Button hpPotionIcon;
     private Button mpPotionIcon;
     private Button arPotionIcon;
-    private Label potionLabel;
+    private TypingLabel potionLabel;
     private Button changePotionLeft;
     private Button changePotionRight;
 
     private Button keyIcon;
-    private Label keyLabel;
+    private TypingLabel keyLabel;
 
     private boolean canPlayerInteract;
     private Window window;
@@ -100,6 +101,7 @@ public class GameScreen extends ScreenAdapter {
     private Array<Object> objects;
     private Object object;
     private int currentPotion;
+    private boolean openModal;
 
     public GameScreen(NoWayLabyrinth game) {
         this.game = game;
@@ -110,7 +112,7 @@ public class GameScreen extends ScreenAdapter {
         renderer = new OrthogonalTiledMapRenderer(Assets.instance.labMap);
         viewport = new ExtendViewport(80 * TILE_SIZE, 80 * TILE_SIZE);
         batch = new SpriteBatch();
-        stage = new Stage(new ExtendViewport(1280, 720));
+        stage = new Stage(new FitViewport(1280, 720));
         poolEngine = new PoolEngine();
         player = new Player(poolEngine);
         canPlayerInteract = false;
@@ -121,6 +123,7 @@ public class GameScreen extends ScreenAdapter {
         viewport.getCamera().position.set(new Vector3(player.getPos(), 0));
         objects = new Array<>();
         object = null;
+        openModal = false;
         initializeUI();
         initObjects();
         spawnEnemies();
@@ -145,11 +148,6 @@ public class GameScreen extends ScreenAdapter {
         }
         for (Enemy e : poolEngine.enemies) {
             shaper.rectangle(e.getBounds());
-//            for(Rectangle r : e.lineSight){
-//                shaper.rectangle(r);
-//                e.lineSight.removeValue(r,true);
-//            }
-
         }
         renderUI(delta);
         batch.end();
@@ -184,51 +182,20 @@ public class GameScreen extends ScreenAdapter {
 
     private void update(float delta) {
         setElementIconPositions(delta);
-        updateItemLabels();
+        updateLabelPositions();
         canPlayerInteract = checkNearItem();
     }
 
-    private void updateItemLabels() {
+    private void updateLabelPositions() {
         Vector2 v = hpPotionIcon.localToStageCoordinates(new Vector2(hpPotionIcon.getX(), hpPotionIcon.getY()));
-        potionLabel.setPosition(v.x + hpPotionIcon.getWidth() / 2.5f, v.y + hpPotionIcon.getHeight() / 8f);
-        switch (currentPotion) {
-            case 0:
-                if (player.getItems().get(0).size == 0) {
-                    potionLabel.setText("x0");
-                } else {
-                    potionLabel.setText("x" + player.getItems().get(currentPotion).size);
-                }
-                break;
-            case 1:
-                if (player.getItems().get(1).size == 0) {
-                    potionLabel.setText("x0");
-                } else {
-                    potionLabel.setText("x" + player.getItems().get(currentPotion).size);
-                }
-                break;
-            case 2:
-                if (player.getItems().get(2).size == 0) {
-                    potionLabel.setText("x0");
-                } else {
-                    potionLabel.setText("x" + player.getItems().get(currentPotion).size);
-                }
-                break;
-        }
+        potionLabel.setPosition(v.x + hpPotionIcon.getWidth() / 2.5f, v.y + hpPotionIcon.getHeight() / 5f);
         v = keyIcon.localToStageCoordinates(new Vector2(keyIcon.getX(), keyIcon.getY()));
-        keyLabel.setPosition(v.x + 30, stage.getHeight() * .825f);
-        if (player.getItems().get(3).size == 0) {
-            keyLabel.setText("x0");
-        } else {
-            keyLabel.setText("x" + player.getItems().get(3).size);
-        }
+        keyLabel.setPosition(v.x + 30, stage.getHeight() * .835f);
+
     }
 
     private void checkObjectInteraction() {
-        if (isWindowActive) {
-            window.setVisible(false);
-            isWindowActive = false;
-            window.clear();
-        } else if (canPlayerInteract) {
+        if (canPlayerInteract && !isWindowActive) {
             if (object instanceof Dialog) {
                 resizeObjectWindow("Dialog");
                 window.add(object.getLabel());
@@ -237,6 +204,7 @@ public class GameScreen extends ScreenAdapter {
                 resizeObjectWindow("Chest");
                 Chest chest = (Chest) object;
                 chest.setOpen(true);
+                canPlayerInteract = false;
                 if (chest.getItemImage() != null) {
                     window.add(chest.getItemImage()).pad(20).padRight(30).padTop(25);
                     if (chest.getItem() instanceof HealthPotion) {
@@ -248,12 +216,16 @@ public class GameScreen extends ScreenAdapter {
                     } else if (chest.getItem() instanceof LabyKey) {
                         player.getItems().get(3).add(chest.getItem());
                     }
+                    potionLabel.setText("{GRADIENT}x" + player.getItems().get(currentPotion).size);
+                    keyLabel.setText("{GRADIENT}x" + player.getItems().get(3).size);
+                    window.add(chest.getLabel()).padRight(20).padTop(5);
+                    chest.getLabel().restart();
                 }
-                window.add(chest.getLabel()).padRight(20).padTop(5);
-                chest.getLabel().restart();
             }
             window.setVisible(true);
             isWindowActive = true;
+        } else if (isWindowActive && object instanceof Dialog) {
+            object.getLabel().skipToTheEnd();
         }
     }
 
@@ -304,8 +276,8 @@ public class GameScreen extends ScreenAdapter {
         window = new Window("", Assets.instance.mainSkin, "special");
         isWindowActive = false;
         window.setVisible(false);
-        potionLabel = new Label("x0", Assets.instance.mainSkin);
-        keyLabel = new Label("x0", Assets.instance.mainSkin);
+        potionLabel = new TypingLabel("{GRADIENT}x0", Assets.instance.mainSkin);
+        keyLabel = new TypingLabel("{GRADIENT}x0", Assets.instance.mainSkin);
         potionLabel.setTouchable(Touchable.disabled);
         currentPotion = 0;
         stage.addActor(iceTypeAnim);
@@ -356,7 +328,7 @@ public class GameScreen extends ScreenAdapter {
                         updateElementIcons();
                         break;
                     case Keys.F:
-                        player.useItem(currentPotion);
+                        useCurrentPotion();
                         break;
                     case Keys.E:
                         addIndexPotion();
@@ -395,20 +367,20 @@ public class GameScreen extends ScreenAdapter {
         hpPotionIcon.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                player.useItem(currentPotion);
+                useCurrentPotion();
 
             }
         });
         mpPotionIcon.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                player.useItem(currentPotion);
+                useCurrentPotion();
             }
         });
         arPotionIcon.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                player.useItem(currentPotion);
+                useCurrentPotion();
             }
         });
 
@@ -437,6 +409,12 @@ public class GameScreen extends ScreenAdapter {
         });
     }
 
+    private void useCurrentPotion() {
+        player.useItem(currentPotion);
+        potionLabel.setText("{GRADIENT}x" + player.getItems().get(currentPotion).size);
+
+    }
+
     private void addIndexPotion() {
         currentPotion += 1;
         if (currentPotion > 2) {
@@ -454,6 +432,8 @@ public class GameScreen extends ScreenAdapter {
             mpPotionIcon.setVisible(false);
             arPotionIcon.setVisible(true);
         }
+        potionLabel.setText("{GRADIENT}x" + player.getItems().get(currentPotion).size);
+
     }
 
     private void restPotionIndex() {
@@ -472,6 +452,8 @@ public class GameScreen extends ScreenAdapter {
             mpPotionIcon.setVisible(true);
             arPotionIcon.setVisible(false);
         }
+        potionLabel.setText("{GRADIENT}x" + player.getItems().get(currentPotion).size);
+
     }
 
     private void updateElementIcons() {
@@ -564,19 +546,25 @@ public class GameScreen extends ScreenAdapter {
                     return true;
                 }
             } else if (o instanceof Chest) {
-                if (((Chest) o).isOpen()) {
-                    object = null;
+                if (((Chest) o).isOpen() && player.getBounds().overlaps(o.getRectangle())) {
+                    openModal = true;
                     return false;
-                }
-                if (player.getBounds().overlaps(o.getRectangle())) {
+                } else if (player.getBounds().overlaps(o.getRectangle())) {
                     if (object == null)
                         object = o;
                     return true;
                 }
             }
         }
-        object = null;
+        if (!openModal) {
+            object = null;
+            isWindowActive = false;
+            window.setVisible(false);
+            window.clear();
+        }
+        openModal = false;
         return false;
+
     }
 
     @Override

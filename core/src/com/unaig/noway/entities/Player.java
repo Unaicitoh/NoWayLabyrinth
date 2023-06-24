@@ -41,7 +41,9 @@ public class Player extends Entity implements InputProcessor {
 
     public static final float BASIC_ATTACK_COOLDOWN = .8f;
     public static final float STRONG_ATTACK_COOLDOWN = 2.5f;
-    private static final float OFFSET_X = 2f;
+    private static final float OFFSET_X = 2.5f;
+    private static final float OFFSET_Y = 2.5f;
+
     private static final float FRAME_DURATION = 0.1f;
     public static final int STRONG_MANA_COST = 25;
     public static final int BASIC_MANA_COST = 5;
@@ -88,7 +90,7 @@ public class Player extends Entity implements InputProcessor {
         mp = maxMp;
         vel = new Vector2(0, 0);
         maxVel = TILE_SIZE * 3;
-        bounds = new Rectangle(pos.x + OFFSET_X, pos.y, size.x - OFFSET_X * 2, size.y);
+        bounds = new Rectangle(pos.x + OFFSET_X, pos.y+ OFFSET_Y, size.x - OFFSET_X * 2, size.y- OFFSET_Y*2);
         lastDir = DOWN;
         animations = new ObjectMap<>();
         stateTime = 0f;
@@ -185,7 +187,7 @@ public class Player extends Entity implements InputProcessor {
         Vector2 lastValidPos = new Vector2(pos);
         // Move horizontally
         pos.x += vel.x * delta;
-        bounds.setPosition(pos.x + OFFSET_X, pos.y);
+        bounds.setPosition(pos.x + OFFSET_X, pos.y+OFFSET_Y);
         if (GameHelper.checkCollisions(bounds)) {
             pos.x = lastValidPos.x;
         } else {
@@ -194,20 +196,19 @@ public class Player extends Entity implements InputProcessor {
 
         // Move vertically
         pos.y += vel.y * delta;
-        bounds.setPosition(pos.x + OFFSET_X, pos.y);
+        bounds.setPosition(pos.x + OFFSET_X, pos.y+OFFSET_Y);
         if (GameHelper.checkCollisions(bounds)) {
             pos.y = lastValidPos.y;
         } else {
             lastValidPos.y = pos.y;
         }
         pos.set(lastValidPos);
-        bounds.setPosition(pos.x + OFFSET_X, pos.y);
+        bounds.setPosition(pos.x + OFFSET_X, pos.y+OFFSET_Y);
     }
 
     private void updateCooldowns(float delta) {
         if (isAttacking) attackCooldown += delta;
         if (onArmoredState) {
-            Gdx.app.log(TAG, "Plyaer armored");
             armoredStateDuration -= delta;
         }
         if (armoredStateDuration < 0) {
@@ -225,7 +226,6 @@ public class Player extends Entity implements InputProcessor {
         switch (currentIndex) {
             case 0:
                 if (getItems().get(currentIndex).size == 0) {
-                    Gdx.app.log(TAG, "No potions");
                 } else {
                     hp += 50;
                     getItems().get(currentIndex).removeIndex(0);
@@ -233,7 +233,6 @@ public class Player extends Entity implements InputProcessor {
                 break;
             case 1:
                 if (getItems().get(currentIndex).size == 0) {
-                    Gdx.app.log(TAG, "No potions");
                 } else {
                     mp += 65;
                     getItems().get(currentIndex).removeIndex(0);
@@ -241,7 +240,6 @@ public class Player extends Entity implements InputProcessor {
                 break;
             case 2:
                 if (getItems().get(currentIndex).size == 0) {
-                    Gdx.app.log(TAG, "No potions");
                 } else {
                     onArmoredState = true;
                     getItems().get(currentIndex).removeIndex(0);
@@ -402,7 +400,7 @@ public class Player extends Entity implements InputProcessor {
                 } else if (elementType == ICE && iceCooldown <= 0f && mp - BASIC_MANA_COST >= 0) {
                     mp -= BASIC_MANA_COST;
                     stateTime = ATTACK_ANIMATION_FRAME_RESET;
-                    iceCooldown = BASIC_ATTACK_COOLDOWN;
+                    iceCooldown = BASIC_ATTACK_COOLDOWN * 1.5f;
                     isAttacking = true;
                     IceSpell.create(poolEngine, this, BASIC);
                 }

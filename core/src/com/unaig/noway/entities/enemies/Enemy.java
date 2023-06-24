@@ -29,8 +29,8 @@ public abstract class Enemy extends Entity implements Poolable {
     public static final float ATTACK_FRAME_DURATION = .15f;
     public static final float DEAD_FRAME_DURATION = .30f;
 
-    private final float OFFSET_X = 2f;
-    private final float OFFSET_Y = 2f;
+    private final float OFFSET_X = 3.25f;
+    private final float OFFSET_Y = 3.25f;
     public boolean isAlive;
     protected float attackRange;
     protected Vector2 playerPos;
@@ -113,7 +113,11 @@ public abstract class Enemy extends Entity implements Poolable {
         if (timeFromDamage > 10f) {
             hp = Math.min(maxHp, hp + delta * 10);
         }
-        if (!isDead && !isFrozen) {
+        if (hp <= 0) {
+            vel.x = 0;
+            vel.y = 0;
+        }
+        if (!isDead && !isFrozen && hp > 0) {
             if (isPlayerInRange() || hp < maxHp) {
                 drawHp = true;
                 readyToAttack = true;
@@ -155,15 +159,15 @@ public abstract class Enemy extends Entity implements Poolable {
 
     private void checkHitFromSpell(Array<Spell> spells) {
         for (Spell s : spells) {
-            if (bounds.overlaps(s.getBounds()) && !isDead) {
+            if (bounds.overlaps(s.getBounds()) && hp > 0 && s.isAlive) {
                 boolean extraDamage = false;
                 s.isAlive = false;
                 if (s instanceof FireSpell) {
                     if (s.getAttackType() == BASIC) {
                         if (!isFrozen) {
                             isBurned = true;
-                            isSlowed = false;
                         }
+                        slowedDuration = 0.25f;
                         if (isBurned) {
                             burnDuration = BURN_ENEMY_TIME;
                         }
@@ -183,7 +187,7 @@ public abstract class Enemy extends Entity implements Poolable {
                         if (isSlowed) {
                             slowedDuration = SLOWED_ENEMY_TIME;
                         } else {
-                            maxVel /= 1.5f;
+                            maxVel /= 1.75f;
                             isSlowed = true;
                         }
                     } else if (s.getAttackType() == STRONG) {
@@ -241,9 +245,9 @@ public abstract class Enemy extends Entity implements Poolable {
         isAttacking = true;
         if (attackCooldown <= 0f) {
             attackCooldown = 2f;
-            if(player.isOnArmoredState()){
-                player.setHp(Math.max(0, player.getHp() - attackDamage/2f));
-            }else{
+            if (player.isOnArmoredState()) {
+                player.setHp(Math.max(0, player.getHp() - attackDamage / 2f));
+            } else {
                 player.setHp(Math.max(0, player.getHp() - attackDamage));
             }
             player.setIsDamaged(true);

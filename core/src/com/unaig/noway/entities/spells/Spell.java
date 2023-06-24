@@ -24,8 +24,8 @@ public abstract class Spell extends Entity implements Poolable {
     private float timeAlive;
     protected Animation<AtlasRegion> animation;
     protected float velMultiplier;
-    private static final float OFFSET_X = 2f;
-    private static final float OFFSET_Y = 2.5f;
+    private static final float OFFSET_X = 5.75f;
+    private static final float OFFSET_Y = 5.75f;
     private static final float LIFE_DURATION = 2f;
     private float playerMaxVel;
     protected AttackType attackType;
