@@ -65,7 +65,7 @@ public class Player extends Entity implements InputProcessor {
         init();
     }
 
-    protected void init() {
+    public void init() {
         int rnd = MathUtils.random(1);
         rnd = 0;
         elementType = FIRE;

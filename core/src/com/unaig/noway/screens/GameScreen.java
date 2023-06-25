@@ -21,7 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.tommyettinger.textra.TypingLabel;
 import com.unaig.noway.NoWayLabyrinth;
@@ -122,9 +122,16 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     @Override
     protected void create() {
         Gdx.app.log(TAG, "creating");
-        renderer = new OrthogonalTiledMapRenderer(Assets.instance.labMap, batch);
+
+    }
+
+    @Override
+    public void show() {
+        Gdx.app.log(TAG, "showing");
+        getInputProcessors().clear();
+        renderer = new OrthogonalTiledMapRenderer(Assets.instance.labMap);
         viewport = new ExtendViewport(80 * TILE_SIZE, 80 * TILE_SIZE);
-        stage = new Stage(new FitViewport(1280, 720), batch);
+        stage = new Stage(new StretchViewport(1280, 720), batch);
         poolEngine = new PoolEngine();
         player = new Player(poolEngine);
         canPlayerInteract = false;
@@ -141,15 +148,11 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         chestsOpened = 0;
         gameOver = false;
         gameOverTime = 0;
+        gameOverLabel = null;
         initializeUI();
         initObjects();
         spawnEnemies();
-    }
-
-    @Override
-    public void show() {
-        Gdx.app.log(TAG,"showing");
-        super.show();
+        resize(stage.getViewport().getScreenWidth(), stage.getViewport().getScreenHeight());
 
     }
 
@@ -161,7 +164,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
 
     @Override
     public Color getClearColor() {
-        return new Color(.5f, .5f, .7f, 1);
+        return new Color(.5f, .5f, .65f, 1);
     }
 
     @Override
@@ -196,7 +199,8 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
             player.maxVel -= TILE_SIZE;
         }
         if (Gdx.input.isKeyJustPressed(Keys.CONTROL_RIGHT)) {
-            game.getScreenManager().pushScreen("Game","blend");
+            game.getScreenManager().pushScreen("Reset", null);
+            game.getScreenManager().pushScreen("Game", "blend");
         }
         GameHelper.resizeGameWindow();
         //End debugging
@@ -211,6 +215,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     }
 
     private void update(float delta) {
+        Gdx.app.log(TAG, "" + player.isDead() + " " + player.getHp() + " " + gameTime + " " + gameOverTime + " " + gameOverLabel);
         viewport.apply();
         stage.getViewport().apply();
         viewport.getCamera().position.lerp(new Vector3(player.getPos(), 0), CAM_SPEED * delta);
@@ -258,6 +263,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
 
             protected void result(java.lang.Object object) {
                 if ((boolean) object) {
+                    game.getScreenManager().pushScreen("Reset", null);
                     game.getScreenManager().pushScreen("Game", "blend");
                 }
             }
@@ -683,6 +689,10 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
 
     @Override
     public void resize(int width, int height) {
+        Gdx.app.log(TAG, "resizing");
+
+        viewport.apply();
+        stage.getViewport().apply();
         viewport.update(width, height);
         stage.getViewport().update(width, height);
         setElementIconPositions(Gdx.graphics.getDeltaTime());
