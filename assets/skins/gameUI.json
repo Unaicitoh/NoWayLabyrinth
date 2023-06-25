@@ -425,7 +425,7 @@
 												{
 													"child": {
 														"class": "Label",
-														"name": null,
+														"name": "currentPotionLabel",
 														"style": {
 															"clazz": "com.badlogic.gdx.scenes.scene2d.ui.Label",
 															"name": "default"

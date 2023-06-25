@@ -7,7 +7,7 @@ import com.unaig.noway.data.Assets;
 public class ManaPotion extends Item {
     public ManaPotion() {
         itemImage = new Image(Assets.instance.objectsAtlas.findRegion("manaPotion"));
-        label = new TypingLabel("{FAST}{SHRINK=1.0;1.0;true}[%50]Mana Potion \n" +
+        label = new TypingLabel("{FASTER}{SHRINK=1.0;1.0;true}[%50]Mana Potion \n" +
                 "x1 obtained[%][@regular]{ENDSHRINK}", Assets.instance.mainSkin, "regular");
     }
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -64,7 +66,8 @@ public class GameScreen extends ScreenAdapter {
     private Viewport viewport;
     private ShapeDrawer shaper;
     private static final float CAM_SPEED = 5f;
-    public static final float CHANGE_TIME_DISABLED = .05f;
+    public static final float TIME_DISABLED = .05f;
+    public static final float ARROWS_TIME_DISABLED = .08f;
     public static final float FADE_DURATION = .25f;
     public static final float SPELL_FRAME_DURATION = .15f;
 
@@ -80,8 +83,13 @@ public class GameScreen extends ScreenAdapter {
     private Button fireTypeIcon;
     private Button fireSpellIcon;
     private Button fire2SpellIcon;
+    private Label currentPotionLabel;
     private Button changeElementIcon;
     private float changeTimeDisabled;
+    private float potionLeftTimeDisabled;
+    private float potionRightTimeDisabled;
+    private float currentPotionTimeDisabled;
+
     private Button iceSpellIcon;
     private Button ice2SpellIcon;
     private Button hpPotionIcon;
@@ -188,9 +196,9 @@ public class GameScreen extends ScreenAdapter {
 
     private void updateLabelPositions() {
         Vector2 v = hpPotionIcon.localToStageCoordinates(new Vector2(hpPotionIcon.getX(), hpPotionIcon.getY()));
-        potionLabel.setPosition(v.x + hpPotionIcon.getWidth() / 2.5f, v.y + hpPotionIcon.getHeight() / 5f);
+        potionLabel.setPosition(v.x + hpPotionIcon.getWidth() / 2.5f, v.y + hpPotionIcon.getHeight() / 4f);
         v = keyIcon.localToStageCoordinates(new Vector2(keyIcon.getX(), keyIcon.getY()));
-        keyLabel.setPosition(v.x + 30, stage.getHeight() * .835f);
+        keyLabel.setPosition(v.x + 30, stage.getHeight() * .84f);
 
     }
 
@@ -268,7 +276,12 @@ public class GameScreen extends ScreenAdapter {
         changePotionRight = stage.getRoot().findActor("potionRightIcon");
         keyIcon = stage.getRoot().findActor("keyIcon");
         changeElementIcon = stage.getRoot().findActor("changeElementButton");
-        changeTimeDisabled = CHANGE_TIME_DISABLED;
+        currentPotionLabel = stage.getRoot().findActor("currentPotionLabel");
+        currentPotionLabel.setColor(Color.WHITE);
+        changeTimeDisabled = TIME_DISABLED;
+        potionRightTimeDisabled = ARROWS_TIME_DISABLED;
+        potionLeftTimeDisabled = ARROWS_TIME_DISABLED;
+        currentPotionTimeDisabled = ARROWS_TIME_DISABLED;
         fireTypeAnim = new ImageAnimation();
         iceTypeAnim = new ImageAnimation();
         fireTypeAnim.setAnimation(new Animation<>(SPELL_FRAME_DURATION, Assets.instance.playerAtlas.findRegions("fireTypeIcon"), NORMAL));
@@ -412,10 +425,11 @@ public class GameScreen extends ScreenAdapter {
     private void useCurrentPotion() {
         player.useItem(currentPotion);
         potionLabel.setText("{GRADIENT}x" + player.getItems().get(currentPotion).size);
-
+        currentPotionLabel.setTouchable(Touchable.enabled);
     }
 
     private void addIndexPotion() {
+        changePotionRight.setDisabled(true);
         currentPotion += 1;
         if (currentPotion > 2) {
             currentPotion = 0;
@@ -437,6 +451,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void restPotionIndex() {
+        changePotionLeft.setDisabled(true);
         currentPotion -= 1;
         if (currentPotion < 0) {
             currentPotion = 2;
@@ -524,10 +539,36 @@ public class GameScreen extends ScreenAdapter {
         if (changeElementIcon.isDisabled() && changeTimeDisabled >= 0) {
             changeTimeDisabled -= delta;
             if (changeTimeDisabled < 0) {
-                changeTimeDisabled = CHANGE_TIME_DISABLED;
+                changeTimeDisabled = TIME_DISABLED;
                 changeElementIcon.setDisabled(false);
             }
         }
+        if (changePotionLeft.isDisabled() && potionLeftTimeDisabled >= 0) {
+            potionLeftTimeDisabled -= delta;
+            if (potionLeftTimeDisabled < 0) {
+                potionLeftTimeDisabled = ARROWS_TIME_DISABLED;
+                changePotionLeft.setDisabled(false);
+            }
+        }
+        if (changePotionRight.isDisabled() && potionRightTimeDisabled >= 0) {
+            potionRightTimeDisabled -= delta;
+            if (potionRightTimeDisabled < 0) {
+                potionRightTimeDisabled = ARROWS_TIME_DISABLED;
+                changePotionRight.setDisabled(false);
+            }
+        }
+        if (currentPotionLabel.isTouchable() && currentPotionTimeDisabled >= 0) {
+            currentPotionTimeDisabled -= delta;
+            currentPotionLabel.setColor(Color.BLACK);
+            Gdx.app.log(TAG, "" + currentPotionTimeDisabled);
+            if (currentPotionTimeDisabled < 0) {
+                currentPotionTimeDisabled = ARROWS_TIME_DISABLED;
+                currentPotionLabel.setTouchable(Touchable.disabled);
+            }
+        } else {
+            currentPotionLabel.setColor(Color.WHITE);
+        }
+
         fireSpellIcon.setDisabled(player.getFireCooldown() > 0f);
         fire2SpellIcon.setDisabled(player.getFire2Cooldown() > 0f);
         iceSpellIcon.setDisabled(player.getIceCooldown() > 0f);

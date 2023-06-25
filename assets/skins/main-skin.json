@@ -162,10 +162,12 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	left: {
 		imageUp: left-arrow
 		imageDown: left-arrow-down
+		imageDisabled: left-arrow-down
 	}
 	right: {
 		imageUp: right-arrow
 		imageDown: right-arrow-down
+		imageDisabled: right-arrow-down
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
