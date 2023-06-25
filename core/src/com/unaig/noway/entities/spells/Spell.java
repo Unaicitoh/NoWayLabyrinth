@@ -61,7 +61,7 @@ public abstract class Spell extends Entity implements Poolable {
             bounds.setPosition(pos.x + OFFSET_X, pos.y + OFFSET_Y);
         }
 
-        if (GameHelper.checkCollisions(bounds) || timeAlive > LIFE_DURATION) {
+        if (GameHelper.checkCollisions(bounds, true) || timeAlive > LIFE_DURATION) {
             isAlive = false;
         }
 

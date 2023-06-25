@@ -34,6 +34,7 @@ public abstract class Enemy extends Entity implements Poolable {
     public boolean isAlive;
     protected float attackRange;
     protected Vector2 playerPos;
+    protected Vector2 lastValidPos;
     protected Rectangle playerBounds;
     private float patrolCooldown;
     private Vector2 lastPatrolVel;
@@ -49,6 +50,10 @@ public abstract class Enemy extends Entity implements Poolable {
     protected float frozenDuration;
     public Array<Rectangle> lineSight;
     private boolean readyToAttack;
+    private boolean isChasing;
+    private boolean collide;
+    protected boolean revertGhost;
+
 
     protected void init(Vector2 _pos) {
         pos = new Vector2();
@@ -56,6 +61,9 @@ public abstract class Enemy extends Entity implements Poolable {
         vel = new Vector2(0, 0);
         size = new Vector2(TILE_SIZE, TILE_SIZE);
         bounds = new Rectangle(pos.x + OFFSET_X, pos.y + OFFSET_Y, size.x - OFFSET_X * 2, size.y - OFFSET_Y * 2);
+        lastValidPos = new Vector2();
+        collide = true;
+        revertGhost = false;
         int rndDir = MathUtils.random(3);
         switch (rndDir) {
             case 0:
@@ -209,6 +217,8 @@ public abstract class Enemy extends Entity implements Poolable {
     }
 
     private void patrolMode(float delta) {
+        isChasing = false;
+
         float x = Math.round(MathUtils.random(-maxVel, maxVel));
         float y = Math.round(MathUtils.random(-maxVel, maxVel));
         int rnd = MathUtils.random(9);
@@ -243,6 +253,8 @@ public abstract class Enemy extends Entity implements Poolable {
 
     private void attackPlayer(Player player) {
         isAttacking = true;
+        isChasing = false;
+
         if (attackCooldown <= 0f) {
             attackCooldown = 2f;
             if (player.isOnArmoredState()) {
@@ -302,6 +314,7 @@ public abstract class Enemy extends Entity implements Poolable {
 
     private void chaseMode(float delta) {
         isAttacking = false;
+        isChasing = true;
         Vector2 direction = playerPos.sub(pos);
         if (Math.round(direction.x) > 0) {
             vel.x = maxVel;
@@ -322,7 +335,18 @@ public abstract class Enemy extends Entity implements Poolable {
     }
 
     private void checkWallCollisions(float delta, Vector2 direction, boolean patrolling) {
-        Vector2 lastValidPos = new Vector2(pos);
+        if ((isChasing || isAttacking) && this instanceof GhostEnemy) {
+            collide = false;
+        } else {
+            collide = true;
+        }
+
+        if (collide && !patrolling) {
+            lastValidPos = new Vector2(pos);
+        }
+        if (this instanceof GhostEnemy && patrolling && GameHelper.checkCollisions(bounds)) {
+            collide = false;
+        }
         int directionX = Math.round(direction.x);
         Vector2 sclDir = new Vector2(directionX, 0).nor();
         if (!patrolling) {
@@ -331,11 +355,18 @@ public abstract class Enemy extends Entity implements Poolable {
             pos.add(sclDir.scl(maxVel / 2.5f * delta));
         }
         bounds.setPosition(pos.x + OFFSET_X, pos.y + OFFSET_Y);
-        if (GameHelper.checkCollisions(bounds)) {
-            pos.x = lastValidPos.x;
+        if (collide) {
+            if (GameHelper.checkCollisions(bounds)) {
+                pos.x = lastValidPos.x;
+            } else {
+                lastValidPos.x = pos.x;
+            }
         } else {
-            lastValidPos.x = pos.x;
+            if (!GameHelper.checkCollisions(bounds)) {
+                lastValidPos.x = pos.x;
+            }
         }
+
 
         int directionY = Math.round(direction.y);
         sclDir.set(0, directionY).nor();
@@ -345,12 +376,24 @@ public abstract class Enemy extends Entity implements Poolable {
             pos.add(sclDir.scl(maxVel / 2.5f * delta));
         }
         bounds.setPosition(pos.x + OFFSET_X, pos.y + OFFSET_Y);
-        if (GameHelper.checkCollisions(bounds)) {
-            pos.y = lastValidPos.y;
+        if (collide) {
+            if (GameHelper.checkCollisions(bounds)) {
+                pos.y = lastValidPos.y;
+            } else {
+                lastValidPos.y = pos.y;
+            }
         } else {
-            lastValidPos.y = pos.y;
+            if (!GameHelper.checkCollisions(bounds)) {
+                lastValidPos.y = pos.y;
+            }
         }
-        pos.set(lastValidPos);
+        if (collide) {
+            pos.set(lastValidPos);
+        } else if (patrolling) {
+            vel.x = 0;
+            vel.y = 0;
+            revertGhost = true;
+        }
         bounds.setPosition(pos.x + OFFSET_X, pos.y + OFFSET_Y);
     }
 

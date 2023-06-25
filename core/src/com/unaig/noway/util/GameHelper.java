@@ -48,6 +48,30 @@ public class GameHelper {
         return false;
     }
 
+    public static boolean checkCollisions(Rectangle r, boolean isSpell) {
+        MapObjects collisions = Assets.instance.labMap.getLayers().get("Collisions").getObjects();
+        for (int i = 0; i < collisions.getCount(); i++) {
+            MapObject mapObject = collisions.get(i);
+            if (mapObject instanceof RectangleMapObject) {
+                Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
+                if (r.overlaps(rectangle)) {
+                    if (mapObject.getProperties().get("fall") != null) {
+                        return !(boolean) mapObject.getProperties().get("fall");
+                    } else {
+                        return true;
+                    }
+                }
+
+            } else if (mapObject instanceof PolygonMapObject) {
+                Polygon polygon = ((PolygonMapObject) mapObject).getPolygon();
+                if (r.overlaps(polygon.getBoundingRectangle())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static Animation<AtlasRegion> setAnimation(float duration, String animationName) {
         return new Animation<>(duration, Assets.instance.playerAtlas.findRegions(animationName), LOOP);
     }
@@ -65,6 +89,16 @@ public class GameHelper {
             e.timeDamageTaken = DAMAGE_ANIMATION_TIME;
             batch.setColor(1, 1, 1, 1);
         }
+
+        if (e.getIsDamaged() && e.timeDamageTaken >= 0) {
+            e.timeDamageTaken -= delta;
+            batch.setColor(1, 0, 0, e.timeDamageTaken * 5);
+        } else {
+            e.setIsDamaged(false);
+            e.timeDamageTaken = DAMAGE_ANIMATION_TIME;
+            batch.setColor(1, 1, 1, 1);
+        }
+
     }
 
     public static void checkEnemyStatus(Enemy enemy, float delta) {
@@ -306,7 +340,7 @@ public class GameHelper {
 
     }
 
-    public static void resizeGameWindow(){
+    public static void resizeGameWindow() {
         if (Gdx.input.isKeyPressed(Input.Keys.F11))
             Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE))

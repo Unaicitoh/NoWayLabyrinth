@@ -29,7 +29,7 @@ public class ZombieEnemy extends Enemy {
 
     protected void init(Vector2 pos) {
         maxHp = 100;
-        maxVel = TILE_SIZE * 2.25f;
+        maxVel = TILE_SIZE * 2.50f;
         attackDamage = 20;
         attackRange = TILE_SIZE * 6f;
         super.init(pos);

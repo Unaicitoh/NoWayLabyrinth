@@ -67,7 +67,6 @@ public class GameScreen extends ScreenAdapter {
     private ShapeDrawer shaper;
     private static final float CAM_SPEED = 5f;
     public static final float TIME_DISABLED = .05f;
-    public static final float ARROWS_TIME_DISABLED = .08f;
     public static final float FADE_DURATION = .25f;
     public static final float SPELL_FRAME_DURATION = .15f;
 
@@ -279,9 +278,9 @@ public class GameScreen extends ScreenAdapter {
         currentPotionLabel = stage.getRoot().findActor("currentPotionLabel");
         currentPotionLabel.setColor(Color.WHITE);
         changeTimeDisabled = TIME_DISABLED;
-        potionRightTimeDisabled = ARROWS_TIME_DISABLED;
-        potionLeftTimeDisabled = ARROWS_TIME_DISABLED;
-        currentPotionTimeDisabled = ARROWS_TIME_DISABLED;
+        potionRightTimeDisabled = TIME_DISABLED;
+        potionLeftTimeDisabled = TIME_DISABLED;
+        currentPotionTimeDisabled = TIME_DISABLED;
         fireTypeAnim = new ImageAnimation();
         iceTypeAnim = new ImageAnimation();
         fireTypeAnim.setAnimation(new Animation<>(SPELL_FRAME_DURATION, Assets.instance.playerAtlas.findRegions("fireTypeIcon"), NORMAL));
@@ -546,14 +545,14 @@ public class GameScreen extends ScreenAdapter {
         if (changePotionLeft.isDisabled() && potionLeftTimeDisabled >= 0) {
             potionLeftTimeDisabled -= delta;
             if (potionLeftTimeDisabled < 0) {
-                potionLeftTimeDisabled = ARROWS_TIME_DISABLED;
+                potionLeftTimeDisabled = TIME_DISABLED;
                 changePotionLeft.setDisabled(false);
             }
         }
         if (changePotionRight.isDisabled() && potionRightTimeDisabled >= 0) {
             potionRightTimeDisabled -= delta;
             if (potionRightTimeDisabled < 0) {
-                potionRightTimeDisabled = ARROWS_TIME_DISABLED;
+                potionRightTimeDisabled = TIME_DISABLED;
                 changePotionRight.setDisabled(false);
             }
         }
@@ -562,7 +561,7 @@ public class GameScreen extends ScreenAdapter {
             currentPotionLabel.setColor(Color.BLACK);
             Gdx.app.log(TAG, "" + currentPotionTimeDisabled);
             if (currentPotionTimeDisabled < 0) {
-                currentPotionTimeDisabled = ARROWS_TIME_DISABLED;
+                currentPotionTimeDisabled = TIME_DISABLED;
                 currentPotionLabel.setTouchable(Touchable.disabled);
             }
         } else {
