@@ -26,22 +26,27 @@ public class Chest extends Object {
         this.rectangle = rectangle;
         isOpen = false;
         stateTime = 0;
-        int rnd = MathUtils.random(3);
-        switch (rnd){
-            case 0: item = new HealthPotion();
+        int rnd = MathUtils.random(4);
+        switch (rnd) {
+            case 0:
+                item = new HealthPotion();
                 break;
-            case 1: item = new ManaPotion();
+            case 1:
+                item = new ManaPotion();
                 break;
-            case 2: item = new ArmorPotion();
+            case 2:
+                item = new ArmorPotion();
                 break;
-            case 3: item = new LabyKey();
+            case 3:
+                item = new LabyKey();
                 break;
         }
-        setLabel(item.getLabel());
-        setItemImage(item.getItemImage());
+
         if (item == null) {
-            label = new TypingLabel("{FAST}{SHRINK=1.0;1.0;true}[%50]Ups... \n" +
-                    "Empty chest, good luck in \nthe next one.[%]{ENDSHRINK}", Assets.instance.mainSkin, "regular");
+            label = new TypingLabel("{FAST}{SHRINK=1.0;1.0;true}[%50]Ups... \n" + "Empty chest, good luck in \nthe next one.[%]{ENDSHRINK}", Assets.instance.mainSkin, "regular");
+        } else {
+            setLabel(item.getLabel());
+            setItemImage(item.getItemImage());
         }
     }
 
@@ -49,9 +54,9 @@ public class Chest extends Object {
         stateTime += delta;
         if (!isOpen) {
             stateTime = 0;
-            batch.draw(animation.getKeyFrame(stateTime), rectangle.x, rectangle.y, TILE_SIZE / 1.5f, TILE_SIZE / 1.5f);
+            batch.draw(animation.getKeyFrame(stateTime), rectangle.x - TILE_SIZE / 3f, rectangle.y - TILE_SIZE / 3f, TILE_SIZE / 1.5f, TILE_SIZE / 1.5f);
         } else {
-            batch.draw(animation.getKeyFrame(stateTime), rectangle.x, rectangle.y, TILE_SIZE / 1.5f, TILE_SIZE / 1.5f);
+            batch.draw(animation.getKeyFrame(stateTime), rectangle.x - TILE_SIZE / 3f, rectangle.y - TILE_SIZE / 3f, TILE_SIZE / 1.5f, TILE_SIZE / 1.5f);
         }
     }
 

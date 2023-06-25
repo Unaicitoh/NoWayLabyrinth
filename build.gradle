@@ -82,5 +82,6 @@ project(":core") {
         implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
         implementation 'com.github.raeleus.stripe:stripe:1.4.5'
         implementation "com.github.tommyettinger:textratypist:0.8.3"
+        api "com.github.crykn:libgdx-screenmanager:0.6.8"
     }
 }

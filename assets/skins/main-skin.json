@@ -175,6 +175,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 		font: font
 		up: button
 		down: button-selected
+		over: button-over
 	}
 	toggle: {
 		font: font
@@ -309,7 +310,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	special: {
 		background: window-special
 		titleFont: font
-		titleFontColor: black
+		titleFontColor: white
 	}
 	special-dialog: {
 		background: window-special

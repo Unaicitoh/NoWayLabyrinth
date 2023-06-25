@@ -18,11 +18,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -34,9 +32,11 @@ import com.unaig.noway.data.Assets;
 import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.entities.enemies.Enemy;
+import com.unaig.noway.entities.enemies.Enemy.EnemyListener;
 import com.unaig.noway.entities.enemies.GhostEnemy;
 import com.unaig.noway.entities.enemies.SpiderEnemy;
 import com.unaig.noway.entities.enemies.ZombieEnemy;
+import com.unaig.noway.entities.objects.Dialog;
 import com.unaig.noway.entities.objects.Object;
 import com.unaig.noway.entities.objects.*;
 import com.unaig.noway.entities.spells.FireSpell;
@@ -56,7 +56,7 @@ import static com.unaig.noway.util.Constants.TILE_SIZE;
 import static com.unaig.noway.util.ElementType.FIRE;
 import static com.unaig.noway.util.ElementType.ICE;
 
-public class GameScreen extends ScreenAdapter {
+public class GameScreen extends ScreenAdapter implements EnemyListener {
     public static final String TAG = GameScreen.class.getName();
 
     private final NoWayLabyrinth game;
@@ -109,6 +109,12 @@ public class GameScreen extends ScreenAdapter {
     private Object object;
     private int currentPotion;
     private boolean openModal;
+    private float gameTime;
+    private int enemiesKilled;
+    private int chestsOpened;
+    private boolean gameOver;
+    private float gameOverTime;
+    private TypingLabel gameOverLabel;
 
     public GameScreen(NoWayLabyrinth game) {
         this.game = game;
@@ -131,6 +137,11 @@ public class GameScreen extends ScreenAdapter {
         objects = new Array<>();
         object = null;
         openModal = false;
+        gameTime = 0;
+        enemiesKilled = 0;
+        chestsOpened = 0;
+        gameOver = false;
+        gameOverTime = 0;
         initializeUI();
         initObjects();
         spawnEnemies();
@@ -188,9 +199,57 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void update(float delta) {
+        if (!player.isDead())
+            gameTime += delta;
         setElementIconPositions(delta);
         updateLabelPositions();
         canPlayerInteract = checkNearItem();
+        isGameOver(delta);
+    }
+
+    private void isGameOver(float delta) {
+        Gdx.app.log(TAG, "on" + openModal);
+        if (player.isDead() && !gameOver && gameOverLabel == null) {
+            Table table = new Table();
+            table.setFillParent(true);
+            table.align(Align.top);
+            gameOverLabel = new TypingLabel("{SHRINK=1.0;1.0;false}{CROWD}GAME OVER", Assets.instance.mainSkin, "title");
+            table.padTop(200);
+            table.add(gameOverLabel);
+            stage.addActor(table);
+            gameOver = true;
+            gameOverTime = gameTime;
+        } else if (player.isDead() && gameOver && !openModal) {
+            gameTime += delta;
+            if (gameTime > gameOverTime + 3f) {
+                gameOverLabel.addAction(Actions.fadeOut(.25f));
+                statsDialog();
+            }
+        }
+    }
+
+    private void statsDialog() {
+        new com.badlogic.gdx.scenes.scene2d.ui.Dialog("RUN STATS", Assets.instance.mainSkin) {
+            {
+                getTitleLabel().setAlignment(Align.center);
+                String sTitles = "\nTime alive: \n\nMonsters defeated: \n\nChests opened: ";
+                String sStats = "\n" + (int) gameOverTime / 60 + " mins " + (int) gameOverTime % 60 + " secs\n\n" + enemiesKilled + "\n\n"
+                        + chestsOpened;
+                text(sTitles);
+                text(sStats).pad(30).padBottom(10).padTop(40);
+                button("Back to Menu", false);
+                button("Restart", true);
+            }
+
+            protected void result(java.lang.Object object) {
+                Gdx.app.log(TAG, "" + (boolean) object);
+                if ((boolean) object) {
+                    Gdx.app.log(TAG, "in" + (boolean) object);
+                    game.setScreen(new GameScreen(game));
+                }
+            }
+        }.show(stage);
+        openModal = true;
     }
 
     private void updateLabelPositions() {
@@ -211,6 +270,7 @@ public class GameScreen extends ScreenAdapter {
                 resizeObjectWindow("Chest");
                 Chest chest = (Chest) object;
                 chest.setOpen(true);
+                chestsOpened++;
                 canPlayerInteract = false;
                 if (chest.getItemImage() != null) {
                     window.add(chest.getItemImage()).pad(20).padRight(30).padTop(25);
@@ -225,9 +285,9 @@ public class GameScreen extends ScreenAdapter {
                     }
                     potionLabel.setText("{GRADIENT}x" + player.getItems().get(currentPotion).size);
                     keyLabel.setText("{GRADIENT}x" + player.getItems().get(3).size);
-                    window.add(chest.getLabel()).padRight(20).padTop(5);
-                    chest.getLabel().restart();
                 }
+                window.add(chest.getLabel()).padRight(20).padTop(5);
+                chest.getLabel().restart();
             }
             window.setVisible(true);
             isWindowActive = true;
@@ -243,11 +303,11 @@ public class GameScreen extends ScreenAdapter {
             MapObject mapObject = collisions.get(i);
             Rectangle pos = ((RectangleMapObject) mapObject).getRectangle();
             if (mapObject.getName().equals("EnemySpawn") && rnd < 4) {
-                SpiderEnemy.create(poolEngine, new Vector2(pos.x - TILE_SIZE / 2f, pos.y - TILE_SIZE / 2f));
+                SpiderEnemy.create(poolEngine, new Vector2(pos.x - TILE_SIZE / 2f, pos.y - TILE_SIZE / 2f), this);
             } else if (mapObject.getName().equals("EnemySpawn") && rnd < 8) {
-                ZombieEnemy.create(poolEngine, new Vector2(pos.x - TILE_SIZE / 2f, pos.y - TILE_SIZE / 2f));
+                ZombieEnemy.create(poolEngine, new Vector2(pos.x - TILE_SIZE / 2f, pos.y - TILE_SIZE / 2f), this);
             } else if (mapObject.getName().equals("EnemySpawn") && rnd >= 8) {
-                GhostEnemy.create(poolEngine, new Vector2(pos.x - TILE_SIZE / 2f, pos.y - TILE_SIZE / 2f));
+                GhostEnemy.create(poolEngine, new Vector2(pos.x - TILE_SIZE / 2f, pos.y - TILE_SIZE / 2f), this);
             }
         }
     }
@@ -559,7 +619,6 @@ public class GameScreen extends ScreenAdapter {
         if (currentPotionLabel.isTouchable() && currentPotionTimeDisabled >= 0) {
             currentPotionTimeDisabled -= delta;
             currentPotionLabel.setColor(Color.BLACK);
-            Gdx.app.log(TAG, "" + currentPotionTimeDisabled);
             if (currentPotionTimeDisabled < 0) {
                 currentPotionTimeDisabled = TIME_DISABLED;
                 currentPotionLabel.setTouchable(Touchable.disabled);
@@ -587,7 +646,8 @@ public class GameScreen extends ScreenAdapter {
                 }
             } else if (o instanceof Chest) {
                 if (((Chest) o).isOpen() && player.getBounds().overlaps(o.getRectangle())) {
-                    openModal = true;
+                    if (!player.isDead())
+                        openModal = true;
                     return false;
                 } else if (player.getBounds().overlaps(o.getRectangle())) {
                     if (object == null)
@@ -602,7 +662,8 @@ public class GameScreen extends ScreenAdapter {
             window.setVisible(false);
             window.clear();
         }
-        openModal = false;
+        if (!player.isDead())
+            openModal = false;
         return false;
 
     }
@@ -623,5 +684,10 @@ public class GameScreen extends ScreenAdapter {
         batch.dispose();
         renderer.dispose();
         stage.dispose();
+    }
+
+    @Override
+    public void onEnemyDead() {
+        enemiesKilled++;
     }
 }

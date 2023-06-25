@@ -21,18 +21,18 @@ public class SpiderEnemy extends Enemy {
         }
     };
 
-    public static void create(PoolEngine poolEngine, Vector2 pos) {
+    public static void create(PoolEngine poolEngine, Vector2 pos, EnemyListener listener) {
         SpiderEnemy enemy = spiderPool.obtain();
-        enemy.init(pos);
+        enemy.init(pos, listener);
         poolEngine.add(enemy);
     }
 
-    protected void init(Vector2 pos) {
+    protected void init(Vector2 pos, EnemyListener listener) {
         maxHp = 100;
         maxVel = TILE_SIZE * 2.75f;
         attackDamage = 15;
         attackRange = TILE_SIZE * 5f;
-        super.init(pos);
+        super.init(pos, listener);
         GameHelper.loadEnemyAnimations(this, animations);
     }
 

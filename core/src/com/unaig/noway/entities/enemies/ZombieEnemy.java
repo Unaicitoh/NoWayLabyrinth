@@ -21,18 +21,18 @@ public class ZombieEnemy extends Enemy {
         }
     };
 
-    public static void create(PoolEngine poolEngine, Vector2 pos) {
+    public static void create(PoolEngine poolEngine, Vector2 pos, EnemyListener listener) {
         ZombieEnemy enemy = zombiePool.obtain();
-        enemy.init(pos);
+        enemy.init(pos, listener);
         poolEngine.add(enemy);
     }
 
-    protected void init(Vector2 pos) {
+    protected void init(Vector2 pos, EnemyListener listener) {
         maxHp = 100;
         maxVel = TILE_SIZE * 2.50f;
         attackDamage = 20;
-        attackRange = TILE_SIZE * 6f;
-        super.init(pos);
+        attackRange = TILE_SIZE * 5.5f;
+        super.init(pos, listener);
         GameHelper.loadEnemyAnimations(this, animations);
     }
 

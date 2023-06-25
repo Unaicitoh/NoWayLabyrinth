@@ -54,8 +54,13 @@ public abstract class Enemy extends Entity implements Poolable {
     private boolean collide;
     protected boolean revertGhost;
 
+    private EnemyListener listener;
 
-    protected void init(Vector2 _pos) {
+    public interface EnemyListener {
+        void onEnemyDead();
+    }
+
+    protected void init(Vector2 _pos, EnemyListener listener) {
         pos = new Vector2();
         pos.set(_pos);
         vel = new Vector2(0, 0);
@@ -105,6 +110,7 @@ public abstract class Enemy extends Entity implements Poolable {
         frozenDuration = FROZEN_ENEMY_TIME;
         lineSight = new Array<>();
         readyToAttack = false;
+        this.listener = listener;
     }
 
     public abstract void render(SpriteBatch batch, ShapeDrawer shaper, float delta, Player player, Array<Spell> spells);
@@ -162,6 +168,7 @@ public abstract class Enemy extends Entity implements Poolable {
         if (hpbar.getVisualHp() <= 0 && !isDead) {
             isDead = true;
             stateTime = 0f;
+            listener.onEnemyDead();
         }
     }
 
@@ -335,12 +342,7 @@ public abstract class Enemy extends Entity implements Poolable {
     }
 
     private void checkWallCollisions(float delta, Vector2 direction, boolean patrolling) {
-        if ((isChasing || isAttacking) && this instanceof GhostEnemy) {
-            collide = false;
-        } else {
-            collide = true;
-        }
-
+        collide = (!isChasing && !isAttacking) || !(this instanceof GhostEnemy);
         if (collide && !patrolling) {
             lastValidPos = new Vector2(pos);
         }

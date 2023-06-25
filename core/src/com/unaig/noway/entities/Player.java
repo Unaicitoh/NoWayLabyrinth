@@ -2,6 +2,7 @@ package com.unaig.noway.entities;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -24,8 +25,6 @@ import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.ElementType;
 import com.unaig.noway.util.GameHelper;
 
-import static com.badlogic.gdx.Input.Buttons.LEFT;
-import static com.badlogic.gdx.Input.Buttons.RIGHT;
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP;
 import static com.unaig.noway.util.AttackType.BASIC;
 import static com.unaig.noway.util.AttackType.STRONG;
@@ -90,7 +89,7 @@ public class Player extends Entity implements InputProcessor {
         mp = maxMp;
         vel = new Vector2(0, 0);
         maxVel = TILE_SIZE * 3;
-        bounds = new Rectangle(pos.x + OFFSET_X, pos.y+ OFFSET_Y, size.x - OFFSET_X * 2, size.y- OFFSET_Y*2);
+        bounds = new Rectangle(pos.x + OFFSET_X, pos.y + OFFSET_Y, size.x - OFFSET_X * 2, size.y - OFFSET_Y * 2);
         lastDir = DOWN;
         animations = new ObjectMap<>();
         stateTime = 0f;
@@ -101,6 +100,7 @@ public class Player extends Entity implements InputProcessor {
         ice2Cooldown = 0;
         attackCooldown = 0;
         isAttacking = false;
+        isDead = false;
         Array<Item> hpP = new Array<>();
         Array<Item> mpP = new Array<>();
         Array<Item> arP = new Array<>();
@@ -109,7 +109,6 @@ public class Player extends Entity implements InputProcessor {
         items.add(hpP, mpP, arP, keys);
         onArmoredState = false;
         armoredStateDuration = ARMORED_STATE_DURATION;
-
         loadPlayerAnimations(animations);
     }
 
@@ -121,21 +120,23 @@ public class Player extends Entity implements InputProcessor {
     }
 
     public void render(SpriteBatch batch, float delta) {
-        update(delta);
+        if (!isDead) {
+            update(delta);
+        }
         GameHelper.damagedEntityAnimation(this, batch, delta);
         renderPlayerAnimations(batch);
     }
 
     private void renderPlayerAnimations(SpriteBatch batch) {
-        if (vel.x < 0) {
+        if (vel.x < 0 && !isDead) {
             playerAnimation(batch, PLAYER_ANIM_LEFT, Direction.LEFT);
-        } else if (vel.x > 0) {
+        } else if (vel.x > 0 && !isDead) {
             playerAnimation(batch, PLAYER_ANIM_RIGHT, Direction.RIGHT);
 
-        } else if (vel.y > 0) {
+        } else if (vel.y > 0 && !isDead) {
             playerAnimation(batch, PLAYER_ANIM_UP, UP);
 
-        } else if (vel.y < 0) {
+        } else if (vel.y < 0 && !isDead) {
             playerAnimation(batch, PLAYER_ANIM_DOWN, DOWN);
 
         } else {
@@ -180,6 +181,9 @@ public class Player extends Entity implements InputProcessor {
         updateCooldowns(delta);
         vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
         vel.y = MathUtils.clamp(vel.y, -maxVel, maxVel);
+        if (hp <= 0) {
+            isDead = true;
+        }
         checkWallCollisions(delta);
     }
 
@@ -187,7 +191,7 @@ public class Player extends Entity implements InputProcessor {
         Vector2 lastValidPos = new Vector2(pos);
         // Move horizontally
         pos.x += vel.x * delta;
-        bounds.setPosition(pos.x + OFFSET_X, pos.y+OFFSET_Y);
+        bounds.setPosition(pos.x + OFFSET_X, pos.y + OFFSET_Y);
         if (GameHelper.checkCollisions(bounds)) {
             pos.x = lastValidPos.x;
         } else {
@@ -196,14 +200,14 @@ public class Player extends Entity implements InputProcessor {
 
         // Move vertically
         pos.y += vel.y * delta;
-        bounds.setPosition(pos.x + OFFSET_X, pos.y+OFFSET_Y);
+        bounds.setPosition(pos.x + OFFSET_X, pos.y + OFFSET_Y);
         if (GameHelper.checkCollisions(bounds)) {
             pos.y = lastValidPos.y;
         } else {
             lastValidPos.y = pos.y;
         }
         pos.set(lastValidPos);
-        bounds.setPosition(pos.x + OFFSET_X, pos.y+OFFSET_Y);
+        bounds.setPosition(pos.x + OFFSET_X, pos.y + OFFSET_Y);
     }
 
     private void updateCooldowns(float delta) {
@@ -390,7 +394,7 @@ public class Player extends Entity implements InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         switch (button) {
-            case LEFT:
+            case Input.Buttons.LEFT:
                 if (elementType == FIRE && fireCooldown <= 0f && mp - BASIC_MANA_COST >= 0) {
                     mp -= BASIC_MANA_COST;
                     stateTime = ATTACK_ANIMATION_FRAME_RESET;
@@ -405,7 +409,7 @@ public class Player extends Entity implements InputProcessor {
                     IceSpell.create(poolEngine, this, BASIC);
                 }
                 break;
-            case RIGHT:
+            case Input.Buttons.RIGHT:
                 if (elementType == FIRE && fire2Cooldown <= 0f && mp - STRONG_MANA_COST >= 0) {
                     mp -= STRONG_MANA_COST;
                     stateTime = ATTACK_ANIMATION_FRAME_RESET;

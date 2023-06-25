@@ -1,6 +1,5 @@
 package com.unaig.noway.entities.enemies;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -25,19 +24,19 @@ public class GhostEnemy extends Enemy {
 
     private float respawnAnimationTime;
 
-    public static void create(PoolEngine poolEngine, Vector2 pos) {
+    public static void create(PoolEngine poolEngine, Vector2 pos, EnemyListener listener) {
         GhostEnemy enemy = ghostPool.obtain();
-        enemy.init(pos);
+        enemy.init(pos, listener);
         poolEngine.add(enemy);
     }
 
-    protected void init(Vector2 pos) {
+    protected void init(Vector2 pos, EnemyListener listener) {
         maxHp = 100;
         maxVel = TILE_SIZE * 2.25f;
         attackDamage = 25;
-        attackRange = TILE_SIZE * 7f;
+        attackRange = TILE_SIZE * 6f;
         respawnAnimationTime = RESPAWN_ANIMATION_TIME;
-        super.init(pos);
+        super.init(pos, listener);
         GameHelper.loadEnemyAnimations(this, animations);
     }
 
@@ -51,8 +50,7 @@ public class GhostEnemy extends Enemy {
         GameHelper.damagedEntityAnimation(this, batch, delta);
         if (revertGhost && respawnAnimationTime >= 0) {
             respawnAnimationTime -= delta;
-            Gdx.app.log(TAG,"alpha "+respawnAnimationTime);
-            batch.setColor(.5f, .5f, .5f, respawnAnimationTime * 2.1f);
+            batch.setColor(.6f, .6f, .6f, respawnAnimationTime * 2.1f);
             if (respawnAnimationTime < RESPAWN_ANIMATION_TIME * .2f) {
                 pos.set(lastValidPos);
             }
