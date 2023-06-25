@@ -2,8 +2,6 @@ package com.unaig.noway.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -22,7 +20,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -44,6 +41,7 @@ import com.unaig.noway.entities.spells.IceSpell;
 import com.unaig.noway.entities.spells.Spell;
 import com.unaig.noway.util.GameHelper;
 import com.unaig.noway.util.ImageAnimation;
+import de.eskalon.commons.screen.ManagedScreen;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP_PINGPONG;
@@ -56,7 +54,7 @@ import static com.unaig.noway.util.Constants.TILE_SIZE;
 import static com.unaig.noway.util.ElementType.FIRE;
 import static com.unaig.noway.util.ElementType.ICE;
 
-public class GameScreen extends ScreenAdapter implements EnemyListener {
+public class GameScreen extends ManagedScreen implements EnemyListener {
     public static final String TAG = GameScreen.class.getName();
 
     private final NoWayLabyrinth game;
@@ -118,19 +116,20 @@ public class GameScreen extends ScreenAdapter implements EnemyListener {
 
     public GameScreen(NoWayLabyrinth game) {
         this.game = game;
+        this.batch = game.getBatch();
     }
 
     @Override
-    public void show() {
-        renderer = new OrthogonalTiledMapRenderer(Assets.instance.labMap);
+    protected void create() {
+        Gdx.app.log(TAG, "creating");
+        renderer = new OrthogonalTiledMapRenderer(Assets.instance.labMap, batch);
         viewport = new ExtendViewport(80 * TILE_SIZE, 80 * TILE_SIZE);
-        batch = new SpriteBatch();
-        stage = new Stage(new FitViewport(1280, 720));
+        stage = new Stage(new FitViewport(1280, 720), batch);
         poolEngine = new PoolEngine();
         player = new Player(poolEngine);
         canPlayerInteract = false;
-        InputMultiplexer im = new InputMultiplexer(stage, player);
-        Gdx.input.setInputProcessor(im);
+        addInputProcessor(stage);
+        addInputProcessor(player);
         ((OrthographicCamera) viewport.getCamera()).zoom = 1 / 5f;
         shaper = new ShapeDrawer(batch, Assets.instance.playerAtlas.findRegion("whitePixel"));
         viewport.getCamera().position.set(new Vector3(player.getPos(), 0));
@@ -148,11 +147,25 @@ public class GameScreen extends ScreenAdapter implements EnemyListener {
     }
 
     @Override
+    public void show() {
+        Gdx.app.log(TAG,"showing");
+        super.show();
+
+    }
+
+    @Override
+    public void hide() {
+        Gdx.app.log(TAG, "hiding");
+
+    }
+
+    @Override
+    public Color getClearColor() {
+        return new Color(.5f, .5f, .7f, 1);
+    }
+
+    @Override
     public void render(float delta) {
-        ScreenUtils.clear(.15f, .15f, .15f, 1f);
-        viewport.apply();
-        viewport.getCamera().position.lerp(new Vector3(player.getPos(), 0), CAM_SPEED * delta);
-        batch.setProjectionMatrix(viewport.getCamera().combined);
         update(delta);
         stage.act();
         renderer.setView((OrthographicCamera) viewport.getCamera());
@@ -171,7 +184,6 @@ public class GameScreen extends ScreenAdapter implements EnemyListener {
         batch.end();
         stage.draw();
 
-
         //DebugPowers
         if (Gdx.input.isKeyJustPressed(Keys.UP)) {
             ((OrthographicCamera) viewport.getCamera()).zoom -= 0.15;
@@ -184,7 +196,7 @@ public class GameScreen extends ScreenAdapter implements EnemyListener {
             player.maxVel -= TILE_SIZE;
         }
         if (Gdx.input.isKeyJustPressed(Keys.CONTROL_RIGHT)) {
-            game.setScreen(new GameScreen(game));
+            game.getScreenManager().pushScreen("Game","blend");
         }
         GameHelper.resizeGameWindow();
         //End debugging
@@ -199,6 +211,10 @@ public class GameScreen extends ScreenAdapter implements EnemyListener {
     }
 
     private void update(float delta) {
+        viewport.apply();
+        stage.getViewport().apply();
+        viewport.getCamera().position.lerp(new Vector3(player.getPos(), 0), CAM_SPEED * delta);
+        batch.setProjectionMatrix(viewport.getCamera().combined);
         if (!player.isDead())
             gameTime += delta;
         setElementIconPositions(delta);
@@ -208,7 +224,6 @@ public class GameScreen extends ScreenAdapter implements EnemyListener {
     }
 
     private void isGameOver(float delta) {
-        Gdx.app.log(TAG, "on" + openModal);
         if (player.isDead() && !gameOver && gameOverLabel == null) {
             Table table = new Table();
             table.setFillParent(true);
@@ -242,10 +257,8 @@ public class GameScreen extends ScreenAdapter implements EnemyListener {
             }
 
             protected void result(java.lang.Object object) {
-                Gdx.app.log(TAG, "" + (boolean) object);
                 if ((boolean) object) {
-                    Gdx.app.log(TAG, "in" + (boolean) object);
-                    game.setScreen(new GameScreen(game));
+                    game.getScreenManager().pushScreen("Game", "blend");
                 }
             }
         }.show(stage);
@@ -679,7 +692,7 @@ public class GameScreen extends ScreenAdapter implements EnemyListener {
 
     @Override
     public void dispose() {
-        Gdx.input.setInputProcessor(null);
+        Gdx.app.log(TAG, "disposing");
         poolEngine.clear();
         batch.dispose();
         renderer.dispose();

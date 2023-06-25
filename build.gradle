@@ -70,6 +70,10 @@ project(":html") {
         implementation 'com.github.raeleus.stripe:stripe:1.4.5:sources'
         implementation "com.github.tommyettinger:regexodus:0.1.15:sources"
         implementation "com.github.tommyettinger:textratypist:0.8.3:sources"
+        api "com.github.crykn:libgdx-screenmanager:0.6.8:sources"
+        api "com.github.crykn:libgdx-screenmanager-gwt:0.6.8"
+        api "com.github.crykn:libgdx-screenmanager-gwt:0.6.8:sources"
+        api "com.github.tommyettinger:formic:0.1.4:sources"
     }
 }
 

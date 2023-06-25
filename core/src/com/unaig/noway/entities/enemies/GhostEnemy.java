@@ -47,7 +47,7 @@ public class GhostEnemy extends Enemy {
         if (drawHp && !isDead) {
             hpbar.render(shaper, delta, pos, hp);
         }
-        GameHelper.damagedEntityAnimation(this, batch, delta);
+
         if (revertGhost && respawnAnimationTime >= 0) {
             respawnAnimationTime -= delta;
             batch.setColor(.6f, .6f, .6f, respawnAnimationTime * 2.1f);
@@ -58,6 +58,9 @@ public class GhostEnemy extends Enemy {
             revertGhost = false;
             respawnAnimationTime = RESPAWN_ANIMATION_TIME;
             batch.setColor(1, 1, 1, 1);
+        }
+        if(!revertGhost){
+            GameHelper.damagedEntityAnimation(this, batch, delta);
         }
         GameHelper.renderEnemyAnimations(this, batch);
 
