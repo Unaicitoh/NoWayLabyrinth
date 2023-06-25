@@ -366,8 +366,8 @@ public abstract class Enemy extends Entity implements Poolable {
         } else {
             if (!GameHelper.checkCollisions(bounds)) {
                 lastValidPos.x = pos.x;
-            }else{
-                revertGhost=true;
+            } else {
+                revertGhost = true;
 
             }
         }
@@ -390,8 +390,8 @@ public abstract class Enemy extends Entity implements Poolable {
         } else {
             if (!GameHelper.checkCollisions(bounds)) {
                 lastValidPos.y = pos.y;
-            }else{
-                revertGhost=true;
+            } else {
+                revertGhost = true;
             }
         }
         if (collide) {
@@ -399,9 +399,9 @@ public abstract class Enemy extends Entity implements Poolable {
         } else if (patrolling) {
             vel.x = 0;
             vel.y = 0;
-            revertGhost=true;
+            revertGhost = true;
+            //TODO ghost enemy back to lastPos gradually
             pos.set(lastValidPos);
-
         }
         bounds.setPosition(pos.x + OFFSET_X, pos.y + OFFSET_Y);
     }

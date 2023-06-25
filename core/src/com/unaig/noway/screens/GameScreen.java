@@ -113,6 +113,8 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     private boolean gameOver;
     private float gameOverTime;
     private TypingLabel gameOverLabel;
+    private Table fadeOutGroup;
+
 
     public GameScreen(NoWayLabyrinth game) {
         this.game = game;
@@ -236,12 +238,13 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
             Table table = new Table();
             table.setFillParent(true);
             table.align(Align.top);
-            gameOverLabel = new TypingLabel("{SHRINK=1.0;1.0;false}{CROWD}GAME OVER", Assets.instance.mainSkin, "title");
+            gameOverLabel = new TypingLabel("{SHRINK=1.0;1.0;false}{CROWD}{COLOR=RED}GAME OVER", Assets.instance.mainSkin, "title");
             table.padTop(200);
             table.add(gameOverLabel);
-            stage.addActor(table);
             gameOver = true;
             gameOverTime = gameTime;
+            fadeOutGroup.addAction(Actions.fadeOut(1f));
+            stage.addActor(table);
         } else if (player.isDead() && gameOver && !openModal) {
             gameTime += delta;
             if (gameTime > gameOverTime + 3f) {
@@ -324,6 +327,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         MapObjects collisions = Assets.instance.labMap.getLayers().get("Spawns").getObjects();
         for (int i = 0; i < collisions.getCount(); i++) {
             int rnd = MathUtils.random(9);
+            rnd = 8;
             MapObject mapObject = collisions.get(i);
             Rectangle pos = ((RectangleMapObject) mapObject).getRectangle();
             if (mapObject.getName().equals("EnemySpawn") && rnd < 4) {
@@ -345,6 +349,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     }
 
     private void findActors() {
+        fadeOutGroup = stage.getRoot().findActor("UIContainer");
         playerHPUI = stage.getRoot().findActor("PlayerHP");
         playerMPUI = stage.getRoot().findActor("PlayerMP");
         fireSpellIcon = stage.getRoot().findActor("fireSpellIcon");
@@ -377,11 +382,14 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         potionLabel.setTouchable(Touchable.disabled);
         currentPotion = 0;
         stage.addActor(iceTypeAnim);
+        fadeOutGroup.addActor(iceTypeAnim);
         stage.addActor(fireTypeAnim);
+        fadeOutGroup.addActor(fireTypeAnim);
         stage.addActor(window);
         stage.addActor(potionLabel);
+        fadeOutGroup.addActor(potionLabel);
         stage.addActor(keyLabel);
-
+        fadeOutGroup.addActor(keyLabel);
     }
 
     private void resizeObjectWindow(String type) {
@@ -695,8 +703,6 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     @Override
     public void resize(int width, int height) {
         Gdx.app.log(TAG, "resizing");
-        viewport.apply();
-        stage.getViewport().apply();
         viewport.update(width, height);
         stage.getViewport().update(width, height);
         setElementIconPositions(Gdx.graphics.getDeltaTime());
