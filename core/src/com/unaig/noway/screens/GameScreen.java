@@ -60,7 +60,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     private final NoWayLabyrinth game;
     private OrthogonalTiledMapRenderer renderer;
     private Stage stage;
-    private SpriteBatch batch;
+    private final SpriteBatch batch;
     private Viewport viewport;
     private ShapeDrawer shaper;
     private static final float CAM_SPEED = 5f;
@@ -152,7 +152,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         initializeUI();
         initObjects();
         spawnEnemies();
-        resize(stage.getViewport().getScreenWidth(), stage.getViewport().getScreenHeight());
+        resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
     }
 
@@ -199,8 +199,10 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
             player.maxVel -= TILE_SIZE;
         }
         if (Gdx.input.isKeyJustPressed(Keys.CONTROL_RIGHT)) {
-            game.getScreenManager().pushScreen("Reset", null);
-            game.getScreenManager().pushScreen("Game", "blend");
+            if (!game.getScreenManager().inTransition()) {
+                game.getScreenManager().pushScreen("Reset", null);
+                game.getScreenManager().pushScreen("Game", "blend");
+            }
         }
         GameHelper.resizeGameWindow();
         //End debugging
@@ -215,9 +217,10 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     }
 
     private void update(float delta) {
-        Gdx.app.log(TAG, "" + player.isDead() + " " + player.getHp() + " " + gameTime + " " + gameOverTime + " " + gameOverLabel);
         viewport.apply();
         stage.getViewport().apply();
+        viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         viewport.getCamera().position.lerp(new Vector3(player.getPos(), 0), CAM_SPEED * delta);
         batch.setProjectionMatrix(viewport.getCamera().combined);
         if (!player.isDead())
@@ -263,8 +266,10 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
 
             protected void result(java.lang.Object object) {
                 if ((boolean) object) {
-                    game.getScreenManager().pushScreen("Reset", null);
-                    game.getScreenManager().pushScreen("Game", "blend");
+                    if (!game.getScreenManager().inTransition()) {
+                        game.getScreenManager().pushScreen("Reset", null);
+                        game.getScreenManager().pushScreen("Game", "blend");
+                    }
                 }
             }
         }.show(stage);
@@ -690,7 +695,6 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     @Override
     public void resize(int width, int height) {
         Gdx.app.log(TAG, "resizing");
-
         viewport.apply();
         stage.getViewport().apply();
         viewport.update(width, height);

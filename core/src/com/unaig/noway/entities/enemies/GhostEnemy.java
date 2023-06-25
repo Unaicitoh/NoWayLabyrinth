@@ -51,9 +51,6 @@ public class GhostEnemy extends Enemy {
         if (revertGhost && respawnAnimationTime >= 0) {
             respawnAnimationTime -= delta;
             batch.setColor(.6f, .6f, .6f, respawnAnimationTime * 2.1f);
-            if (respawnAnimationTime < RESPAWN_ANIMATION_TIME * .2f) {
-                pos.set(lastValidPos);
-            }
         } else {
             revertGhost = false;
             respawnAnimationTime = RESPAWN_ANIMATION_TIME;
