@@ -192,13 +192,13 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         batch.begin();
         renderEntities(delta);
         //Debugging
-        shaper.rectangle(player.getBounds());
-        for (Spell s : poolEngine.spells) {
-            shaper.rectangle(s.getBounds());
-        }
-        for (Enemy e : poolEngine.enemies) {
-            shaper.rectangle(e.getBounds());
-        }
+//        shaper.rectangle(player.getBounds());
+//        for (Spell s : poolEngine.spells) {
+//            shaper.rectangle(s.getBounds());
+//        }
+//        for (Enemy e : poolEngine.enemies) {
+//            shaper.rectangle(e.getBounds());
+//        }
         renderUI(delta);
         batch.end();
         stage.draw();
@@ -359,6 +359,8 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                         chest.getEmptyLabel().restart();
                     }
                 } else {
+                    chest.setOpen(true);
+                    chestsOpened++;
                     window.add(chest.getLabel()).padRight(20).padTop(5);
                     chest.getLabel().restart();
                 }
@@ -373,7 +375,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                     Table table = new Table();
                     table.setFillParent(true);
                     table.align(Align.top);
-                    gameOverLabel = new TypingLabel("{SHRINK=1.0;1.0;false}{CROWD}{COLOR=LIME}LAYER COMPLETED", Assets.instance.mainSkin, "title");
+                    gameOverLabel = new TypingLabel("{SHRINK=1.0;1.0;false}{CROWD}{COLOR=LIME}LEVEL COMPLETED", Assets.instance.mainSkin, "title");
                     table.padTop(200);
                     table.add(gameOverLabel);
                     gameOver = true;
@@ -393,7 +395,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     }
 
     private void winDialog() {
-        new com.badlogic.gdx.scenes.scene2d.ui.Dialog("LAYER COMPLETED", Assets.instance.mainSkin) {
+        new com.badlogic.gdx.scenes.scene2d.ui.Dialog("LEVEL COMPLETED", Assets.instance.mainSkin) {
             {
                 getTitleLabel().setAlignment(Align.center);
                 getContentTable().defaults().padLeft(20).padRight(20);
@@ -401,12 +403,12 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                 String sTitles = "\nTime alive: \n\nMonsters defeated: \n\nChests opened: ";
                 String sStats = "\n" + (int) gameOverTime / 60 + " mins " + (int) gameOverTime % 60 + " secs\n\n" + enemiesKilled + "\n\n"
                         + chestsOpened;
-                text("\nYou escaped from this layer!!\n\nKeep going to find the exit.\n\nDifficulty will be increased.\n\n\nStats:");
+                text("\nYou escaped the level!!\n\nKeep going to find the exit.\n\nDifficulty will be increased.\n\n\nStats:");
                 getContentTable().row();
                 text(sTitles);
                 text(sStats);
                 button("Back to Menu", false);
-                button("Next layer", true);
+                button("Next level", true);
             }
 
             protected void result(java.lang.Object object) {
