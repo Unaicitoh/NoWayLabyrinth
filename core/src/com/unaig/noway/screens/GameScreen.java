@@ -124,13 +124,11 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
 
     @Override
     protected void create() {
-        Gdx.app.log(TAG, "creating");
 
     }
 
     @Override
     public void show() {
-        Gdx.app.log(TAG, "showing");
         getInputProcessors().clear();
         renderer = new OrthogonalTiledMapRenderer(Assets.instance.labMap);
         viewport = new ExtendViewport(80 * TILE_SIZE, 80 * TILE_SIZE);
@@ -178,8 +176,6 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
 
     @Override
     public void hide() {
-        Gdx.app.log(TAG, "hiding");
-
     }
 
     @Override
@@ -238,7 +234,6 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
 
     private void update(float delta) {
         viewport.apply();
-        Gdx.app.log(TAG, "gameTIme" + gameTime + gameOverTime);
         stage.getViewport().apply();
         viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -285,7 +280,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                 getTitleLabel().setAlignment(Align.center);
                 getContentTable().defaults().padLeft(20).padRight(20);
                 String sTitles = "Time alive: \n\nMonsters defeated: \n\nchests opened: ";
-                String sStats = "" + (int) gameOverTime / 60 + " mins " + (int) gameOverTime % 60 + " secs\n\n" + enemiesKilled + "\n\n"
+                String sStats = (int) gameOverTime / 60 + " mins " + (int) gameOverTime % 60 + " secs\n\n" + enemiesKilled + "\n\n"
                         + chestsOpened;
 
                 text("\nYou just have been defeated,\n\nYour progress will be reset.\n\n\nStats:");
@@ -840,7 +835,6 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
 
     @Override
     public void resize(int width, int height) {
-        Gdx.app.log(TAG, "resizing");
         viewport.update(width, height);
         stage.getViewport().update(width, height);
         setElementIconPositions(Gdx.graphics.getDeltaTime());
@@ -850,7 +844,6 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
 
     @Override
     public void dispose() {
-        Gdx.app.log(TAG, "disposing");
         poolEngine.clear();
         batch.dispose();
         renderer.dispose();
