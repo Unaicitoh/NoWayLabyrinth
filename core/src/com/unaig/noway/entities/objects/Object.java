@@ -6,6 +6,7 @@ import com.github.tommyettinger.textra.TypingLabel;
 public class Object {
 
     protected TypingLabel label;
+    protected TypingLabel emptyLabel;
     protected Rectangle rectangle;
 
     public Rectangle getRectangle() {
@@ -24,4 +25,11 @@ public class Object {
         this.label = label;
     }
 
+    public TypingLabel getEmptyLabel() {
+        return emptyLabel;
+    }
+
+    public void setEmptyLabel(TypingLabel emptyLabel) {
+        this.emptyLabel = emptyLabel;
+    }
 }

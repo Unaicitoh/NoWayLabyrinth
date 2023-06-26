@@ -21,6 +21,7 @@ import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.entities.objects.Item;
 import com.unaig.noway.entities.spells.FireSpell;
 import com.unaig.noway.entities.spells.IceSpell;
+import com.unaig.noway.screens.GameScreen;
 import com.unaig.noway.util.Direction;
 import com.unaig.noway.util.ElementType;
 import com.unaig.noway.util.GameHelper;
@@ -59,6 +60,8 @@ public class Player extends Entity implements InputProcessor {
     private Array<Array<Item>> items;
     private boolean onArmoredState;
     private float armoredStateDuration;
+    public final static int MAX_POTS = 5;
+
 
     public Player(PoolEngine poolEngine) {
         this.poolEngine = poolEngine;
@@ -120,8 +123,11 @@ public class Player extends Entity implements InputProcessor {
     }
 
     public void render(SpriteBatch batch, float delta) {
-        if (!isDead) {
+        if (!GameScreen.gameOver) {
             update(delta);
+        } else {
+            vel.x = 0;
+            vel.y = 0;
         }
         GameHelper.damagedEntityAnimation(this, batch, delta);
         renderPlayerAnimations(batch);
@@ -183,6 +189,7 @@ public class Player extends Entity implements InputProcessor {
         vel.y = MathUtils.clamp(vel.y, -maxVel, maxVel);
         if (hp <= 0) {
             isDead = true;
+            GameScreen.gameOver = true;
         }
         checkWallCollisions(delta);
     }

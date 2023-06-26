@@ -6,147 +6,154 @@ filter: Linear, Linear
 repeat: none
 armorPotion
   rotate: false
-  xy: 588, 150
+  xy: 588, 151
   size: 291, 358
   orig: 375, 375
   offset: 17, 8
   index: -1
 chestDown
   rotate: false
-  xy: 881, 467
+  xy: 947, 490
   size: 16, 19
   orig: 16, 24
   offset: 0, 0
   index: 3
 chestDown
   rotate: false
-  xy: 2, 2
+  xy: 28, 24
   size: 16, 19
   orig: 16, 24
   offset: 0, 0
   index: 2
 chestDown
   rotate: false
-  xy: 881, 449
+  xy: 899, 427
   size: 16, 16
   orig: 16, 24
   offset: 0, 0
   index: 0
 chestDown
   rotate: false
-  xy: 38, 28
+  xy: 46, 29
   size: 16, 14
   orig: 16, 24
   offset: 0, 0
   index: 1
 chestLeft
   rotate: false
-  xy: 20, 24
+  xy: 117, 109
   size: 16, 18
   orig: 16, 23
   offset: 0, 0
   index: 2
 chestLeft
   rotate: false
-  xy: 117, 108
+  xy: 135, 130
   size: 16, 18
   orig: 16, 23
   offset: 0, 0
   index: 3
 chestLeft
   rotate: false
-  xy: 20, 7
+  xy: 965, 494
   size: 16, 15
   orig: 16, 23
   offset: 0, 0
   index: 0
 chestLeft
   rotate: false
-  xy: 153, 134
+  xy: 153, 135
   size: 16, 13
   orig: 16, 23
   offset: 0, 0
   index: 1
 chestRight
   rotate: false
-  xy: 117, 128
+  xy: 881, 424
   size: 16, 19
   orig: 16, 24
   offset: 0, 0
   index: 3
 chestRight
   rotate: false
-  xy: 907, 489
+  xy: 2, 2
   size: 16, 19
   orig: 16, 24
   offset: 0, 0
   index: 2
 chestRight
   rotate: false
-  xy: 135, 131
+  xy: 881, 406
   size: 16, 16
   orig: 16, 24
   offset: 0, 0
   index: 0
 chestRight
   rotate: false
-  xy: 135, 115
+  xy: 135, 114
   size: 16, 14
   orig: 16, 24
   offset: 0, 0
   index: 1
 chestUp
   rotate: false
-  xy: 2, 23
+  xy: 117, 129
   size: 16, 19
   orig: 16, 24
   offset: 0, 0
   index: 2
 chestUp
   rotate: false
-  xy: 2, 23
+  xy: 117, 129
   size: 16, 19
   orig: 16, 24
   offset: 0, 0
   index: 3
 chestUp
   rotate: false
-  xy: 925, 492
+  xy: 947, 472
   size: 16, 16
   orig: 16, 24
   offset: 0, 0
   index: 0
 chestUp
   rotate: false
-  xy: 117, 92
+  xy: 117, 93
   size: 16, 14
   orig: 16, 24
   offset: 0, 0
   index: 1
+exit
+  rotate: false
+  xy: 881, 445
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 healthPotion
   rotate: false
-  xy: 295, 149
+  xy: 295, 150
   size: 291, 359
   orig: 375, 375
   offset: 18, 8
   index: -1
 keyIcon
   rotate: false
-  xy: 881, 488
+  xy: 2, 23
   size: 24, 20
   orig: 28, 40
   offset: 1, 11
   index: -1
 manaPotion
   rotate: false
-  xy: 2, 149
+  xy: 2, 150
   size: 291, 359
   orig: 377, 377
   offset: 17, 9
   index: -1
 rKey
   rotate: false
-  xy: 2, 44
+  xy: 2, 45
   size: 113, 103
   orig: 128, 128
   offset: 8, 13

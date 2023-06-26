@@ -46,8 +46,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP_PINGPONG;
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.NORMAL;
-import static com.unaig.noway.entities.Player.STRONG_ATTACK_COOLDOWN;
-import static com.unaig.noway.entities.Player.STRONG_MANA_COST;
+import static com.unaig.noway.entities.Player.*;
 import static com.unaig.noway.util.AttackType.STRONG;
 import static com.unaig.noway.util.Constants.GAME_UI_JSON;
 import static com.unaig.noway.util.Constants.TILE_SIZE;
@@ -110,11 +109,13 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     private float gameTime;
     private int enemiesKilled;
     private int chestsOpened;
-    private boolean gameOver;
+    public static boolean gameOver;
     private float gameOverTime;
     private TypingLabel gameOverLabel;
     private Table fadeOutGroup;
 
+    private Rectangle exitPos;
+    private int contOverLabel;
 
     public GameScreen(NoWayLabyrinth game) {
         this.game = game;
@@ -145,12 +146,29 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         objects = new Array<>();
         object = null;
         openModal = false;
-        gameTime = 0;
-        enemiesKilled = 0;
-        chestsOpened = 0;
-        gameOver = false;
+        if (pushParams != null) {
+            for (int i = 0; i < pushParams.length; i++) {
+                switch (i) {
+                    case 0:
+                        gameTime = (float) pushParams[i];
+                        break;
+                    case 1:
+                        enemiesKilled = (int) pushParams[i];
+                        break;
+                    case 2:
+                        chestsOpened = (int) pushParams[i];
+                        break;
+                }
+            }
+        } else {
+            gameTime = 0;
+            enemiesKilled = 0;
+            chestsOpened = 0;
+        }
         gameOverTime = 0;
-        gameOverLabel = null;
+        gameOver = false;
+        gameOverLabel = new TypingLabel();
+        contOverLabel = 0;
         initializeUI();
         initObjects();
         spawnEnemies();
@@ -220,13 +238,13 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
 
     private void update(float delta) {
         viewport.apply();
+        Gdx.app.log(TAG, "gameTIme" + gameTime + gameOverTime);
         stage.getViewport().apply();
         viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         viewport.getCamera().position.lerp(new Vector3(player.getPos(), 0), CAM_SPEED * delta);
         batch.setProjectionMatrix(viewport.getCamera().combined);
-        if (!player.isDead())
-            gameTime += delta;
+        gameTime += delta;
         setElementIconPositions(delta);
         updateLabelPositions();
         canPlayerInteract = checkNearItem();
@@ -234,35 +252,46 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     }
 
     private void isGameOver(float delta) {
-        if (player.isDead() && !gameOver && gameOverLabel == null) {
+        if (gameOver && contOverLabel < 1) {
             Table table = new Table();
             table.setFillParent(true);
             table.align(Align.top);
-            gameOverLabel = new TypingLabel("{SHRINK=1.0;1.0;false}{CROWD}{COLOR=RED}GAME OVER", Assets.instance.mainSkin, "title");
+            if (player.isDead()) {
+                gameOverLabel = new TypingLabel("{SHRINK=1.0;1.0;false}{CROWD}{COLOR=SCARLET}GAME OVER", Assets.instance.mainSkin, "title");
+            }
             table.padTop(200);
             table.add(gameOverLabel);
-            gameOver = true;
             gameOverTime = gameTime;
+            contOverLabel++;
             fadeOutGroup.addAction(Actions.fadeOut(1f));
             stage.addActor(table);
         } else if (player.isDead() && gameOver && !openModal) {
-            gameTime += delta;
             if (gameTime > gameOverTime + 3f) {
                 gameOverLabel.addAction(Actions.fadeOut(.25f));
-                statsDialog();
+                dieDialog();
+            }
+        } else if (!player.isDead() && gameOver && !openModal) {
+            if (gameTime > gameOverTime + 3f) {
+                gameOverLabel.addAction(Actions.fadeOut(.25f));
+                winDialog();
             }
         }
     }
 
-    private void statsDialog() {
-        new com.badlogic.gdx.scenes.scene2d.ui.Dialog("RUN STATS", Assets.instance.mainSkin) {
+    private void dieDialog() {
+        new com.badlogic.gdx.scenes.scene2d.ui.Dialog("GAME OVER", Assets.instance.mainSkin) {
             {
+                debugAll();
                 getTitleLabel().setAlignment(Align.center);
-                String sTitles = "\nTime alive: \n\nMonsters defeated: \n\nChests opened: ";
-                String sStats = "\n" + (int) gameOverTime / 60 + " mins " + (int) gameOverTime % 60 + " secs\n\n" + enemiesKilled + "\n\n"
+                getContentTable().defaults().padLeft(20).padRight(20);
+                String sTitles = "Time alive: \n\nMonsters defeated: \n\nchests opened: ";
+                String sStats = "" + (int) gameOverTime / 60 + " mins " + (int) gameOverTime % 60 + " secs\n\n" + enemiesKilled + "\n\n"
                         + chestsOpened;
+
+                text("\nYou just have been defeated,\n\nYour progress will be reset.\n\n\nStats:");
+                getContentTable().row();
                 text(sTitles);
-                text(sStats).pad(30).padBottom(10).padTop(40);
+                text(sStats);
                 button("Back to Menu", false);
                 button("Restart", true);
             }
@@ -296,38 +325,111 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
             } else if (object instanceof Chest) {
                 resizeObjectWindow("Chest");
                 Chest chest = (Chest) object;
-                chest.setOpen(true);
-                chestsOpened++;
                 canPlayerInteract = false;
+                boolean isMaxPot = false;
                 if (chest.getItemImage() != null) {
                     window.add(chest.getItemImage()).pad(20).padRight(30).padTop(25);
                     if (chest.getItem() instanceof HealthPotion) {
-                        player.getItems().get(0).add(chest.getItem());
+                        if (player.getItems().get(0).size < MAX_POTS) {
+                            player.getItems().get(0).add(chest.getItem());
+                        } else {
+                            isMaxPot = true;
+                        }
                     } else if (chest.getItem() instanceof ManaPotion) {
-                        player.getItems().get(1).add(chest.getItem());
+                        if (player.getItems().get(1).size < MAX_POTS) {
+                            player.getItems().get(1).add(chest.getItem());
+                        } else {
+                            isMaxPot = true;
+                        }
                     } else if (chest.getItem() instanceof ArmorPotion) {
-                        player.getItems().get(2).add(chest.getItem());
+                        if (player.getItems().get(2).size < MAX_POTS) {
+                            player.getItems().get(2).add(chest.getItem());
+                        } else {
+                            isMaxPot = true;
+                        }
                     } else if (chest.getItem() instanceof LabyKey) {
-                        player.getItems().get(3).add(chest.getItem());
+                        if (player.getItems().get(3).size < MAX_POTS) {
+                            player.getItems().get(3).add(chest.getItem());
+                        } else {
+                            isMaxPot = true;
+                        }
                     }
-                    potionLabel.setText("{GRADIENT}x" + player.getItems().get(currentPotion).size);
-                    keyLabel.setText("{GRADIENT}x" + player.getItems().get(3).size);
+                    if (!isMaxPot || chest.getItem() instanceof LabyKey || chest.getItemImage() == null) {
+                        chest.setOpen(true);
+                        chestsOpened++;
+                        window.add(chest.getLabel()).padRight(20).padTop(5);
+                        chest.getLabel().restart();
+                    } else {
+                        window.add(chest.getEmptyLabel()).padRight(20).padTop(5);
+                        chest.getEmptyLabel().restart();
+                    }
+                } else {
+                    window.add(chest.getLabel()).padRight(20).padTop(5);
+                    chest.getLabel().restart();
                 }
-                window.add(chest.getLabel()).padRight(20).padTop(5);
-                chest.getLabel().restart();
+                {
+                    potionLabel.setText("x" + player.getItems().get(currentPotion).size);
+                    keyLabel.setText("x" + player.getItems().get(3).size);
+                }
+
             }
-            window.setVisible(true);
-            isWindowActive = true;
+            if (onEnabledExit()) {
+                if (!gameOver) {
+                    Table table = new Table();
+                    table.setFillParent(true);
+                    table.align(Align.top);
+                    gameOverLabel = new TypingLabel("{SHRINK=1.0;1.0;false}{CROWD}{COLOR=LIME}LAYER COMPLETED", Assets.instance.mainSkin, "title");
+                    table.padTop(200);
+                    table.add(gameOverLabel);
+                    gameOver = true;
+                    gameOverTime = gameTime;
+                    fadeOutGroup.addAction(Actions.fadeOut(1f));
+                    stage.addActor(table);
+                }
+            }
+            if (!gameOver) {
+                window.setVisible(true);
+                isWindowActive = true;
+            }
         } else if (isWindowActive && object instanceof Dialog) {
             object.getLabel().skipToTheEnd();
         }
+
+    }
+
+    private void winDialog() {
+        new com.badlogic.gdx.scenes.scene2d.ui.Dialog("LAYER COMPLETED", Assets.instance.mainSkin) {
+            {
+                getTitleLabel().setAlignment(Align.center);
+                getContentTable().defaults().padLeft(20).padRight(20);
+
+                String sTitles = "\nTime alive: \n\nMonsters defeated: \n\nChests opened: ";
+                String sStats = "\n" + (int) gameOverTime / 60 + " mins " + (int) gameOverTime % 60 + " secs\n\n" + enemiesKilled + "\n\n"
+                        + chestsOpened;
+                text("\nYou escaped from this layer!!\n\nKeep going to find the exit.\n\nDifficulty will be increased.\n\n\nStats:");
+                getContentTable().row();
+                text(sTitles);
+                text(sStats);
+                button("Back to Menu", false);
+                button("Next layer", true);
+            }
+
+            protected void result(java.lang.Object object) {
+                if ((boolean) object) {
+                    if (!game.getScreenManager().inTransition()) {
+                        game.getScreenManager().pushScreen("Reset", null);
+                        game.getScreenManager().pushScreen("Game", "blend", gameOverTime, enemiesKilled, chestsOpened);
+                    }
+                }
+            }
+        }.show(stage);
+        openModal = true;
     }
 
     private void spawnEnemies() {
         MapObjects collisions = Assets.instance.labMap.getLayers().get("Spawns").getObjects();
         for (int i = 0; i < collisions.getCount(); i++) {
             int rnd = MathUtils.random(9);
-            rnd = 8;
             MapObject mapObject = collisions.get(i);
             Rectangle pos = ((RectangleMapObject) mapObject).getRectangle();
             if (mapObject.getName().equals("EnemySpawn") && rnd < 4) {
@@ -377,8 +479,8 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         window = new Window("", Assets.instance.mainSkin, "special");
         isWindowActive = false;
         window.setVisible(false);
-        potionLabel = new TypingLabel("{GRADIENT}x0", Assets.instance.mainSkin);
-        keyLabel = new TypingLabel("{GRADIENT}x0", Assets.instance.mainSkin);
+        potionLabel = new TypingLabel("x0", Assets.instance.mainSkin);
+        keyLabel = new TypingLabel("x0", Assets.instance.mainSkin);
         potionLabel.setTouchable(Touchable.disabled);
         currentPotion = 0;
         stage.addActor(iceTypeAnim);
@@ -411,14 +513,38 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                 Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
                 if (mapObject.getName().equals("Dialog")) {
                     objects.add(new Dialog((String) mapObject.getProperties().get("Text"), rectangle));
-                }
-                if (mapObject.getName().equals("Chest")) {
+                } else if (mapObject.getName().equals("Chest")) {
                     switch ((String) mapObject.getProperties().get("direction")) {
                         case "down":
                             objects.add(new Chest(Assets.instance.objectsAtlas.findRegions("chestDown"), rectangle));
+                            break;
+                        case "up":
+                            objects.add(new Chest(Assets.instance.objectsAtlas.findRegions("chestUp"), rectangle));
+                            break;
+                        case "left":
+                            objects.add(new Chest(Assets.instance.objectsAtlas.findRegions("chestLeft"), rectangle));
+                            break;
+                        case "right":
+                            objects.add(new Chest(Assets.instance.objectsAtlas.findRegions("chestRight"), rectangle));
+                            break;
                     }
+                } else if (mapObject.getName().equals("Exit")) {
+                    exitPos = new Rectangle(rectangle);
                 }
 
+            }
+        }
+        if (Chest.keyCount < Chest.MAX_KEYS) {
+            for (Object o : objects) {
+                if (o instanceof Chest) {
+                    if (((Chest) o).getItem() == null) {
+                        ((Chest) o).setItem(new LabyKey());
+                        Chest.keyCount++;
+                        if (Chest.keyCount == Chest.MAX_KEYS) {
+                            break;
+                        }
+                    }
+                }
             }
         }
     }
@@ -515,7 +641,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
 
     private void useCurrentPotion() {
         player.useItem(currentPotion);
-        potionLabel.setText("{GRADIENT}x" + player.getItems().get(currentPotion).size);
+        potionLabel.setText("x" + player.getItems().get(currentPotion).size);
         currentPotionLabel.setTouchable(Touchable.enabled);
     }
 
@@ -537,7 +663,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
             mpPotionIcon.setVisible(false);
             arPotionIcon.setVisible(true);
         }
-        potionLabel.setText("{GRADIENT}x" + player.getItems().get(currentPotion).size);
+        potionLabel.setText("x" + player.getItems().get(currentPotion).size);
 
     }
 
@@ -614,14 +740,25 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     }
 
     private void renderEntities(float delta) {
-        poolEngine.renderEnemies(batch, shaper, delta, player, poolEngine.spells);
         for (Object o : objects) {
             if (o instanceof Chest) {
                 ((Chest) o).draw(batch, delta);
             }
         }
+        if (onMaxKeys()) {
+            batch.draw(Assets.instance.objectsAtlas.findRegion("exit"), exitPos.x, exitPos.y, TILE_SIZE * 2, TILE_SIZE * 2);
+        }
+        poolEngine.renderEnemies(batch, shaper, delta, player, poolEngine.spells);
         poolEngine.renderSpells(batch, delta);
         player.render(batch, delta);
+    }
+
+    private boolean onMaxKeys() {
+        return player.getItems().get(3).size == 5;
+    }
+
+    private boolean onEnabledExit() {
+        return onMaxKeys() && player.getBounds().overlaps(exitPos);
     }
 
     private void renderUI(float delta) {
@@ -678,7 +815,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                 }
             } else if (o instanceof Chest) {
                 if (((Chest) o).isOpen() && player.getBounds().overlaps(o.getRectangle())) {
-                    if (!player.isDead())
+                    if (!gameOver)
                         openModal = true;
                     return false;
                 } else if (player.getBounds().overlaps(o.getRectangle())) {
@@ -688,13 +825,14 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                 }
             }
         }
+        if (player.getBounds().overlaps(exitPos) && player.getItems().get(3).size == 5) return true;
         if (!openModal) {
             object = null;
             isWindowActive = false;
             window.setVisible(false);
             window.clear();
         }
-        if (!player.isDead())
+        if (!gameOver)
             openModal = false;
         return false;
 
