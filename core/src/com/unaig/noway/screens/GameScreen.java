@@ -116,6 +116,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
 
     private Rectangle exitPos;
     private int contOverLabel;
+    private int currentLevel;
 
     public GameScreen(NoWayLabyrinth game) {
         this.game = game;
@@ -156,17 +157,23 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                     case 2:
                         chestsOpened = (int) pushParams[i];
                         break;
+                    case 3:
+                        currentLevel = (int) pushParams[i];
+                        break;
                 }
             }
         } else {
             gameTime = 0;
             enemiesKilled = 0;
             chestsOpened = 0;
+            currentLevel = 1;
         }
         gameOverTime = 0;
         gameOver = false;
         gameOverLabel = new TypingLabel();
         contOverLabel = 0;
+        Chest.keyCount = 0;
+        Chest.emptyCount = 0;
         initializeUI();
         initObjects();
         spawnEnemies();
@@ -192,13 +199,13 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         batch.begin();
         renderEntities(delta);
         //Debugging
-//        shaper.rectangle(player.getBounds());
-//        for (Spell s : poolEngine.spells) {
-//            shaper.rectangle(s.getBounds());
-//        }
-//        for (Enemy e : poolEngine.enemies) {
-//            shaper.rectangle(e.getBounds());
-//        }
+        shaper.rectangle(player.getBounds());
+        for (Spell s : poolEngine.spells) {
+            shaper.rectangle(s.getBounds());
+        }
+        for (Enemy e : poolEngine.enemies) {
+            shaper.rectangle(e.getBounds());
+        }
         renderUI(delta);
         batch.end();
         stage.draw();
@@ -217,12 +224,13 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         if (Gdx.input.isKeyJustPressed(Keys.CONTROL_RIGHT)) {
             if (!game.getScreenManager().inTransition()) {
                 game.getScreenManager().pushScreen("Reset", null);
-                game.getScreenManager().pushScreen("Game", "blend");
+                currentLevel++;
+                game.getScreenManager().pushScreen("Game", "blend", 0f, 0, 0, currentLevel);
             }
         }
         GameHelper.resizeGameWindow();
         //End debugging
-//		Gdx.app.log(TAG, ""+Gdx.graphics.getFramesPerSecond());
+        Gdx.app.log(TAG, "" + Gdx.graphics.getFramesPerSecond());
 
     }
 
@@ -276,14 +284,12 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     private void dieDialog() {
         new com.badlogic.gdx.scenes.scene2d.ui.Dialog("GAME OVER", Assets.instance.mainSkin) {
             {
-                debugAll();
-                getTitleLabel().setAlignment(Align.center);
-                getContentTable().defaults().padLeft(20).padRight(20);
                 String sTitles = "Time alive: \n\nMonsters defeated: \n\nchests opened: ";
                 String sStats = (int) gameOverTime / 60 + " mins " + (int) gameOverTime % 60 + " secs\n\n" + enemiesKilled + "\n\n"
                         + chestsOpened;
-
-                text("\nYou just have been defeated,\n\nYour progress will be reset.\n\n\nStats:");
+                getTitleLabel().setAlignment(Align.center);
+                getContentTable().defaults().padLeft(20).padRight(20);
+                text("\nYou have been defeated,\n\nYour progress will be reset.\n\n\nStats:");
                 getContentTable().row();
                 text(sTitles);
                 text(sStats);
@@ -375,7 +381,11 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                     Table table = new Table();
                     table.setFillParent(true);
                     table.align(Align.top);
-                    gameOverLabel = new TypingLabel("{SHRINK=1.0;1.0;false}{CROWD}{COLOR=LIME}LEVEL COMPLETED", Assets.instance.mainSkin, "title");
+                    if (currentLevel < 5)
+                        gameOverLabel = new TypingLabel("{SHRINK=1.0;1.0;false}{CROWD}{COLOR=LIME}LEVEL COMPLETED", Assets.instance.mainSkin, "title");
+                    else
+                        gameOverLabel = new TypingLabel("{SHRINK=1.0;1.0;false}{CROWD}{COLOR=LIME}[%150]EXIT FOUND", Assets.instance.mainSkin, "title");
+
                     table.padTop(200);
                     table.add(gameOverLabel);
                     gameOver = true;
@@ -395,18 +405,50 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     }
 
     private void winDialog() {
+        if (currentLevel < 5) {
+            nextLevelDialog();
+        } else {
+            endDialog();
+        }
+
+        openModal = true;
+    }
+
+    private void endDialog() {
+        new com.badlogic.gdx.scenes.scene2d.ui.Dialog("ESCAPE SUCCESSFUL", Assets.instance.mainSkin) {
+            {
+                String sTitles = "\nRun time: \n\nMonsters defeated: \n\nChests opened: ";
+                String sStats = "\n" + (int) gameOverTime / 60 + " mins " + (int) gameOverTime % 60 + " secs\n\n" + enemiesKilled + "\n\n"
+                        + chestsOpened;
+                getTitleLabel().setAlignment(Align.center);
+                getContentTable().defaults().padLeft(20).padRight(20);
+                text("\nYou escaped from the labyrinth!\n\nCongratulations on your hard work\nEscaping from this Hell\n\nWant to play again?\n\n\nStats:");
+                getContentTable().row();
+                text(sTitles);
+                text(sStats);
+                button("No, Back to menu", false);
+                button("Yes, Play again", true);
+            }
+
+            protected void result(java.lang.Object object) {
+                if ((boolean) object) {
+                    if (!game.getScreenManager().inTransition()) {
+                        game.getScreenManager().pushScreen("Reset", null);
+                        currentLevel++;
+                        game.getScreenManager().pushScreen("Game", "blend");
+                    }
+                }
+            }
+        }.show(stage);
+    }
+
+    private void nextLevelDialog() {
         new com.badlogic.gdx.scenes.scene2d.ui.Dialog("LEVEL COMPLETED", Assets.instance.mainSkin) {
             {
                 getTitleLabel().setAlignment(Align.center);
                 getContentTable().defaults().padLeft(20).padRight(20);
-
-                String sTitles = "\nTime alive: \n\nMonsters defeated: \n\nChests opened: ";
-                String sStats = "\n" + (int) gameOverTime / 60 + " mins " + (int) gameOverTime % 60 + " secs\n\n" + enemiesKilled + "\n\n"
-                        + chestsOpened;
-                text("\nYou escaped the level!!\n\nKeep going to find the exit.\n\nDifficulty will be increased.\n\n\nStats:");
+                text("\nYou escaped the level!\n\n\nContinue to the next layer to keep searching the exit.\n\n\nDifficulty will be increased.");
                 getContentTable().row();
-                text(sTitles);
-                text(sStats);
                 button("Back to Menu", false);
                 button("Next level", true);
             }
@@ -415,19 +457,42 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                 if ((boolean) object) {
                     if (!game.getScreenManager().inTransition()) {
                         game.getScreenManager().pushScreen("Reset", null);
-                        game.getScreenManager().pushScreen("Game", "blend", gameOverTime, enemiesKilled, chestsOpened);
+                        currentLevel++;
+                        game.getScreenManager().pushScreen("Game", "blend", gameOverTime, enemiesKilled, chestsOpened, currentLevel);
                     }
                 }
             }
         }.show(stage);
-        openModal = true;
     }
 
     private void spawnEnemies() {
         MapObjects collisions = Assets.instance.labMap.getLayers().get("Spawns").getObjects();
-        for (int i = 0; i < collisions.getCount(); i++) {
+        int spawnNum = 0;
+        Array<MapObject> transObjList = new Array<>();
+        for (MapObject o : collisions) {
+            transObjList.add(o);
+        }
+        transObjList.shuffle();
+        switch (currentLevel) {
+            case 1:
+                spawnNum = 50;
+                break;
+            case 2:
+                spawnNum = 65;
+                break;
+            case 3:
+                spawnNum = 85;
+                break;
+            case 4:
+                spawnNum = 100;
+                break;
+            case 5:
+                spawnNum = 122;
+                break;
+        }
+        for (int i = 0; i < spawnNum; i++) {
             int rnd = MathUtils.random(9);
-            MapObject mapObject = collisions.get(i);
+            MapObject mapObject = transObjList.get(i);
             Rectangle pos = ((RectangleMapObject) mapObject).getRectangle();
             if (mapObject.getName().equals("EnemySpawn") && rnd < 4) {
                 SpiderEnemy.create(poolEngine, new Vector2(pos.x - TILE_SIZE / 2f, pos.y - TILE_SIZE / 2f), this);
@@ -535,6 +600,20 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
             for (Object o : objects) {
                 if (o instanceof Chest) {
                     if (((Chest) o).getItem() == null) {
+                        ((Chest) o).setItem(new LabyKey());
+                        Chest.keyCount++;
+                        Chest.emptyCount--;
+                        if (Chest.keyCount == Chest.MAX_KEYS) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if (Chest.emptyCount < 1 && Chest.keyCount < Chest.MAX_KEYS) {
+            for (Object o : objects) {
+                if (o instanceof Chest) {
+                    if (((Chest) o).getItem() instanceof ManaPotion) {
                         ((Chest) o).setItem(new LabyKey());
                         Chest.keyCount++;
                         if (Chest.keyCount == Chest.MAX_KEYS) {

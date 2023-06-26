@@ -13,8 +13,9 @@ import com.unaig.noway.data.Assets;
 import static com.unaig.noway.util.Constants.TILE_SIZE;
 
 public class Chest extends Object {
-
+    //TODO create key chest
     public static int keyCount = 0;
+    public static int emptyCount = 0;
     public static final int MAX_KEYS = 5;
     private Animation<AtlasRegion> animation;
     private float stateTime;
@@ -51,6 +52,7 @@ public class Chest extends Object {
 
         if (item == null) {
             label = new TypingLabel("{FAST}{SHRINK=1.0;1.0;true}[%50]Ups . . . \n" + "Empty chest, good luck in \nthe next one.[%]{ENDSHRINK}", Assets.instance.mainSkin, "regular");
+            emptyCount++;
         } else {
             setLabel(item.getLabel());
             setEmptyLabel(item.getEmptyLabel());

@@ -36,7 +36,7 @@ import static com.unaig.noway.util.ElementType.FIRE;
 import static com.unaig.noway.util.ElementType.ICE;
 
 public class Player extends Entity implements InputProcessor {
-
+    //TODO mp warning
     public static final String TAG = Player.class.getName();
 
     public static final float BASIC_ATTACK_COOLDOWN = .8f;

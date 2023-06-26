@@ -13,7 +13,7 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 import static com.unaig.noway.util.Constants.TILE_SIZE;
 
 public class GhostEnemy extends Enemy {
-
+    //TODO balance the Ghost behaviour
     private static final Pool<GhostEnemy> ghostPool = new Pool<GhostEnemy>() {
         @Override
         protected GhostEnemy newObject() {
