@@ -253,10 +253,10 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         setElementIconPositions(delta);
         updateLabelPositions();
         canPlayerInteract = checkNearItem();
-        isGameOver(delta);
+        isGameOver();
     }
 
-    private void isGameOver(float delta) {
+    private void isGameOver() {
         if (gameOver && contOverLabel < 1) {
             Table table = new Table();
             table.setFillParent(true);
