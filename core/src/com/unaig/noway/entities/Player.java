@@ -73,7 +73,6 @@ public class Player extends Entity implements InputProcessor {
 
     public void init() {
         int rnd = MathUtils.random(1);
-        rnd = 0;
         elementType = FIRE;
         size = new Vector2(TILE_SIZE, TILE_SIZE);
         MapObjects collisions = Assets.instance.labMap.getLayers().get("Spawns").getObjects();
