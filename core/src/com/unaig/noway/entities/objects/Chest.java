@@ -13,10 +13,11 @@ import com.unaig.noway.data.Assets;
 import static com.unaig.noway.util.Constants.TILE_SIZE;
 
 public class Chest extends Object {
-    //TODO create key chest
+    public static final float FRAME_DURATION = .35f;
     public static int keyCount = 0;
     public static int emptyCount = 0;
     public static final int MAX_KEYS = 5;
+    private final String dir;
     private Animation<AtlasRegion> animation;
     private float stateTime;
     private boolean isOpen;
@@ -24,11 +25,11 @@ public class Chest extends Object {
     private Item item;
 
 
-    public Chest(Array<AtlasRegion> animation, Rectangle rectangle) {
-        this.animation = new Animation<>(.3f, animation, Animation.PlayMode.NORMAL);
+    public Chest(String dir, Rectangle rectangle) {
         this.rectangle = rectangle;
         isOpen = false;
         stateTime = 0;
+        this.dir = dir;
         int rnd = MathUtils.random(4);
         switch (rnd) {
             case 0:
@@ -49,15 +50,53 @@ public class Chest extends Object {
                 }
                 break;
         }
-
         if (item == null) {
             label = new TypingLabel("{FAST}{SHRINK=1.0;1.0;true}[%50]Ups . . . \n" + "Empty chest, good luck in \nthe next one.[%]{ENDSHRINK}", Assets.instance.mainSkin, "regular");
-            emptyCount++;
-        } else {
+            if (emptyCount < MAX_KEYS) {
+                emptyCount++;
+            } else {
+                item = createRandomPotion();
+            }
+        }
+        if (item != null) {
             setLabel(item.getLabel());
             setEmptyLabel(item.getEmptyLabel());
             setItemImage(item.getItemImage());
         }
+        Array<AtlasRegion> animFrames = new Array<>();
+        if (item instanceof LabyKey) {
+            switch (dir) {
+                case "down":
+                    animFrames = Assets.instance.objectsAtlas.findRegions("keyChestDown");
+                    break;
+                case "up":
+                    animFrames = Assets.instance.objectsAtlas.findRegions("keyChestUp");
+                    break;
+                case "left":
+                    animFrames = Assets.instance.objectsAtlas.findRegions("keyChestLeft");
+                    break;
+                case "right":
+                    animFrames = Assets.instance.objectsAtlas.findRegions("keyChestRight");
+                    break;
+            }
+        } else {
+            switch (dir) {
+                case "down":
+                    animFrames = Assets.instance.objectsAtlas.findRegions("chestDown");
+                    break;
+                case "up":
+                    animFrames = Assets.instance.objectsAtlas.findRegions("chestUp");
+                    break;
+                case "left":
+                    animFrames = Assets.instance.objectsAtlas.findRegions("chestLeft");
+                    break;
+                case "right":
+                    animFrames = Assets.instance.objectsAtlas.findRegions("chestRight");
+                    break;
+            }
+        }
+        this.animation = new Animation<>(FRAME_DURATION, animFrames, Animation.PlayMode.NORMAL);
+
     }
 
     private Item createRandomPotion() {
@@ -123,4 +162,9 @@ public class Chest extends Object {
     public void setItem(Item item) {
         this.item = item;
     }
+
+    public String getDir() {
+        return dir;
+    }
+
 }

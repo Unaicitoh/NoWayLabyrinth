@@ -36,7 +36,6 @@ import static com.unaig.noway.util.ElementType.FIRE;
 import static com.unaig.noway.util.ElementType.ICE;
 
 public class Player extends Entity implements InputProcessor {
-    //TODO mp warning
     public static final String TAG = Player.class.getName();
 
     public static final float BASIC_ATTACK_COOLDOWN = .8f;
@@ -48,7 +47,8 @@ public class Player extends Entity implements InputProcessor {
     public static final int STRONG_MANA_COST = 25;
     public static final int BASIC_MANA_COST = 5;
     public static final float ATTACK_ANIMATION_FRAME_RESET = .1f;
-    public static final float ARMORED_STATE_DURATION = 7f;
+    public static final float ARMORED_STATE_DURATION = 5f;
+    public static final float TIME_SINCE_RUN = .5f;
     public PoolEngine poolEngine;
     private ElementType elementType;
     private float mp;
@@ -62,6 +62,9 @@ public class Player extends Entity implements InputProcessor {
     private float armoredStateDuration;
     public final static int MAX_POTS = 5;
 
+    private boolean isRunning;
+    public static boolean underAttack;
+    private float timeSinceRun;
 
     public Player(PoolEngine poolEngine) {
         this.poolEngine = poolEngine;
@@ -112,6 +115,8 @@ public class Player extends Entity implements InputProcessor {
         items.add(hpP, mpP, arP, keys);
         onArmoredState = false;
         armoredStateDuration = ARMORED_STATE_DURATION;
+        isRunning = false;
+        timeSinceRun = TIME_SINCE_RUN;
         loadPlayerAnimations(animations);
     }
 
@@ -176,17 +181,52 @@ public class Player extends Entity implements InputProcessor {
         }
     }
 
-    private void playerAnimation(SpriteBatch batch, String playerAnimLeft, Direction dir) {
-        GameHelper.drawEntity(batch, animations.get(playerAnimLeft).getKeyFrame(stateTime), pos, size);
+    private void playerAnimation(SpriteBatch batch, String playerAnimDir, Direction dir) {
+        if (isRunning && !underAttack) {
+            animations.get(playerAnimDir).setFrameDuration(FRAME_DURATION / 1.5f);
+        } else {
+            animations.get(playerAnimDir).setFrameDuration(FRAME_DURATION);
+        }
+        GameHelper.drawEntity(batch, animations.get(playerAnimDir).getKeyFrame(stateTime), pos, size);
         lastDir = dir;
     }
 
     private void update(float delta) {
         stateTime += delta;
-        mp = Math.min(maxMp, mp + delta * 5);
-        updateCooldowns(delta);
         vel.x = MathUtils.clamp(vel.x, -maxVel, maxVel);
         vel.y = MathUtils.clamp(vel.y, -maxVel, maxVel);
+        if (isRunning && !underAttack && !GameScreen.debugControl) {
+            timeSinceRun = 0f;
+            if (vel.x > 0) {
+                vel.x = TILE_SIZE * 4.25f;
+            } else if (vel.x < 0) {
+                vel.x = -TILE_SIZE * 4.25f;
+            }
+            if (vel.y > 0) {
+                vel.y = TILE_SIZE * 4.25f;
+            } else if (vel.y < 0) {
+                vel.y = -TILE_SIZE * 4.25f;
+            }
+        } else if (!GameScreen.debugControl) {
+            timeSinceRun = Math.min(TIME_SINCE_RUN, timeSinceRun + delta);
+            maxVel = TILE_SIZE * 3f;
+
+        } else {
+            if (vel.x > 0) {
+                vel.x = TILE_SIZE * 10;
+            } else if (vel.x < 0) {
+                vel.x = -TILE_SIZE * 10;
+            }
+            if (vel.y > 0) {
+                vel.y = TILE_SIZE * 10;
+            } else if (vel.y < 0) {
+                vel.y = -TILE_SIZE * 10;
+            }
+        }
+        mp = Math.min(maxMp, mp + delta * 5);
+        hp = Math.min(maxHp, hp);
+        updateCooldowns(delta);
+
         if (hp <= 0) {
             isDead = true;
             GameScreen.gameOver = true;
@@ -199,7 +239,7 @@ public class Player extends Entity implements InputProcessor {
         // Move horizontally
         pos.x += vel.x * delta;
         bounds.setPosition(pos.x + OFFSET_X, pos.y + OFFSET_Y);
-        if (GameHelper.checkCollisions(bounds)) {
+        if (GameHelper.checkCollisions(bounds) && !GameScreen.debugControl) {
             pos.x = lastValidPos.x;
         } else {
             lastValidPos.x = pos.x;
@@ -208,7 +248,7 @@ public class Player extends Entity implements InputProcessor {
         // Move vertically
         pos.y += vel.y * delta;
         bounds.setPosition(pos.x + OFFSET_X, pos.y + OFFSET_Y);
-        if (GameHelper.checkCollisions(bounds)) {
+        if (GameHelper.checkCollisions(bounds) && !GameScreen.debugControl) {
             pos.y = lastValidPos.y;
         } else {
             lastValidPos.y = pos.y;
@@ -245,7 +285,7 @@ public class Player extends Entity implements InputProcessor {
             case 1:
                 if (getItems().get(currentIndex).size == 0) {
                 } else {
-                    mp += 65;
+                    mp += 70;
                     getItems().get(currentIndex).removeIndex(0);
                 }
                 break;
@@ -278,8 +318,12 @@ public class Player extends Entity implements InputProcessor {
             case Keys.S:
                 vel.y = -maxVel;
                 break;
+            case Keys.SHIFT_LEFT:
+                Gdx.app.log(TAG, "running");
+                isRunning = true;
+                break;
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -321,8 +365,13 @@ public class Player extends Entity implements InputProcessor {
                 }
                 stateTime = 0f;
                 break;
+            case Keys.SHIFT_LEFT:
+                Gdx.app.log(TAG, "stop running");
+
+                isRunning = false;
+                break;
         }
-        return true;
+        return false;
     }
 
     public void changeElement() {
@@ -402,13 +451,13 @@ public class Player extends Entity implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         switch (button) {
             case Input.Buttons.LEFT:
-                if (elementType == FIRE && fireCooldown <= 0f && mp - BASIC_MANA_COST >= 0) {
+                if (elementType == FIRE && fireCooldown <= 0f && mp - BASIC_MANA_COST >= 0 && timeSinceRun == TIME_SINCE_RUN) {
                     mp -= BASIC_MANA_COST;
                     stateTime = ATTACK_ANIMATION_FRAME_RESET;
                     fireCooldown = BASIC_ATTACK_COOLDOWN;
                     isAttacking = true;
                     FireSpell.create(poolEngine, this, BASIC);
-                } else if (elementType == ICE && iceCooldown <= 0f && mp - BASIC_MANA_COST >= 0) {
+                } else if (elementType == ICE && iceCooldown <= 0f && mp - BASIC_MANA_COST >= 0 && timeSinceRun == TIME_SINCE_RUN) {
                     mp -= BASIC_MANA_COST;
                     stateTime = ATTACK_ANIMATION_FRAME_RESET;
                     iceCooldown = BASIC_ATTACK_COOLDOWN * 1.5f;
@@ -417,13 +466,13 @@ public class Player extends Entity implements InputProcessor {
                 }
                 break;
             case Input.Buttons.RIGHT:
-                if (elementType == FIRE && fire2Cooldown <= 0f && mp - STRONG_MANA_COST >= 0) {
+                if (elementType == FIRE && fire2Cooldown <= 0f && mp - STRONG_MANA_COST >= 0 && timeSinceRun == TIME_SINCE_RUN) {
                     mp -= STRONG_MANA_COST;
                     stateTime = ATTACK_ANIMATION_FRAME_RESET;
                     fire2Cooldown = STRONG_ATTACK_COOLDOWN;
                     isAttacking = true;
                     FireSpell.create(poolEngine, this, STRONG);
-                } else if (elementType == ICE && ice2Cooldown <= 0f && mp - STRONG_MANA_COST >= 0) {
+                } else if (elementType == ICE && ice2Cooldown <= 0f && mp - STRONG_MANA_COST >= 0 && timeSinceRun == TIME_SINCE_RUN) {
                     mp -= STRONG_MANA_COST;
                     mp = MathUtils.clamp(mp, 0, maxMp);
                     stateTime = ATTACK_ANIMATION_FRAME_RESET;

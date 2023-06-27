@@ -117,6 +117,8 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     private Rectangle exitPos;
     private int contOverLabel;
     private int currentLevel;
+    private int rndStairs;
+    public static boolean debugControl;
 
     public GameScreen(NoWayLabyrinth game) {
         this.game = game;
@@ -174,11 +176,13 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         contOverLabel = 0;
         Chest.keyCount = 0;
         Chest.emptyCount = 0;
+        rndStairs = MathUtils.random(1);
         initializeUI();
         initObjects();
         spawnEnemies();
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+        debugControl = false;
     }
 
     @Override
@@ -217,9 +221,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
             ((OrthographicCamera) viewport.getCamera()).zoom += 0.15;
         }
         if (Gdx.input.isKeyJustPressed(Keys.RIGHT)) {
-            player.maxVel += TILE_SIZE;
-        } else if (Gdx.input.isKeyJustPressed(Keys.LEFT)) {
-            player.maxVel -= TILE_SIZE;
+            debugControl = !debugControl;
         }
         if (Gdx.input.isKeyJustPressed(Keys.CONTROL_RIGHT)) {
             if (!game.getScreenManager().inTransition()) {
@@ -229,8 +231,8 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
             }
         }
         GameHelper.resizeGameWindow();
+//        Gdx.app.log(TAG, "" + Gdx.graphics.getFramesPerSecond());
         //End debugging
-        Gdx.app.log(TAG, "" + Gdx.graphics.getFramesPerSecond());
 
     }
 
@@ -576,20 +578,8 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                 if (mapObject.getName().equals("Dialog")) {
                     objects.add(new Dialog((String) mapObject.getProperties().get("Text"), rectangle));
                 } else if (mapObject.getName().equals("Chest")) {
-                    switch ((String) mapObject.getProperties().get("direction")) {
-                        case "down":
-                            objects.add(new Chest(Assets.instance.objectsAtlas.findRegions("chestDown"), rectangle));
-                            break;
-                        case "up":
-                            objects.add(new Chest(Assets.instance.objectsAtlas.findRegions("chestUp"), rectangle));
-                            break;
-                        case "left":
-                            objects.add(new Chest(Assets.instance.objectsAtlas.findRegions("chestLeft"), rectangle));
-                            break;
-                        case "right":
-                            objects.add(new Chest(Assets.instance.objectsAtlas.findRegions("chestRight"), rectangle));
-                            break;
-                    }
+                    String dir = (String) mapObject.getProperties().get("direction");
+                    objects.add(new Chest(dir, rectangle));
                 } else if (mapObject.getName().equals("Exit")) {
                     exitPos = new Rectangle(rectangle);
                 }
@@ -601,8 +591,11 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                 if (o instanceof Chest) {
                     if (((Chest) o).getItem() == null) {
                         ((Chest) o).setItem(new LabyKey());
-                        Chest.keyCount++;
+                        ((Chest) o).setItemImage(((Chest) o).getItem().getItemImage());
+                        o.setLabel(((Chest) o).getItem().getLabel());
                         Chest.emptyCount--;
+                        Chest.keyCount++;
+                        replaceChestTexture((Chest) o);
                         if (Chest.keyCount == Chest.MAX_KEYS) {
                             break;
                         }
@@ -616,12 +609,32 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                     if (((Chest) o).getItem() instanceof ManaPotion) {
                         ((Chest) o).setItem(new LabyKey());
                         Chest.keyCount++;
+                        ((Chest) o).setItemImage(((Chest) o).getItem().getItemImage());
+                        o.setLabel(((Chest) o).getItem().getLabel());
+                        replaceChestTexture((Chest) o);
                         if (Chest.keyCount == Chest.MAX_KEYS) {
                             break;
                         }
                     }
                 }
             }
+        }
+    }
+
+    private static void replaceChestTexture(Chest c) {
+        switch (c.getDir()) {
+            case "down":
+                c.setAnimation(new Animation<>(Chest.FRAME_DURATION, Assets.instance.objectsAtlas.findRegions("keyChestDown"), NORMAL));
+                break;
+            case "up":
+                c.setAnimation(new Animation<>(Chest.FRAME_DURATION, Assets.instance.objectsAtlas.findRegions("keyChestUp"), NORMAL));
+                break;
+            case "left":
+                c.setAnimation(new Animation<>(Chest.FRAME_DURATION, Assets.instance.objectsAtlas.findRegions("keyChestLeft"), NORMAL));
+                break;
+            case "right":
+                c.setAnimation(new Animation<>(Chest.FRAME_DURATION, Assets.instance.objectsAtlas.findRegions("keyChestRight"), NORMAL));
+                break;
         }
     }
 
@@ -821,12 +834,23 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                 ((Chest) o).draw(batch, delta);
             }
         }
-        if (onMaxKeys()) {
-            batch.draw(Assets.instance.objectsAtlas.findRegion("exit"), exitPos.x, exitPos.y, TILE_SIZE * 2, TILE_SIZE * 2);
-        }
+        renderExit();
         poolEngine.renderEnemies(batch, shaper, delta, player, poolEngine.spells);
         poolEngine.renderSpells(batch, delta);
         player.render(batch, delta);
+    }
+
+    private void renderExit() {
+        if (onMaxKeys() && currentLevel < 4) {
+            if (rndStairs == 0) {
+                batch.draw(Assets.instance.objectsAtlas.findRegion("stairs"), exitPos.x, exitPos.y, TILE_SIZE * 2, TILE_SIZE * 2);
+            } else {
+                batch.draw(Assets.instance.objectsAtlas.findRegion("stairs2"), exitPos.x, exitPos.y, TILE_SIZE * 2, TILE_SIZE * 2);
+            }
+        } else if (onMaxKeys() && currentLevel == 5) {
+            batch.draw(Assets.instance.objectsAtlas.findRegion("exit"), exitPos.x, exitPos.y, TILE_SIZE * 2, TILE_SIZE * 2);
+
+        }
     }
 
     private boolean onMaxKeys() {
@@ -872,10 +896,10 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
             currentPotionLabel.setColor(Color.WHITE);
         }
 
-        fireSpellIcon.setDisabled(player.getFireCooldown() > 0f);
-        fire2SpellIcon.setDisabled(player.getFire2Cooldown() > 0f);
-        iceSpellIcon.setDisabled(player.getIceCooldown() > 0f);
-        ice2SpellIcon.setDisabled(player.getIce2Cooldown() > 0f);
+        fireSpellIcon.setDisabled(player.getFireCooldown() > 0f || player.getMp() < BASIC_MANA_COST);
+        fire2SpellIcon.setDisabled(player.getFire2Cooldown() > 0f || player.getMp() < STRONG_MANA_COST);
+        iceSpellIcon.setDisabled(player.getIceCooldown() > 0f || player.getMp() < BASIC_MANA_COST);
+        ice2SpellIcon.setDisabled(player.getIce2Cooldown() > 0f || player.getMp() < STRONG_MANA_COST);
         if (canPlayerInteract) {
             drawHelperKey();
         }

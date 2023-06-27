@@ -12,6 +12,7 @@ import com.unaig.noway.entities.Player;
 import com.unaig.noway.entities.spells.FireSpell;
 import com.unaig.noway.entities.spells.IceSpell;
 import com.unaig.noway.entities.spells.Spell;
+import com.unaig.noway.screens.GameScreen;
 import com.unaig.noway.util.GameHelper;
 import com.unaig.noway.util.HPBar;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -49,7 +50,7 @@ public abstract class Enemy extends Entity implements Poolable {
     protected float slowedDuration;
     protected float frozenDuration;
     public Array<Rectangle> lineSight;
-    private boolean readyToAttack;
+    public boolean readyToAttack;
     private boolean isChasing;
     private boolean collide;
     protected boolean revertGhost;
@@ -264,10 +265,12 @@ public abstract class Enemy extends Entity implements Poolable {
 
         if (attackCooldown <= 0f) {
             attackCooldown = 2f;
-            if (player.isOnArmoredState()) {
-                player.setHp(Math.max(0, player.getHp() - attackDamage / 2f));
-            } else {
-                player.setHp(Math.max(0, player.getHp() - attackDamage));
+            if (!GameScreen.debugControl) {
+                if (player.isOnArmoredState()) {
+                    player.setHp(Math.max(0, player.getHp() - attackDamage / 2f));
+                } else {
+                    player.setHp(Math.max(0, player.getHp() - attackDamage));
+                }
             }
             player.setIsDamaged(true);
         }

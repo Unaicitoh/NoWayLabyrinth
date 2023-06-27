@@ -39,6 +39,7 @@ public class PoolEngine {
     }
 
     public void renderEnemies(SpriteBatch batch, ShapeDrawer shaper, float delta, Player player, Array<Spell> spells) {
+        int underAttackCont = 0;
         for (Enemy e : enemies) {
             if (!e.isAlive) {
                 e.reset();
@@ -47,7 +48,11 @@ public class PoolEngine {
                 continue;
             }
             e.render(batch, shaper, delta, player, spells);
+            if (e.readyToAttack) {
+                underAttackCont++;
+            }
         }
+        Player.underAttack = underAttackCont > 0;
     }
 
     public void clear() {
