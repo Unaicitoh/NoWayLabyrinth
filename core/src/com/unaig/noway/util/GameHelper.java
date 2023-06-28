@@ -2,6 +2,7 @@ package com.unaig.noway.util;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -83,7 +84,7 @@ public class GameHelper {
     public static void damagedEntityAnimation(Entity e, SpriteBatch batch, float delta) {
         if (e.getIsDamaged() && e.timeDamageTaken >= 0) {
             e.timeDamageTaken -= delta;
-            batch.setColor(1, 0, 0, e.timeDamageTaken * 5);
+            batch.setColor(1, 1, 1, e.timeDamageTaken * 5);
         } else {
             e.setIsDamaged(false);
             e.timeDamageTaken = DAMAGE_ANIMATION_TIME;
@@ -342,4 +343,13 @@ public class GameHelper {
     private GameHelper() {
     }
 
+    public static void updateEnemyStatus(Enemy e, SpriteBatch batch) {
+        if (e.isBurned()) {
+            batch.setColor(Color.SCARLET);
+        } else if (e.isSlowed()) {
+            batch.setColor(Color.SKY);
+        } else if (e.isFrozen()) {
+            batch.setColor(Color.ROYAL);
+        }
+    }
 }

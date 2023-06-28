@@ -14,7 +14,6 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 import static com.unaig.noway.util.Constants.TILE_SIZE;
 
 public class GhostEnemy extends Enemy {
-    //TODO balance the Ghost behaviour
     private static final Pool<GhostEnemy> ghostPool = new Pool<GhostEnemy>() {
         @Override
         protected GhostEnemy newObject() {
@@ -59,6 +58,9 @@ public class GhostEnemy extends Enemy {
         }
         if (!revertGhost) {
             GameHelper.damagedEntityAnimation(this, batch, delta);
+        }
+        if (!isDamaged) {
+            GameHelper.updateEnemyStatus(this, batch);
         }
         GameHelper.renderEnemyAnimations(this, batch);
         batch.setColor(Color.WHITE);

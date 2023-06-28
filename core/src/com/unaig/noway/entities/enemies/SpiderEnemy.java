@@ -45,6 +45,9 @@ public class SpiderEnemy extends Enemy {
             hpbar.render(shaper, delta, pos, hp);
         }
         GameHelper.damagedEntityAnimation(this, batch, delta);
+        if (!isDamaged) {
+            GameHelper.updateEnemyStatus(this, batch);
+        }
         GameHelper.renderEnemyAnimations(this, batch);
         batch.setColor(Color.WHITE);
 
