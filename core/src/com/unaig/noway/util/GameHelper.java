@@ -90,14 +90,6 @@ public class GameHelper {
             batch.setColor(1, 1, 1, 1);
         }
 
-        if (e.getIsDamaged() && e.timeDamageTaken >= 0) {
-            e.timeDamageTaken -= delta;
-            batch.setColor(1, 0, 0, e.timeDamageTaken * 5);
-        } else {
-            e.setIsDamaged(false);
-            e.timeDamageTaken = DAMAGE_ANIMATION_TIME;
-            batch.setColor(1, 1, 1, 1);
-        }
 
     }
 

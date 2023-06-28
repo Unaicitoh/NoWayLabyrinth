@@ -66,8 +66,8 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     public static final float TIME_DISABLED = .05f;
     public static final float FADE_DURATION = .25f;
     public static final float SPELL_FRAME_DURATION = .15f;
-
-
+    private float levelLabelTime;
+    private TypingLabel levelLabel;
     private Player player;
     private ProgressBar playerHPUI;
     private ProgressBar playerMPUI;
@@ -120,6 +120,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     private int rndStairs;
     public static boolean debugControl;
 
+
     public GameScreen(NoWayLabyrinth game) {
         this.game = game;
         this.batch = game.getBatch();
@@ -135,7 +136,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         getInputProcessors().clear();
         renderer = new OrthogonalTiledMapRenderer(Assets.instance.labMap);
         viewport = new ExtendViewport(80 * TILE_SIZE, 80 * TILE_SIZE);
-        stage = new Stage(new StretchViewport(1280, 720), batch);
+        stage = new Stage(new StretchViewport(1280, 720));
         poolEngine = new PoolEngine();
         player = new Player(poolEngine);
         canPlayerInteract = false;
@@ -173,6 +174,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         gameOverTime = 0;
         gameOver = false;
         gameOverLabel = new TypingLabel();
+        levelLabelTime = 4f;
         contOverLabel = 0;
         Chest.keyCount = 0;
         Chest.emptyCount = 0;
@@ -181,7 +183,6 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         initObjects();
         spawnEnemies();
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
         debugControl = false;
     }
 
@@ -254,6 +255,10 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         updateLabelPositions();
         canPlayerInteract = checkNearItem();
         isGameOver();
+        levelLabelTime -= delta;
+        if (levelLabelTime <= 0) {
+            levelLabel.addAction(Actions.fadeOut(.75f));
+        }
     }
 
     private void isGameOver() {
@@ -547,6 +552,10 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         keyLabel = new TypingLabel("x0", Assets.instance.mainSkin);
         potionLabel.setTouchable(Touchable.disabled);
         currentPotion = 0;
+        Table table = new Table();
+        table.setFillParent(true);
+        levelLabel = new TypingLabel("{FADE}LEVEL L-" + currentLevel + "{ENDFADE}", Assets.instance.mainSkin, "title");
+        table.add(levelLabel).padBottom(200);
         stage.addActor(iceTypeAnim);
         fadeOutGroup.addActor(iceTypeAnim);
         stage.addActor(fireTypeAnim);
@@ -556,6 +565,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         fadeOutGroup.addActor(potionLabel);
         stage.addActor(keyLabel);
         fadeOutGroup.addActor(keyLabel);
+        stage.addActor(table);
     }
 
     private void resizeObjectWindow(String type) {

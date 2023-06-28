@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -135,6 +136,8 @@ public class Player extends Entity implements InputProcessor {
         }
         GameHelper.damagedEntityAnimation(this, batch, delta);
         renderPlayerAnimations(batch);
+        batch.setColor(Color.WHITE);
+
     }
 
     private void renderPlayerAnimations(SpriteBatch batch) {

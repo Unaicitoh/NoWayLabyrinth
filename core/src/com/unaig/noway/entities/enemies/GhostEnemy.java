@@ -1,5 +1,6 @@
 package com.unaig.noway.entities.enemies;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -34,7 +35,7 @@ public class GhostEnemy extends Enemy {
         maxHp = 100;
         maxVel = TILE_SIZE * 2.25f;
         attackDamage = 25;
-        attackRange = TILE_SIZE * 6f;
+        attackRange = TILE_SIZE * 5.8f;
         respawnAnimationTime = RESPAWN_ANIMATION_TIME;
         super.init(pos, listener);
         GameHelper.loadEnemyAnimations(this, animations);
@@ -60,6 +61,7 @@ public class GhostEnemy extends Enemy {
             GameHelper.damagedEntityAnimation(this, batch, delta);
         }
         GameHelper.renderEnemyAnimations(this, batch);
+        batch.setColor(Color.WHITE);
 
     }
 

@@ -1,5 +1,6 @@
 package com.unaig.noway.entities.enemies;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -28,7 +29,7 @@ public class ZombieEnemy extends Enemy {
     }
 
     protected void init(Vector2 pos, EnemyListener listener) {
-        maxHp = 100;
+        maxHp = 90;
         maxVel = TILE_SIZE * 2.50f;
         attackDamage = 20;
         attackRange = TILE_SIZE * 5.5f;
@@ -45,6 +46,7 @@ public class ZombieEnemy extends Enemy {
         }
         GameHelper.damagedEntityAnimation(this, batch, delta);
         GameHelper.renderEnemyAnimations(this, batch);
+        batch.setColor(Color.WHITE);
 
     }
 

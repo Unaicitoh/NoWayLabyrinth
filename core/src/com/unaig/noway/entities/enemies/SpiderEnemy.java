@@ -1,5 +1,6 @@
 package com.unaig.noway.entities.enemies;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -28,7 +29,7 @@ public class SpiderEnemy extends Enemy {
     }
 
     protected void init(Vector2 pos, EnemyListener listener) {
-        maxHp = 100;
+        maxHp = 85;
         maxVel = TILE_SIZE * 2.75f;
         attackDamage = 15;
         attackRange = TILE_SIZE * 5f;
@@ -45,6 +46,7 @@ public class SpiderEnemy extends Enemy {
         }
         GameHelper.damagedEntityAnimation(this, batch, delta);
         GameHelper.renderEnemyAnimations(this, batch);
+        batch.setColor(Color.WHITE);
 
     }
 
