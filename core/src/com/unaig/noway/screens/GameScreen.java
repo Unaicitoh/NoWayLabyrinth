@@ -174,7 +174,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         gameOverTime = 0;
         gameOver = false;
         gameOverLabel = new TypingLabel();
-        levelLabelTime = 4f;
+        levelLabelTime = 3f;
         contOverLabel = 0;
         Chest.keyCount = 0;
         Chest.emptyCount = 0;
