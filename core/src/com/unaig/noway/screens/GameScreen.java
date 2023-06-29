@@ -36,8 +36,6 @@ import com.unaig.noway.entities.enemies.ZombieEnemy;
 import com.unaig.noway.entities.objects.Dialog;
 import com.unaig.noway.entities.objects.Object;
 import com.unaig.noway.entities.objects.*;
-import com.unaig.noway.entities.spells.FireSpell;
-import com.unaig.noway.entities.spells.IceSpell;
 import com.unaig.noway.entities.spells.Spell;
 import com.unaig.noway.util.GameHelper;
 import com.unaig.noway.util.ImageAnimation;
@@ -47,11 +45,9 @@ import space.earlygrey.shapedrawer.ShapeDrawer;
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP_PINGPONG;
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.NORMAL;
 import static com.unaig.noway.entities.Player.*;
-import static com.unaig.noway.util.AttackType.STRONG;
 import static com.unaig.noway.util.Constants.GAME_UI_JSON;
 import static com.unaig.noway.util.Constants.TILE_SIZE;
 import static com.unaig.noway.util.ElementType.FIRE;
-import static com.unaig.noway.util.ElementType.ICE;
 
 public class GameScreen extends ManagedScreen implements EnemyListener {
     public static final String TAG = GameScreen.class.getName();
@@ -68,7 +64,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     public static final float SPELL_FRAME_DURATION = .15f;
     private float levelLabelTime;
     private TypingLabel levelLabel;
-    private Player player;
+    private static Player player;
     private ProgressBar playerHPUI;
     private ProgressBar playerMPUI;
 
@@ -91,12 +87,12 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     private Button hpPotionIcon;
     private Button mpPotionIcon;
     private Button arPotionIcon;
-    private TypingLabel potionLabel;
+    private Label potionLabel;
     private Button changePotionLeft;
     private Button changePotionRight;
 
     private Button keyIcon;
-    private TypingLabel keyLabel;
+    private Label keyLabel;
 
     private boolean canPlayerInteract;
     private Window window;
@@ -115,6 +111,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     private Table fadeOutGroup;
 
     private Rectangle exitPos;
+    public static Rectangle barrierPos;
     private int contOverLabel;
     private int currentLevel;
     private int rndStairs;
@@ -138,16 +135,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         viewport = new ExtendViewport(80 * TILE_SIZE, 80 * TILE_SIZE);
         stage = new Stage(new StretchViewport(1280, 720));
         poolEngine = new PoolEngine();
-        player = new Player(poolEngine);
         canPlayerInteract = false;
-        addInputProcessor(stage);
-        addInputProcessor(player);
-        ((OrthographicCamera) viewport.getCamera()).zoom = 1 / 5f;
-        shaper = new ShapeDrawer(batch, Assets.instance.playerAtlas.findRegion("whitePixel"));
-        viewport.getCamera().position.set(new Vector3(player.getPos(), 0));
-        objects = new Array<>();
-        object = null;
-        openModal = false;
         if (pushParams != null) {
             for (int i = 0; i < pushParams.length; i++) {
                 switch (i) {
@@ -163,6 +151,15 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                     case 3:
                         currentLevel = (int) pushParams[i];
                         break;
+                    case 4:
+                        Player currPlayer = (Player) pushParams[i];
+                        currPlayer.getItems().get(3).clear();
+                        Array<Array<Item>> items = currPlayer.getItems();
+                        float hp = currPlayer.getHp();
+                        player.init();
+                        player.setItems(items);
+                        player.setHp(hp);
+                        break;
                 }
             }
         } else {
@@ -170,7 +167,16 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
             enemiesKilled = 0;
             chestsOpened = 0;
             currentLevel = 1;
+            player = new Player(poolEngine);
         }
+        addInputProcessor(stage);
+        addInputProcessor(player);
+        ((OrthographicCamera) viewport.getCamera()).zoom = 1 / 5f;
+        shaper = new ShapeDrawer(batch, Assets.instance.playerAtlas.findRegion("whitePixel"));
+        viewport.getCamera().position.set(new Vector3(player.getPos(), 0));
+        objects = new Array<>();
+        object = null;
+        openModal = false;
         gameOverTime = 0;
         gameOver = false;
         gameOverLabel = new TypingLabel();
@@ -192,7 +198,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
 
     @Override
     public Color getClearColor() {
-        return new Color(.5f, .5f, .65f, 1);
+        return new Color(.5f, .5f, .7f, 1);
     }
 
     @Override
@@ -318,10 +324,11 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
 
     private void updateLabelPositions() {
         Vector2 v = hpPotionIcon.localToStageCoordinates(new Vector2(hpPotionIcon.getX(), hpPotionIcon.getY()));
-        potionLabel.setPosition(v.x + hpPotionIcon.getWidth() / 2.5f, v.y + hpPotionIcon.getHeight() / 4f);
+        potionLabel.setPosition(v.x + hpPotionIcon.getWidth() / 2.75f, v.y + hpPotionIcon.getHeight() / 3.5f);
         v = keyIcon.localToStageCoordinates(new Vector2(keyIcon.getX(), keyIcon.getY()));
         keyLabel.setPosition(v.x + 30, stage.getHeight() * .84f);
-
+        potionLabel.setText("x" + player.getItems().get(currentPotion).size);
+        keyLabel.setText("x" + player.getItems().get(3).size);
     }
 
     private void checkObjectInteraction() {
@@ -377,11 +384,6 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                     window.add(chest.getLabel()).padRight(20).padTop(5);
                     chest.getLabel().restart();
                 }
-                {
-                    potionLabel.setText("x" + player.getItems().get(currentPotion).size);
-                    keyLabel.setText("x" + player.getItems().get(3).size);
-                }
-
             }
             if (onEnabledExit()) {
                 if (!gameOver) {
@@ -465,7 +467,7 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                     if (!game.getScreenManager().inTransition()) {
                         game.getScreenManager().pushScreen("Reset", null);
                         currentLevel++;
-                        game.getScreenManager().pushScreen("Game", "blend", gameOverTime, enemiesKilled, chestsOpened, currentLevel);
+                        game.getScreenManager().pushScreen("Game", "blend", gameOverTime, enemiesKilled, chestsOpened, currentLevel, player);
                     }
                 }
             }
@@ -482,19 +484,19 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         transObjList.shuffle();
         switch (currentLevel) {
             case 1:
-                spawnNum = 50;
+                spawnNum = 55;
                 break;
             case 2:
-                spawnNum = 65;
+                spawnNum = 75;
                 break;
             case 3:
-                spawnNum = 85;
+                spawnNum = 95;
                 break;
             case 4:
-                spawnNum = 100;
+                spawnNum = 110;
                 break;
             case 5:
-                spawnNum = 122;
+                spawnNum = 134;
                 break;
         }
         for (int i = 0; i < spawnNum; i++) {
@@ -548,8 +550,8 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         window = new Window("", Assets.instance.mainSkin, "special");
         isWindowActive = false;
         window.setVisible(false);
-        potionLabel = new TypingLabel("x0", Assets.instance.mainSkin);
-        keyLabel = new TypingLabel("x0", Assets.instance.mainSkin);
+        potionLabel = new Label("", Assets.instance.mainSkin);
+        keyLabel = new Label("", Assets.instance.mainSkin);
         potionLabel.setTouchable(Touchable.disabled);
         currentPotion = 0;
         Table table = new Table();
@@ -592,6 +594,8 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                     objects.add(new Chest(dir, rectangle));
                 } else if (mapObject.getName().equals("Exit")) {
                     exitPos = new Rectangle(rectangle);
+                } else if (mapObject.getName().equals("Barrier")) {
+                    barrierPos = new Rectangle(rectangle);
                 }
 
             }
@@ -712,35 +716,10 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
                 useCurrentPotion();
             }
         });
-
-        fire2SpellIcon.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                if (player.getElementType() == FIRE && player.getFire2Cooldown() <= 0f && player.getMp() - STRONG_MANA_COST >= 0) {
-                    player.setMp(player.getMp() - STRONG_MANA_COST);
-                    player.setStateTime(0);
-                    player.setFire2Cooldown(STRONG_ATTACK_COOLDOWN);
-                    FireSpell.create(poolEngine, player, STRONG);
-                }
-            }
-        });
-
-        ice2SpellIcon.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                if (player.getElementType() == ICE && player.getIce2Cooldown() <= 0f && player.getMp() - STRONG_MANA_COST >= 0) {
-                    player.setMp(player.getMp() - STRONG_MANA_COST);
-                    player.setStateTime(0);
-                    player.setIce2Cooldown(STRONG_ATTACK_COOLDOWN);
-                    IceSpell.create(poolEngine, player, STRONG);
-                }
-            }
-        });
     }
 
     private void useCurrentPotion() {
         player.useItem(currentPotion);
-        potionLabel.setText("x" + player.getItems().get(currentPotion).size);
         currentPotionLabel.setTouchable(Touchable.enabled);
     }
 
@@ -762,7 +741,6 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
             mpPotionIcon.setVisible(false);
             arPotionIcon.setVisible(true);
         }
-        potionLabel.setText("x" + player.getItems().get(currentPotion).size);
 
     }
 
@@ -783,8 +761,6 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
             mpPotionIcon.setVisible(true);
             arPotionIcon.setVisible(false);
         }
-        potionLabel.setText("{GRADIENT}x" + player.getItems().get(currentPotion).size);
-
     }
 
     private void updateElementIcons() {
@@ -851,19 +827,23 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
     }
 
     private void renderExit() {
-        if (onMaxKeys() && currentLevel < 4) {
+        if (currentLevel <= 4) {
             if (rndStairs == 0) {
                 batch.draw(Assets.instance.objectsAtlas.findRegion("stairs"), exitPos.x, exitPos.y, TILE_SIZE * 2, TILE_SIZE * 2);
             } else {
                 batch.draw(Assets.instance.objectsAtlas.findRegion("stairs2"), exitPos.x, exitPos.y, TILE_SIZE * 2, TILE_SIZE * 2);
             }
+        } else if (!onMaxKeys() && currentLevel == 5) {
+            batch.draw(Assets.instance.objectsAtlas.findRegion("exitClosed"), exitPos.x, exitPos.y, TILE_SIZE * 2, TILE_SIZE * 2);
         } else if (onMaxKeys() && currentLevel == 5) {
             batch.draw(Assets.instance.objectsAtlas.findRegion("exit"), exitPos.x, exitPos.y, TILE_SIZE * 2, TILE_SIZE * 2);
-
+        }
+        if (!onMaxKeys()) {
+            batch.draw(Assets.instance.objectsAtlas.findRegion("barrier"), barrierPos.x, barrierPos.y, TILE_SIZE, TILE_SIZE);
         }
     }
 
-    private boolean onMaxKeys() {
+    public static boolean onMaxKeys() {
         return player.getItems().get(3).size == 5;
     }
 

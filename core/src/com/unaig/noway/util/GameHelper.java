@@ -20,6 +20,7 @@ import com.unaig.noway.entities.enemies.Enemy;
 import com.unaig.noway.entities.enemies.GhostEnemy;
 import com.unaig.noway.entities.enemies.SpiderEnemy;
 import com.unaig.noway.entities.enemies.ZombieEnemy;
+import com.unaig.noway.screens.GameScreen;
 
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP;
 import static com.badlogic.gdx.graphics.g2d.Animation.PlayMode.NORMAL;
@@ -33,6 +34,9 @@ public class GameHelper {
         MapObjects collisions = Assets.instance.labMap.getLayers().get("Collisions").getObjects();
         for (int i = 0; i < collisions.getCount(); i++) {
             MapObject mapObject = collisions.get(i);
+            if (GameScreen.barrierPos.overlaps(r) && !GameScreen.onMaxKeys()) {
+                return true;
+            }
             if (mapObject instanceof RectangleMapObject) {
                 Rectangle rectangle = ((RectangleMapObject) mapObject).getRectangle();
                 if (r.overlaps(rectangle)) {
@@ -345,6 +349,13 @@ public class GameHelper {
 
     public static void updateEnemyStatus(Enemy e, SpriteBatch batch) {
         if (e.isBurned()) {
+//            int[] colors = {
+//                    0xFF0000FF, // Red
+//                    0x00FF00FF, // Green
+//                    0x0000FFFF, // Blue
+//            };
+//
+//            int mixedColor = ColorUtils.mix(colors, 0, colors.length);
             batch.setPackedColor(Palette.BURNT_YELLOW);
         } else if (e.isSlowed()) {
             batch.setPackedColor(Palette.CALM_SKY);

@@ -11,9 +11,7 @@ import de.eskalon.commons.screen.transition.ScreenTransition;
 import de.eskalon.commons.screen.transition.impl.BlendingTransition;
 
 public class NoWayLabyrinth extends ManagedGame<ManagedScreen, ScreenTransition> {
-
-    //TODO cofres dont show correctly, keep status and invetory when going up, visible sprint, center bugs, 4th stair not showing
-    //TODO cursor disable actions, reset map center and to easy, and pathfinding
+    //TODO sprint icon
     private SpriteBatch batch;
 
     @Override

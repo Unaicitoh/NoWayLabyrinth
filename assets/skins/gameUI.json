@@ -776,7 +776,7 @@
 													"visible": true
 												}
 											],
-											"touchable": "enabled",
+											"touchable": "disabled",
 											"visible": true
 										},
 										"row": 0,

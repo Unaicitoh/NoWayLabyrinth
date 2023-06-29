@@ -265,7 +265,7 @@ public abstract class Enemy extends Entity implements Poolable {
 
         if (attackCooldown <= 0f) {
             attackCooldown = 2f;
-            if (!GameScreen.debugControl) {
+            if (!GameScreen.debugControl && !GameScreen.gameOver) {
                 if (player.isOnArmoredState()) {
                     player.setHp(Math.max(0, player.getHp() - attackDamage / 2f));
                 } else {
