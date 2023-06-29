@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -17,6 +16,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.github.tommyettinger.colorful.rgb.Palette;
+import com.github.tommyettinger.colorful.rgb.SimplePalette;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.entities.objects.Item;
@@ -136,7 +137,7 @@ public class Player extends Entity implements InputProcessor {
         }
         GameHelper.damagedEntityAnimation(this, batch, delta);
         renderPlayerAnimations(batch);
-        batch.setColor(Color.WHITE);
+        batch.setPackedColor(Palette.GRAY);
 
     }
 

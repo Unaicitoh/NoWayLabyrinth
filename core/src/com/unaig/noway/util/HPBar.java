@@ -42,7 +42,7 @@ public class HPBar {
         shaper.filledRectangle(content);
 
         float x = (this.visualHp - hp);
-        shaper.setColor(RED);
+        shaper.setColor(SCARLET);
         shaper.filledRectangle(content.x + hp * size.x / maxHp, content.y, x * size.x / maxHp, content.height);
         shaper.setColor(WHITE);
     }
@@ -52,7 +52,7 @@ public class HPBar {
         shaper.setColor(BLACK);
         shaper.filledRectangle(content.x - hpOutline, content.y - hpOutline, size.x + hpOutline * 2, content.height + hpOutline * 2);
 
-        shaper.setColor(GRAY);
+        shaper.setColor(DARK_GRAY);
         shaper.filledRectangle(content.x, content.y, size.x, content.height);
     }
 

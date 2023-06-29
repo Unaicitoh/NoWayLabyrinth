@@ -9,6 +9,7 @@
 	<inherits name="com.github.tommyettinger.textratypist" />
 	<inherits name="libgdx_screenmanager" />
 	<inherits name="libgdx_screenmanager_gwt" />
+	<inherits name="com.github.tommyettinger.colorful.colorful" />
 	<entry-point class='com.unaig.noway.client.HtmlLauncher' />
 	<set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>
 	<set-configuration-property name="gdx.assetpath" value="../assets" />

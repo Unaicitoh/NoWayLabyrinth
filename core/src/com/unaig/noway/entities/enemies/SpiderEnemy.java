@@ -1,10 +1,11 @@
 package com.unaig.noway.entities.enemies;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import com.github.tommyettinger.colorful.rgb.Palette;
+import com.github.tommyettinger.colorful.rgb.SimplePalette;
 import com.unaig.noway.engines.PoolEngine;
 import com.unaig.noway.entities.Player;
 import com.unaig.noway.entities.spells.Spell;
@@ -49,7 +50,7 @@ public class SpiderEnemy extends Enemy {
             GameHelper.updateEnemyStatus(this, batch);
         }
         GameHelper.renderEnemyAnimations(this, batch);
-        batch.setColor(Color.WHITE);
+        batch.setPackedColor(Palette.GRAY);
 
     }
 

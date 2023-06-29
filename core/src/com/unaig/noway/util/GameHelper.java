@@ -2,7 +2,6 @@ package com.unaig.noway.util;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -14,6 +13,7 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.github.tommyettinger.colorful.rgb.Palette;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.entities.Entity;
 import com.unaig.noway.entities.enemies.Enemy;
@@ -84,11 +84,11 @@ public class GameHelper {
     public static void damagedEntityAnimation(Entity e, SpriteBatch batch, float delta) {
         if (e.getIsDamaged() && e.timeDamageTaken >= 0) {
             e.timeDamageTaken -= delta;
-            batch.setColor(1, 1, 1, e.timeDamageTaken * 5);
+            batch.setColor(.5f, .5f, .5f, e.timeDamageTaken * 5);
         } else {
             e.setIsDamaged(false);
             e.timeDamageTaken = DAMAGE_ANIMATION_TIME;
-            batch.setColor(1, 1, 1, 1);
+            batch.setPackedColor(Palette.GRAY);
         }
 
 
@@ -345,11 +345,11 @@ public class GameHelper {
 
     public static void updateEnemyStatus(Enemy e, SpriteBatch batch) {
         if (e.isBurned()) {
-            batch.setColor(Color.SCARLET);
+            batch.setPackedColor(Palette.BURNT_YELLOW);
         } else if (e.isSlowed()) {
-            batch.setColor(Color.SKY);
+            batch.setPackedColor(Palette.CALM_SKY);
         } else if (e.isFrozen()) {
-            batch.setColor(Color.ROYAL);
+            batch.setPackedColor(Palette.REFRESHING_MIST);
         }
     }
 }

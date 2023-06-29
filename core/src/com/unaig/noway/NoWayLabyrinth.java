@@ -1,6 +1,7 @@
 package com.unaig.noway;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.github.tommyettinger.colorful.Shaders;
 import com.unaig.noway.data.Assets;
 import com.unaig.noway.screens.BlankScreen;
 import com.unaig.noway.screens.GameScreen;
@@ -11,13 +12,14 @@ import de.eskalon.commons.screen.transition.impl.BlendingTransition;
 
 public class NoWayLabyrinth extends ManagedGame<ManagedScreen, ScreenTransition> {
 
-
+    //TODO cofres dont show correctly, keep status and invetory when going up, visible sprint, center bugs, 4th stair not showing
+    //TODO cursor disable actions, reset map center and to easy, and pathfinding
     private SpriteBatch batch;
 
     @Override
     public void create() {
         super.create();
-        batch = new SpriteBatch();
+        batch = new SpriteBatch(1000, Shaders.makeRGBAShader());
         Assets.instance.load();
         screenManager.addScreen("Game", new GameScreen(this));
         screenManager.addScreen("Reset", new BlankScreen());
