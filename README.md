@@ -1,6 +1,6 @@
 # NoWayLabyrinth
 
-Your mage needs to survive the maze!
+## Your mage needs to survive the maze!
 
 ### Project on ALPHA status, you can complete it, but some features are missing.
 Game -> build/lib/NowWayLabyrinth.jar
