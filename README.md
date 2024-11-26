@@ -1,8 +1,8 @@
 # NoWayLabyrinth
 
-## Your mage needs to survive the maze!
+### Your mage needs to survive the maze!
 
-### Project not finished, you can complete the game run, but some features are missing
+Project ***not*** finished, you can complete the game run, but some features are missing
 You can download the [game here](https://1ai-13.itch.io/no-way-labyrinth)
 
 Game path -> build/lib/NowWayLabyrinth.jar
