@@ -4,6 +4,7 @@
 
 ### Project not finished, you can complete the game run, but some features are missing
 You can download the [game here](https://1ai-13.itch.io/no-way-labyrinth)
+
 Game -> build/lib/NowWayLabyrinth.jar
 
 Only .jar available, you will need Java installed to run it the project
