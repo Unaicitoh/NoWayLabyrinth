@@ -210,13 +210,13 @@ public class GameScreen extends ManagedScreen implements EnemyListener {
         batch.begin();
         renderEntities(delta);
         //Debugging
-        shaper.rectangle(player.getBounds());
-        for (Spell s : poolEngine.spells) {
-            shaper.rectangle(s.getBounds());
-        }
-        for (Enemy e : poolEngine.enemies) {
-            shaper.rectangle(e.getBounds());
-        }
+        // shaper.rectangle(player.getBounds());
+        // for (Spell s : poolEngine.spells) {
+        //     shaper.rectangle(s.getBounds());
+        // }
+        // for (Enemy e : poolEngine.enemies) {
+        //     shaper.rectangle(e.getBounds());
+        // }
         renderUI(delta);
         batch.end();
         stage.draw();
